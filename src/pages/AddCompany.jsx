@@ -21,6 +21,94 @@ export default function AddCompany() {
   const navigate = useNavigate();
 
   const validateInput = () => {
+    
+    // Validate Empty Input
+    if (companyName === "") {
+      toast.error("Please enter company name");
+      return;
+    } 
+
+    if (email === "") {
+      toast.error("Please enter email");
+      return;
+    }
+
+    if (jobTitle === "") {
+      toast.error("Please enter job title");
+      return;
+    }
+
+    if (address === "") {
+      toast.error("Please enter address");
+      return;
+    }
+
+    if (jobDescription === "") {
+      toast.error("Please enter job description");
+      return;
+    }
+
+    if (workingHourStart === "") {
+      toast.error("Please enter working hour start");
+      return;
+    }
+
+    if (workingHourEnd === "") {
+      toast.error("Please enter working hour end");
+      return;
+    }
+
+    if (allowanceStart === "") {
+      toast.error("Please enter allowance start");
+      return;
+    }
+
+    if (allowanceEnd === "") {
+      toast.error("Please enter allowance end");
+      return;
+    }
+
+    if (workingHourStart === "") {
+      toast.error("Please enter working hour start");
+      return;
+    }
+
+    if (workingHourEnd === "") {
+      toast.error("Please enter working hour end");
+      return;
+    }
+    // Validate Same Company Name??
+    
+    // Validate Email
+    if (!email.includes("@") || !email.includes(".")) {
+      toast.error("Please enter a valid email");
+      return;
+    }
+    
+    // Validate Website
+    if (!website.includes(".")) {
+      toast.error("Please enter a valid website");
+      return;
+    }
+
+    // Validate Job Description
+    if (jobDescription.length < 20) {
+      toast.error("Job description must be at least 20 characters");
+      return;
+    }
+    
+    // Validate Working Hour
+    if (workingHourStart > workingHourEnd) {
+      toast.error("Start working hour cannot be later than end working hour");
+      return;
+    }
+
+    // Validate Allowance
+    if (allowanceStart > allowanceEnd) {
+      toast.error("Please enter a valid allowance range");
+      return;
+    }
+
     onSubmit();
   };
 
@@ -67,7 +155,7 @@ export default function AddCompany() {
               id="company_name"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Acme Inc. (M) Sdn Bhd"
-              required
+              onChange={(e) => setCompanyName(e.target.value)}
             />
           </div>
           {/* Email */}
@@ -83,6 +171,7 @@ export default function AddCompany() {
               id="email"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="johndoe@acme.com"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           {/* Website */}
@@ -98,6 +187,7 @@ export default function AddCompany() {
               id="website"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="www.acmeinc.com"
+              onChange={(e) => setWebsite(e.target.value)}
             />
           </div>
           {/* Job Title */}
@@ -113,7 +203,7 @@ export default function AddCompany() {
               id="job_title"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Software Engineer, Frontend Developer"
-              required
+              onChange={(e) => setJobTitle(e.target.value)}
             />
           </div>
         </div>
@@ -130,7 +220,7 @@ export default function AddCompany() {
             id="address"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Jalan Genting Kelang, Setapak, 53300 Kuala Lumpur, Federal Territory of Kuala Lumpur"
-            required
+            onChange={(e) => setAddress(e.target.value)}
           />
         </div>
         {/* Job Description */}
@@ -146,6 +236,7 @@ export default function AddCompany() {
             rows="4"
             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Write a description for this job (E.g. Individual with the knowledge of HTML, CSS, Javascript)"
+            onChange={(e) => setJobDescription(e.target.value)}
           ></textarea>
         </div>
         <div class="grid gap-6 mb-6 md:grid-cols-2">
@@ -162,6 +253,7 @@ export default function AddCompany() {
                 <select
                   id="workingday-start"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) => setWorkingDayStart(e.target.value)}
                 >
                   <option value="Monday">Monday</option>
                   <option value="Tuesday">Tuesday</option>
@@ -177,6 +269,7 @@ export default function AddCompany() {
                 <select
                   id="workingday-end"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) => setWorkingDayEnd(e.target.value)}
                 >
                   <option value="Monday">Monday</option>
                   <option value="Tuesday">Tuesday</option>
@@ -205,6 +298,7 @@ export default function AddCompany() {
                   name="workinghour-start"
                   type="time"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-5 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) => setWorkingHourStart(e.target.value)}
                 />
               </div>
               <span class="mx-4 text-gray-500 dark:text-gray-400">to</span>
@@ -213,6 +307,7 @@ export default function AddCompany() {
                   name="workinghour-end"
                   type="time"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-5 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) => setWorkingHourEnd(e.target.value)}
                 />
               </div>
             </div>
@@ -238,7 +333,7 @@ export default function AddCompany() {
                   min="0"
                   max="10000"
                   step="100"
-                  required
+                  onChange={(e) => setAllowanceStart(e.target.value)}
                 />
               </div>
               <span class="mx-4 text-gray-500 dark:text-gray-400">to</span>
@@ -251,10 +346,10 @@ export default function AddCompany() {
                   id="allowance-end"
                   class="bg-gray-50 border border-gray-300 text-gray-900 pl-12 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="800"
-                  min="0"
+                  min={allowanceStart}
                   max="10000"
                   step="100"
-                  required
+                  onChange={(e) => setAllowanceEnd(e.target.value)}
                 />
               </div>
             </div>
@@ -277,6 +372,7 @@ export default function AddCompany() {
                   value=""
                   name="openFor"
                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  onClick={() => setOpenFor("Degree")}
                 />
                 <label
                   for="Degree"
@@ -292,6 +388,7 @@ export default function AddCompany() {
                   value=""
                   name="openFor"
                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  onClick={() => setOpenFor("Diploma")}
                 />
                 <label
                   for="Diploma"
@@ -307,6 +404,7 @@ export default function AddCompany() {
                   value=""
                   name="openFor"
                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  onClick={() => setOpenFor("Master")}
                 />
                 <label
                   for="Master"
@@ -322,6 +420,7 @@ export default function AddCompany() {
                   value=""
                   name="openFor"
                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  onClick={() => setOpenFor("Degree & Diploma")}
                 />
                 <label
                   for="Degree & Diploma"
