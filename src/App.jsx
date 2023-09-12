@@ -1,19 +1,24 @@
 import React, { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
+import { UserRoleProvider } from "./UserRoleContext";
 
 import "./css/style.css";
 import { Toaster } from "react-hot-toast";
 
 // Import pages
-import SignIn from "./pages/SignIn";
+import AdminSignIn from "./pages/AdminSignIn";
+import SupervisorSignIn from "./pages/SupervisorSignIn";
+import StudentSignIn from "./pages/StudentSignIn";
+import CompanySignIn from "./pages/CompanySignIn";
 import Dashboard from "./pages/Dashboard";
-import Home from "./pages/Home";
+import Main from "./pages/Main";
 import AddCompany from "./pages/AddCompany";
 import ViewCompany from "./pages/ViewCompany";
 import AddSupervisor from "./pages/AddSupervisor";
 import ViewSupervisor from "./pages/ViewSupervisor";
 import AddStudent from "./pages/AddStudent";
 import ViewStudent from "./pages/ViewStudent";
+import Home from "./pages/Home";
 
 function App() {
   const location = useLocation();
@@ -25,22 +30,26 @@ function App() {
   }, [location.pathname]); // triggered on route change
 
   return (
-    <>
-      <Routes>
-        <Route exact path="/" element={<SignIn />} />
-        <Route path="/Dashboard" element={<Dashboard />}>
-          <Route index element={<Home />} />
-          <Route path="Home" element={<Home />} />
-          <Route path="AddCompany" element={<AddCompany />} />
-          <Route path="ViewCompany" element={<ViewCompany />} />
-          <Route path="AddSupervisor" element={<AddSupervisor />} />
-          <Route path="ViewSupervisor" element={<ViewSupervisor />} />
-          <Route path="AddStudent" element={<AddStudent />} />
-          <Route path="ViewStudent" element={<ViewStudent />} />
-        </Route>
-      </Routes>
-      <Toaster position="top-right" />
-    </>
+      <UserRoleProvider>
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route path="AdminSignIn" element={<AdminSignIn />} />
+            <Route path="SupervisorSignIn" element={<SupervisorSignIn />} />
+            <Route path="StudentSignIn" element={<StudentSignIn />} />
+            <Route path="CompanySignIn" element={<CompanySignIn />} />
+            <Route path="Dashboard" element={<Dashboard />}>
+              <Route index element={<Main />} />
+              <Route path="Main" element={<Main />} />
+              <Route path="AddCompany" element={<AddCompany />} />
+              <Route path="ViewCompany" element={<ViewCompany />} />
+              <Route path="AddSupervisor" element={<AddSupervisor />} />
+              <Route path="ViewSupervisor" element={<ViewSupervisor />} />
+              <Route path="AddStudent" element={<AddStudent />} />
+              <Route path="ViewStudent" element={<ViewStudent />} />
+            </Route>
+          </Routes>
+          <Toaster position="top-right" />
+      </UserRoleProvider> 
   );
 }
 

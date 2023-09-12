@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Logo from "../images/TARUMT-Logo.png";
+import { useUserRole } from "../UserRoleContext";
 
-export default function SignIn() {
+export default function SupervisorSignIn() {
   const navigate = useNavigate();
+  const userRole = useUserRole();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,24 +15,50 @@ export default function SignIn() {
       toast.error("Please fill all the fields");
       return;
     }
-    
+
     if (username !== "admin" || password !== "123456") {
       toast.error("Invalid Username or Password");
       return;
     }
-    navigate("dashboard");
+    navigate("/dashboard");
     toast.success("Login Successful");
   };
+
+  useEffect(() => {
+    if (userRole !== "Supervisor") {
+      toast.error("You are not authorized to view this page");
+      navigate("/");
+    }
+  }, []);
 
   return (
     <>
       <section class="bg-gray-50 dark:bg-gray-900">
-        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <div
-            class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+        <button
+          onClick={() => {
+            navigate("/");
+          }}
+          class="absolute mt-10 ml-10 transition duration-300 ease-in-out hover:scale-110 hover:text-gray-900 dark:hover:text-gray-200 rounded-full dark:hover:bg-slate-700 hover:bg-slate-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-10 h-10"
           >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 19.5L8.25 12l7.5-7.5"
+            />
+          </svg>
+        </button>
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+          <div class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
             <img class="w-10 h-10 mr-2" src={Logo} alt="logo" />
-            Admin Internship Portal
+            Supervisor Internship Portal
           </div>
           <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8 shadow rounded-lg">
@@ -40,17 +68,17 @@ export default function SignIn() {
               <div class="space-y-4 md:space-y-6">
                 <div>
                   <label
-                    for="email"
+                    for="text"
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Username
+                    Staff ID
                   </label>
                   <input
-                    type="email"
-                    name="email"
-                    id="email"
+                    type="text"
+                    name="text"
+                    id="text"
                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="admin"
+                    placeholder="4905"
                     onChange={(e) => {
                       setUsername(e.target.value);
                     }}
@@ -58,16 +86,16 @@ export default function SignIn() {
                 </div>
                 <div>
                   <label
-                    for="password"
+                    for="email"
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Password
+                    Staff Email
                   </label>
                   <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="123456"
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="limjj@tarc.edu.my"
                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     onChange={(e) => {
                       setPassword(e.target.value);
@@ -79,7 +107,7 @@ export default function SignIn() {
                     href="https://www.tarc.edu.my/account_help.jsp"
                     class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
-                    Forgot password?
+                    Login Problem?
                   </a>
                 </div>
                 <button
