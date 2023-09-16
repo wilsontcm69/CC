@@ -96,6 +96,12 @@ export default function AddCompany() {
       toast.error("Job description must be at least 20 characters");
       return;
     }
+
+    //Validate Working Day
+    if (workingDayStart === workingDayEnd) {
+      toast.error("Start working day cannot be the same as end working day");
+      return;
+    }
     
     // Validate Working Hour
     if (workingHourStart > workingHourEnd) {
@@ -131,7 +137,7 @@ export default function AddCompany() {
     setTimeout(() => {
       toast.success("Company added successfully");
       navigate("/dashboard");
-    }, 1500);
+    }, 1000);
   };
 
   return (

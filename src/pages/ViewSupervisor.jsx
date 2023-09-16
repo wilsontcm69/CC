@@ -17,7 +17,6 @@ import {
   Input,
 } from "@material-tailwind/react";
 
-
 const TABLE_HEAD = ["Name", "Email", "Phone", "Birth Date", "Gender", "Position", "Major of Study", "Edit", "Remove"];
  
 const TABLE_ROWS = [
@@ -140,7 +139,7 @@ export default function ViewSupervisor() {
       <Card className="h-full w-full">
       {/* ... other parts of your component ... */}
 
-      <CardBody className="overflow-scroll px-0">
+      <CardBody className="overflow-x-auto px-0 bg-white text-black dark:bg-gray-800 dark:text-white rounded-t-lg">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             {/* ... table header ... */}
@@ -265,7 +264,7 @@ export default function ViewSupervisor() {
                 <td className="p-4">
                   <Tooltip content="Edit User">
                     <IconButton variant="text">
-                      <PencilIcon className="h-4 w-4" />
+                      <PencilIcon className="h-4 w-4 dark:text-white hover:opacity-50 transition duration-75 ease-in-out" />
                     </IconButton>
                   </Tooltip>
                 </td>
@@ -274,7 +273,7 @@ export default function ViewSupervisor() {
                 <td className="p-4">
                   <Tooltip content="Delete User">
                     <IconButton variant="text">
-                    <TrashIcon className="h-4 w-4" />
+                    <TrashIcon className="h-4 w-4 dark:text-white hover:opacity-50 transition duration-75 ease-in-out" />
                     </IconButton>
                   </Tooltip>
                 </td>
@@ -286,15 +285,15 @@ export default function ViewSupervisor() {
         </table>
       </CardBody>
 
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4 bg-white text-black dark:bg-gray-800 dark:text-white rounded-b-lg">
         <Typography variant="small" color="blue-gray" className="font-normal">
           Page {currentPage} of {totalPages}
         </Typography>
         <div className="flex gap-2">
-          <Button variant="outlined" size="sm" onClick={handlePreviousPage}>
+          <Button variant="outlined" size="sm" onClick={handlePreviousPage} className="dark:text-white dark:border-white hover:opacity-60 transition duration-300 ease-in-out">
             Previous
           </Button>
-          <Button variant="outlined" size="sm" onClick={handleNextPage}>
+          <Button variant="outlined" size="sm" onClick={handleNextPage} className="dark:text-white dark:border-white hover:opacity-60 transition duration-300 ease-in-out">
             Next
           </Button>
         </div>
