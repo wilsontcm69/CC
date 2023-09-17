@@ -20,7 +20,7 @@ export default function StudentSignIn() {
         toast.error("Invalid Username or Password");
         return;
       }
-      navigate("/dashboard");
+      navigate("/StudentHome");
       toast.success("Login Successful");
     };
   

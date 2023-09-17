@@ -19,6 +19,8 @@ import ViewSupervisor from "./pages/ViewSupervisor";
 import AddStudent from "./pages/AddStudent";
 import ViewStudent from "./pages/ViewStudent";
 import Home from "./pages/Home";
+import SupervisorHome from "./pages/SupervisorHome";
+import StudentHome from "./pages/StudentHome";
 
 function App() {
   const location = useLocation();
@@ -35,7 +37,9 @@ function App() {
             <Route exact path="/" element={<Home />} />
             <Route path="AdminSignIn" element={<AdminSignIn />} />
             <Route path="SupervisorSignIn" element={<SupervisorSignIn />} />
+            <Route path="SupervisorHome" element={<SupervisorHome />} />
             <Route path="StudentSignIn" element={<StudentSignIn />} />
+            <Route path="StudentHome" element={<StudentHome />} />
             <Route path="CompanySignIn" element={<CompanySignIn />} />
             <Route path="Dashboard" element={<Dashboard />}>
               <Route index element={<Main />} />

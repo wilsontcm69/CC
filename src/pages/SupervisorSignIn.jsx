@@ -20,7 +20,7 @@ export default function SupervisorSignIn() {
       toast.error("Invalid Username or Password");
       return;
     }
-    navigate("/dashboard");
+    navigate("/SupervisorHome");
     toast.success("Login Successful");
   };
 

@@ -21,15 +21,22 @@ export default function AddCompany() {
   const navigate = useNavigate();
 
   const validateInput = () => {
-    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const allowanceRegex = /^[0-9]+$/;
+
     // Validate Empty Input
     if (companyName === "") {
       toast.error("Please enter company name");
       return;
-    } 
+    }
 
     if (email === "") {
       toast.error("Please enter email");
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email");
       return;
     }
 
@@ -68,6 +75,20 @@ export default function AddCompany() {
       return;
     }
 
+    if (
+      !allowanceRegex.test(allowanceStart) ||
+      !allowanceRegex.test(allowanceEnd)
+    ) {
+      toast.error("Please enter a valid allowance range");
+      return;
+    }
+
+    // Validate Allowance
+    if (allowanceStart > allowanceEnd) {
+      toast.error("Please enter a valid allowance range");
+      return;
+    }
+
     if (workingHourStart === "") {
       toast.error("Please enter working hour start");
       return;
@@ -78,13 +99,7 @@ export default function AddCompany() {
       return;
     }
     // Validate Same Company Name??
-    
-    // Validate Email
-    if (!email.includes("@") || !email.includes(".")) {
-      toast.error("Please enter a valid email");
-      return;
-    }
-    
+
     // Validate Website
     if (!website.includes(".")) {
       toast.error("Please enter a valid website");
@@ -102,16 +117,10 @@ export default function AddCompany() {
       toast.error("Start working day cannot be the same as end working day");
       return;
     }
-    
+
     // Validate Working Hour
     if (workingHourStart > workingHourEnd) {
       toast.error("Start working hour cannot be later than end working hour");
-      return;
-    }
-
-    // Validate Allowance
-    if (allowanceStart > allowanceEnd) {
-      toast.error("Please enter a valid allowance range");
       return;
     }
 
@@ -447,7 +456,14 @@ export default function AddCompany() {
             Accomodation
           </label>
           <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" value="" class="sr-only peer" onClick={() => {setAccomodation(!accomodation)}}/>
+            <input
+              type="checkbox"
+              value=""
+              class="sr-only peer"
+              onClick={() => {
+                setAccomodation(!accomodation);
+              }}
+            />
             <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
             <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
               {accomodation ? "Yes" : "No"}
