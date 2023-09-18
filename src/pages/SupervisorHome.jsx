@@ -1,17 +1,162 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useUserRole, useUserRoleUpdate } from "../UserRoleContext";
 import { useNavigate } from "react-router-dom";
 import Logo from "../images/TARUMT-Logo.png";
 import ThemeToggle from "../components/ThemeToggle";
+import Help from "../components/DropdownHelp";
 import toast from "react-hot-toast";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import {
+  Card,
+  CardHeader,
+  Typography,
+  Button,
+  CardBody,
+  Chip,
+  CardFooter,
+  Avatar,
+  IconButton,
+  Tooltip,
+  Input,
+} from "@material-tailwind/react";
+
+const TABLE_HEAD = [
+  "Name",
+  "Email",
+  "Phone",
+  "Birth Date",
+  "Gender",
+  "Position",
+  "Major of Study",
+  "Edit",
+  "Remove",
+];
+
+const TABLE_ROWS = [
+  {
+    name: "Tan Li Peng",
+    email: "tanlipeng@gmail.com",
+    phone: "0129677589",
+    dob: "16/5/1980",
+    gender: "Female",
+    position: "Senior Lecturer",
+    major: "Software Engineering",
+  },
+  {
+    name: "Tan Li Peng",
+    email: "tanlipeng@gmail.com",
+    phone: "0129677589",
+    dob: "16/5/1980",
+    gender: "Female",
+    position: "Senior Lecturer",
+    major: "Software Engineering",
+  },
+  {
+    name: "Tan Li Peng",
+    email: "tanlipeng@gmail.com",
+    phone: "0129677589",
+    dob: "16/5/1980",
+    gender: "Female",
+    position: "Senior Lecturer",
+    major: "Software Engineering",
+  },
+  {
+    name: "Tan Li Peng",
+    email: "tanlipeng@gmail.com",
+    phone: "0129677589",
+    dob: "16/5/1980",
+    gender: "Female",
+    position: "Senior Lecturer",
+    major: "Software Engineering",
+  },
+  {
+    name: "Tan Li Peng",
+    email: "tanlipeng@gmail.com",
+    phone: "0129677589",
+    dob: "16/5/1980",
+    gender: "Female",
+    position: "Senior Lecturer",
+    major: "Software Engineering",
+  },
+  {
+    name: "Tan Li Peng",
+    email: "tanlipeng@gmail.com",
+    phone: "0129677589",
+    dob: "16/5/1980",
+    gender: "Female",
+    position: "Senior Lecturer",
+    major: "Software Engineering",
+  },
+  {
+    name: "Tan Li Peng",
+    email: "tanlipeng@gmail.com",
+    phone: "0129677589",
+    dob: "16/5/1980",
+    gender: "Female",
+    position: "Senior Lecturer",
+    major: "Software Engineering",
+  },
+  {
+    name: "Tan Li Peng",
+    email: "tanlipeng@gmail.com",
+    phone: "0129677589",
+    dob: "16/5/1980",
+    gender: "Female",
+    position: "Senior Lecturer",
+    major: "Software Engineering",
+  },
+  {
+    name: "Tan Li Peng",
+    email: "tanlipeng@gmail.com",
+    phone: "0129677589",
+    dob: "16/5/1980",
+    gender: "Female",
+    position: "Senior Lecturer",
+    major: "Software Engineering",
+  },
+];
+
+const ROWS_PER_PAGE = 7; // Number of rows per page
 
 export default function SupervisorHome() {
   const navigate = useNavigate();
+  const userRole = useUserRole();
+  const setForUserRole = useUserRoleUpdate();
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Calculate the start and end indexes for the current page
+  const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
+  const endIndex = startIndex + ROWS_PER_PAGE;
+
+  // Slice the data to display only the rows for the current page
+  const rowsToDisplay = TABLE_ROWS.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(TABLE_ROWS.length / ROWS_PER_PAGE);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (userRole !== "Supervisor") {
+  //     toast.error("You are not authorized to view this page");
+  //     navigate("/");
+  //   }
+  // }, []);
 
   return (
     <>
       <header>
         <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 shadow-md">
-          <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+          <div class="flex flex-wrap sm:items-center sm:justify-between p-4 sm:p-6 xl:px-28 xl:py-2">
             <div class="flex items-center">
               <img src={Logo} class="mr-3 h-6 sm:h-9" alt="Logo" />
               <span class="self-center text-xl font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">
@@ -19,9 +164,11 @@ export default function SupervisorHome() {
               </span>
             </div>
             <div className="flex items-center space-x-3">
+              <Help align="right" />
               <ThemeToggle />
               <button
                 onClick={() => {
+                  setForUserRole("");
                   navigate("/");
                   toast.success("You have successfully logged out!");
                 }}
@@ -59,9 +206,388 @@ export default function SupervisorHome() {
         </nav>
       </header>
 
-      <section className="sm:flex sm:items-center sm:justify-between p-4 sm:p-6 xl:px-28 xl:py-8">
-        <div class="block mb-4 text-2xl font-semibold text-gray-900 dark:text-white">
-          Supervisor Page
+      <div class="sm:flex sm:items-center sm:justify-between p-6 sm:p-8 xl:px-28 block text-2xl font-semibold text-gray-900 dark:text-white">
+        <h2 class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+          Hello, Welcome Back!
+        </h2>
+      </div>
+      <section className="sm:flex sm:items-center sm:justify-between p-2 sm:p-4 xl:px-28 xl:py-4">
+        <Card className="h-full w-full">
+          {/* ... other parts of your component ... */}
+
+          <CardBody className="overflow-x-auto px-0 bg-white text-black dark:bg-gray-800 dark:text-white rounded-t-lg">
+            <table className="w-full min-w-max table-auto text-left">
+              <thead>
+                {/* ... table header ... */}
+                <tr>
+                  {TABLE_HEAD.map((head) => (
+                    <th
+                      key={head}
+                      className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                    >
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
+                      >
+                        {head}
+                      </Typography>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody>
+                {rowsToDisplay.map(
+                  (
+                    { name, email, phone, dob, gender, position, major },
+                    index
+                  ) => (
+                    <tr key={index}>
+                      {/* Supervisor Name */}
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {name}
+                            </Typography>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Email */}
+                      <td className="p-4">
+                        <div className="flex flex-col">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {email}
+                          </Typography>
+                        </div>
+                      </td>
+
+                      {/* Phone */}
+                      <td className="p-4">
+                        <div className="flex flex-col">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {phone}
+                          </Typography>
+                        </div>
+                      </td>
+
+                      {/* DOB */}
+                      <td className="p-4">
+                        <div className="flex flex-col">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {dob}
+                          </Typography>
+                        </div>
+                      </td>
+
+                      {/* Gender */}
+                      <td className="p-4">
+                        <div className="flex flex-col">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {gender}
+                          </Typography>
+                        </div>
+                      </td>
+
+                      {/* Position */}
+                      <td className="p-4">
+                        <div className="flex flex-col">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {position}
+                          </Typography>
+                        </div>
+                      </td>
+
+                      {/* Major of Study */}
+                      <td className="p-4">
+                        <div className="flex flex-col">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {major}
+                          </Typography>
+                        </div>
+                      </td>
+
+                      {/* Edit Button */}
+                      <td className="p-4">
+                        <Tooltip content="Edit User">
+                          <IconButton variant="text">
+                            <PencilIcon className="h-4 w-4 dark:text-white hover:opacity-50 transition duration-75 ease-in-out" />
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+
+                      {/* Delete Button */}
+                      <td className="p-4">
+                        <Tooltip content="Delete User">
+                          <IconButton variant="text">
+                            <TrashIcon className="h-4 w-4 dark:text-white hover:opacity-50 transition duration-75 ease-in-out" />
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          </CardBody>
+
+          <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4 bg-white text-black dark:bg-gray-800 dark:text-white rounded-b-lg">
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              Page {currentPage} of {totalPages}
+            </Typography>
+            <div className="flex gap-2">
+              <Button
+                variant="outlined"
+                size="sm"
+                onClick={handlePreviousPage}
+                className="dark:text-white dark:border-white hover:opacity-60 transition duration-300 ease-in-out"
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outlined"
+                size="sm"
+                onClick={handleNextPage}
+                className="dark:text-white dark:border-white hover:opacity-60 transition duration-300 ease-in-out"
+              >
+                Next
+              </Button>
+            </div>
+          </CardFooter>
+        </Card>
+      </section>
+
+      <section>
+        <div class="w-full p-2 sm:p-4 xl:px-28 xl:py-4">
+          <h2 class="mb-8 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+            Quick Links
+          </h2>
+
+          <div class="block w-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:border-gray-700 dark:hover:bg-gray-700 mb-6">
+            <h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Face Problem?
+            </h5>
+            <ul role="list" class="space-y-4 text-gray-500 dark:text-gray-400">
+              <li class="flex space-x-2 items-center">
+                <svg
+                  class="flex-shrink-0 w-3.5 h-3.5 text-blue-600 dark:text-blue-500"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 14 18"
+                >
+                  <path d="M7 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm2 1H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+                </svg>
+
+                <p class="leading-tight">
+                  Contact Admin:{" "}
+                  <a
+                    href="https://mail.google.com/mail/u/0/"
+                    className="text-blue-600 dark:text-blue-500 hover:underline"
+                  >
+                    Mr Harry Goh
+                  </a>
+                  <span className="text-sm"> (gohks.tarc.edu.my)</span>, or{" "}
+                  <a
+                    href="https://mail.google.com/mail/u/0/"
+                    className="text-blue-600 dark:text-blue-500 hover:underline"
+                  >
+                    Ms Kanimoli d/o Jeevanantham
+                  </a>
+                  <span className="text-sm"> (kanimolij@tarc.edu.my)</span>
+                </p>
+              </li>
+              <li class="flex space-x-2 items-center">
+                <svg
+                  class="flex-shrink-0 w-3.5 h-3.5 text-blue-600 dark:text-blue-500"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 19 18"
+                >
+                  <path d="M18 13.446a3.02 3.02 0 0 0-.946-1.985l-1.4-1.4a3.054 3.054 0 0 0-4.218 0l-.7.7a.983.983 0 0 1-1.39 0l-2.1-2.1a.983.983 0 0 1 0-1.389l.7-.7a2.98 2.98 0 0 0 0-4.217l-1.4-1.4a2.824 2.824 0 0 0-4.218 0c-3.619 3.619-3 8.229 1.752 12.979C6.785 16.639 9.45 18 11.912 18a7.175 7.175 0 0 0 5.139-2.325A2.9 2.9 0 0 0 18 13.446Z" />
+                </svg>
+                <p class="leading-tight">
+                  Phone Number: Tel No:
+                  <a
+                    href="tel:0341450123"
+                    className="text-blue-600 dark:text-blue-500 hover:underline"
+                  >
+                    {" "}
+                    03-4145 0123
+                  </a>
+                  , Fax No:
+                  <a
+                    href="tel:0341423166"
+                    className="text-blue-600 dark:text-blue-500 hover:underline"
+                  >
+                    {" "}
+                    03-4142 3166
+                  </a>
+                </p>
+              </li>
+              <li class="flex space-x-2 items-center">
+                <svg
+                  class="flex-shrink-0 w-3.5 h-3.5 text-blue-600 dark:text-blue-500"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 14v4m-4 1h8M1 10h18M2 1h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1Z"
+                  />
+                </svg>
+
+                <p class="leading-tight">
+                  Website:{" "}
+                  <a
+                    href="https://www.tarc.edu.my/dsa/a/student-career-development-center/contact-information/"
+                    className="text-blue-600 dark:text-blue-500 hover:underline"
+                  >
+                    Help Center
+                  </a>
+                </p>
+              </li>
+            </ul>
+          </div>
+
+          <div class="block w-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:border-gray-700 dark:hover:bg-gray-700">
+            <h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Quick Direct
+            </h5>
+            <ul role="list" class="space-y-4 text-gray-500 dark:text-gray-400">
+              <li class="flex space-x-2 items-center">
+                <svg
+                  class="flex-shrink-0 w-3.5 h-3.5"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 14v4m-4 1h8M1 10h18M2 1h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1Z"
+                  />
+                </svg>
+                <a
+                  href="https://portal.tarc.edu.my/portal/login.jsp"
+                  className="text-blue-600 dark:text-blue-500 hover:underline leading-tight"
+                >
+                  Staff Intranet
+                </a>
+              </li>
+              <li class="flex space-x-2 items-center">
+                <svg
+                  class="flex-shrink-0 w-3.5 h-3.5"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 16"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m19 2-8.4 7.05a1 1 0 0 1-1.2 0L1 2m18 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1m18 0v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2"
+                  />
+                </svg>
+                <a
+                  href="https://mail.google.com/mail/u/0/"
+                  className="text-blue-600 dark:text-blue-500 hover:underline leading-tight"
+                >
+                  Gmail
+                </a>
+              </li>
+              <li class="flex space-x-2 items-center">
+                <svg
+                  class="flex-shrink-0 w-3.5 h-3.5"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 18"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 16.5c0-1-8-2.7-9-2V1.8c1-1 9 .707 9 1.706M10 16.5V3.506M10 16.5c0-1 8-2.7 9-2V1.8c-1-1-9 .707-9 1.706"
+                  />
+                </svg>
+                <a
+                  href="https://classroom.google.com/h"
+                  className="text-blue-600 dark:text-blue-500 hover:underline leading-tight"
+                >
+                  Google Classroom
+                </a>
+              </li>
+              <li class="flex space-x-2 items-center">
+                <svg
+                  class="flex-shrink-0 w-3.5 h-3.5"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 16 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 1v4a1 1 0 0 1-1 1H1m14-4v16a.97.97 0 0 1-.933 1H1.933A.97.97 0 0 1 1 18V5.828a2 2 0 0 1 .586-1.414l2.828-2.828A2 2 0 0 1 5.828 1h8.239A.97.97 0 0 1 15 2Z"
+                  />
+                </svg>
+                <a
+                  href="https://drive.google.com/drive/my-drive"
+                  className="text-blue-600 dark:text-blue-500 hover:underline leading-tight"
+                >
+                  Google Drive
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </section>
 

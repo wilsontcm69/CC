@@ -6,7 +6,7 @@ import Supervisor from "../images/Supervisor.png";
 import Student from "../images/Student.png";
 import Company from "../images/Company.png";
 import ThemeToggle from "../components/ThemeToggle";
-import toast from "react-hot-toast";
+import Help from '../components/DropdownHelp';
 import { useUserRole, useUserRoleUpdate } from "../UserRoleContext";
 
 export default function Home() {
@@ -29,7 +29,8 @@ export default function Home() {
                 TARUMT Internship Portal
               </span>
             </div>
-            <div>
+            <div className="flex items-center space-x-3">
+              <Help align="right" />
               <ThemeToggle />
             </div>
           </div>
@@ -86,18 +87,15 @@ export default function Home() {
                 Student
               </h3>
             </button>
-            <button
-              class="text-center text-gray-500 dark:text-gray-400 transition duration-300 ease-in-out hover:scale-110"
-              onClick={() => {
-                navigate("CompanySignIn");
-                setForUserRole("Company");
-              }}
+            <a
+              class="text-center text-gray-500 dark:text-gray-400 transition duration-300 ease-in-out hover:scale-110 cursor-pointer"
+              href="https://itp.tarc.edu.my/"
             >
               <img class="mx-auto mb-4 w-52 h-52" src={Company} alt="Company" />
               <h3 class="mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-200">
-                Company
+                Find Company
               </h3>
-            </button>
+            </a>
           </div>
         </div>
         <div className="text-center">

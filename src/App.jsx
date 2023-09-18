@@ -9,7 +9,6 @@ import { Toaster } from "react-hot-toast";
 import AdminSignIn from "./pages/AdminSignIn";
 import SupervisorSignIn from "./pages/SupervisorSignIn";
 import StudentSignIn from "./pages/StudentSignIn";
-import CompanySignIn from "./pages/CompanySignIn";
 import Dashboard from "./pages/Dashboard";
 import Main from "./pages/Main";
 import AddCompany from "./pages/AddCompany";
@@ -40,7 +39,6 @@ function App() {
             <Route path="SupervisorHome" element={<SupervisorHome />} />
             <Route path="StudentSignIn" element={<StudentSignIn />} />
             <Route path="StudentHome" element={<StudentHome />} />
-            <Route path="CompanySignIn" element={<CompanySignIn />} />
             <Route path="Dashboard" element={<Dashboard />}>
               <Route index element={<Main />} />
               <Route path="Main" element={<Main />} />

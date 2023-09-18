@@ -1,6 +1,4 @@
 import React from 'react';
-
-import Help from './DropdownHelp';
 import UserMenu from './DropdownProfile';
 import ThemeToggle from './ThemeToggle';
 
@@ -33,7 +31,6 @@ function Header({ sidebarOpen, setSidebarOpen }) {
 
           {/* Header: Right side */}
           <div className="flex items-center space-x-3">
-            <Help align="right" />
             <ThemeToggle />
             {/*  Divider */}
             <hr className="w-px h-6 bg-slate-200 dark:bg-slate-700 border-none" />
