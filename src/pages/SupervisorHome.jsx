@@ -5,7 +5,7 @@ import Logo from "../images/TARUMT-Logo.png";
 import ThemeToggle from "../components/ThemeToggle";
 import Help from "../components/DropdownHelp";
 import toast from "react-hot-toast";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { PencilIcon, TrashIcon, CheckBadgeIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -28,8 +28,8 @@ const TABLE_HEAD = [
   "Gender",
   "Position",
   "Major of Study",
-  "Edit",
-  "Remove",
+  "Status",
+  "Evaluate",
 ];
 
 const TABLE_ROWS = [
@@ -337,23 +337,36 @@ export default function SupervisorHome() {
                         </div>
                       </td>
 
-                      {/* Edit Button */}
+                      {/* Status */}
                       <td className="p-4">
-                        <Tooltip content="Edit User">
-                          <IconButton variant="text">
-                            <PencilIcon className="h-4 w-4 dark:text-white hover:opacity-50 transition duration-75 ease-in-out" />
-                          </IconButton>
-                        </Tooltip>
+                        <div className="flex flex-col">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {/* {major} */}
+                            Pending
+                          </Typography>
+                        </div>
                       </td>
 
-                      {/* Delete Button */}
+                      {/* Edit Button */}
                       <td className="p-4">
-                        <Tooltip content="Delete User">
-                          <IconButton variant="text">
-                            <TrashIcon className="h-4 w-4 dark:text-white hover:opacity-50 transition duration-75 ease-in-out" />
-                          </IconButton>
-                        </Tooltip>
+                      <div className="flex flex-col">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            <a href={`SupervisorHome/${name}`}
+                    className="text-blue-600 dark:text-blue-500 hover:underline">
+                              Check
+                            </a>
+                          </Typography>
+                        </div>
                       </td>
+
                     </tr>
                   )
                 )}
@@ -390,7 +403,8 @@ export default function SupervisorHome() {
           </CardFooter>
         </Card>
       </section>
-
+      
+      {/* Quick Links */}
       <section>
         <div class="w-full p-2 sm:p-4 xl:px-28 xl:py-4">
           <h2 class="mb-8 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
@@ -399,12 +413,12 @@ export default function SupervisorHome() {
 
           <div class="block w-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:border-gray-700 dark:hover:bg-gray-700 mb-6">
             <h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              Face Problem?
+              Facing Problem?
             </h5>
             <ul role="list" class="space-y-4 text-gray-500 dark:text-gray-400">
               <li class="flex space-x-2 items-center">
                 <svg
-                  class="flex-shrink-0 w-3.5 h-3.5 text-blue-600 dark:text-blue-500"
+                  class="flex-shrink-0 w-3.5 h-3.5"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -414,7 +428,7 @@ export default function SupervisorHome() {
                 </svg>
 
                 <p class="leading-tight">
-                  Contact Admin:{" "}
+                  
                   <a
                     href="https://mail.google.com/mail/u/0/"
                     className="text-blue-600 dark:text-blue-500 hover:underline"
@@ -433,7 +447,7 @@ export default function SupervisorHome() {
               </li>
               <li class="flex space-x-2 items-center">
                 <svg
-                  class="flex-shrink-0 w-3.5 h-3.5 text-blue-600 dark:text-blue-500"
+                  class="flex-shrink-0 w-3.5 h-3.5"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -442,7 +456,7 @@ export default function SupervisorHome() {
                   <path d="M18 13.446a3.02 3.02 0 0 0-.946-1.985l-1.4-1.4a3.054 3.054 0 0 0-4.218 0l-.7.7a.983.983 0 0 1-1.39 0l-2.1-2.1a.983.983 0 0 1 0-1.389l.7-.7a2.98 2.98 0 0 0 0-4.217l-1.4-1.4a2.824 2.824 0 0 0-4.218 0c-3.619 3.619-3 8.229 1.752 12.979C6.785 16.639 9.45 18 11.912 18a7.175 7.175 0 0 0 5.139-2.325A2.9 2.9 0 0 0 18 13.446Z" />
                 </svg>
                 <p class="leading-tight">
-                  Phone Number: Tel No:
+                  Tel No:
                   <a
                     href="tel:0341450123"
                     className="text-blue-600 dark:text-blue-500 hover:underline"
@@ -462,7 +476,7 @@ export default function SupervisorHome() {
               </li>
               <li class="flex space-x-2 items-center">
                 <svg
-                  class="flex-shrink-0 w-3.5 h-3.5 text-blue-600 dark:text-blue-500"
+                  class="flex-shrink-0 w-3.5 h-3.5"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -478,7 +492,7 @@ export default function SupervisorHome() {
                 </svg>
 
                 <p class="leading-tight">
-                  Website:{" "}
+                  
                   <a
                     href="https://www.tarc.edu.my/dsa/a/student-career-development-center/contact-information/"
                     className="text-blue-600 dark:text-blue-500 hover:underline"

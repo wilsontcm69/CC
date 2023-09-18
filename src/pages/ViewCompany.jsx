@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 //import { Card, Typography } from "@material-tailwind/react";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
@@ -40,7 +40,7 @@ const TABLE_ROWS = [
     major: "Software Engineering",
   },
   {
-    name: "Tan Li Peng",
+    name: "Wong Kah Yi",
     email: "tanlipeng@gmail.com",
     phone: "0129677589",
     dob: "16/5/1980",
@@ -49,7 +49,7 @@ const TABLE_ROWS = [
     major: "Software Engineering",
   },
   {
-    name: "Tan Li Peng",
+    name: "Kuan Zhen Hin",
     email: "tanlipeng@gmail.com",
     phone: "0129677589",
     dob: "16/5/1980",
@@ -58,7 +58,7 @@ const TABLE_ROWS = [
     major: "Software Engineering",
   },
   {
-    name: "Tan Li Peng",
+    name: "Lim Khai Jun",
     email: "tanlipeng@gmail.com",
     phone: "0129677589",
     dob: "16/5/1980",
@@ -117,7 +117,7 @@ const ROWS_PER_PAGE = 5; // Number of rows per page
 
 export default function ViewCompany() {
   const [currentPage, setCurrentPage] = useState(1);
-
+  const navigate = useNavigate();
   // Calculate the start and end indexes for the current page
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
@@ -137,6 +137,12 @@ export default function ViewCompany() {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
+  };
+
+  const [deleteTarget, setDeleteTarget] = useState("");
+
+  const deleteAction = () => {
+    toast.success(`${deleteTarget} has been deleted!`);
   };
 
   return (
@@ -273,7 +279,12 @@ export default function ViewCompany() {
                     {/* Edit Button */}
                     <td className="p-4">
                       <Tooltip content="Edit User">
-                        <IconButton variant="text">
+                        <IconButton
+                          variant="text"
+                          onClick={() => {
+                            navigate(`/Dashboard/EditCompany/${name}`);
+                          }}
+                        >
                           <PencilIcon className="h-4 w-4 dark:text-white hover:opacity-50 transition duration-75 ease-in-out" />
                         </IconButton>
                       </Tooltip>
@@ -282,7 +293,12 @@ export default function ViewCompany() {
                     {/* Delete Button */}
                     <td className="p-4">
                       <Tooltip content="Delete User">
-                        <IconButton variant="text">
+                        <IconButton
+                          variant="text"
+                          data-modal-target="popup-modal"
+                          data-modal-toggle="popup-modal"
+                          onClick={() => setDeleteTarget(name)}
+                        >
                           <TrashIcon className="h-4 w-4 dark:text-white hover:opacity-50 transition duration-75 ease-in-out" />
                         </IconButton>
                       </Tooltip>
@@ -318,6 +334,74 @@ export default function ViewCompany() {
           </div>
         </CardFooter>
       </Card>
+
+      <div
+        id="popup-modal"
+        tabindex="-1"
+        class="fixed top-0 left-0 right-0 z-50 hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full bg-gray-900 bg-opacity-50"
+      >
+        <div class="relative w-full max-w-md max-h-full">
+          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <button
+              type="button"
+              class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+              data-modal-hide="popup-modal"
+            >
+              <svg
+                class="w-3 h-3"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 14"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                />
+              </svg>
+              <span class="sr-only">Close modal</span>
+            </button>
+            <div class="p-6 text-center">
+              <svg
+                class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+              <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                Are you sure you want to delete?
+              </h3>
+              <button
+                data-modal-hide="popup-modal"
+                type="button"
+                class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2"
+                onClick={() => deleteAction()}
+              >
+                Yes, I'm sure
+              </button>
+              <button
+                data-modal-hide="popup-modal"
+                type="button"
+                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+              >
+                No, cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
