@@ -18,7 +18,6 @@ db_conn = connections.Connection(
     user=customuser,
     password=custompass,
     db=customdb
-
 )
 output = {}
 
