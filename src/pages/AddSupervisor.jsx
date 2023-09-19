@@ -41,12 +41,12 @@ export default function AddSupervisor() {
       toast.error("Please enter email");
       return;
     }
-
+    /*
     if (!emailRegex.test(email)) {
       toast.error("Please enter a valid email");
       return;
     }
-
+    */
     if (password === "") {
       toast.error("Please enter password");
       return;
@@ -95,8 +95,8 @@ export default function AddSupervisor() {
 
   const onSubmit = () => {
     setLoading(true);
-    /*
-    console.log("First Name: " + first);
+    
+    console.log("First Name: " + firstName);
     console.log("Last Name: " + lastName);
     console.log("Email: " + email);
     console.log("Phone: " + phone);
@@ -104,12 +104,57 @@ export default function AddSupervisor() {
     console.log("Gender: " + gender);
     console.log("Position: " + positionTitle);
     console.log("Major of Study: " + major);
-    */
+
+    handleAddSupervisor()
 
     setTimeout(() => {
       toast.success("Supervisor added successfully");
       navigate("/dashboard");
     }, 1500);
+  };
+
+  const handleAddSupervisor = () => {
+    // Create a data object to send to your Flask API
+    const data = {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      phone: phone,
+      birth_date: birthDate.toISOString().split('T')[0],
+      gender: gender,
+      position_title: positionTitle,
+      major: major,
+    };
+
+    // Send a POST request to your Flask API endpoint for adding supervisors
+    fetch("http://localhost:5000/add_supervisor", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Supervisor added successfully!");
+
+        // Clear the form fields
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPhone("");
+        setBirthDate(new Date());
+        setGender("");
+        setPositionTitle("");
+        setMajor("");
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while adding the supervisor.");
+      });
   };
 
   return (
@@ -118,7 +163,8 @@ export default function AddSupervisor() {
         Add Supervisor
       </div>
 
-      <form className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
+      <form action="/add_supervisor" autoComplete="on" method="POST" enctype="multipart/form-data" className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
+
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           {/* Staff ID */}
           <div>
