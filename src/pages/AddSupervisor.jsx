@@ -75,21 +75,66 @@ export default function AddSupervisor() {
 
   const onSubmit = () => {
     setLoading(true);
-    /*
-    console.log("First Name: " + first);
-    console.log("Last Name: " + lastName);
-    console.log("Email: " + email);
-    console.log("Phone: " + phone);
-    console.log("Birth Date: " + birthDate);
-    console.log("Gender: " + gender);
-    console.log("Position: " + positionTitle);
-    console.log("Major of Study: " + major);
-    */
+   
+    handleAddSupervisor()
     
     setTimeout(() => {
       toast.success("Supervisor added successfully");
       navigate("/dashboard");
     }, 1500);
+  };
+
+  const handleAddSupervisor = () => {
+    // Create a data object to send to your Flask API
+    const data = {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      phone: phone,
+      birth_date: birthDate.toISOString().split('T')[0],
+      gender: gender,
+      position_title: positionTitle,
+      major: major,
+    };
+
+    // Send a POST request to your Flask API endpoint for adding supervisors
+    fetch("http://localhost:5000/add_supervisor", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Supervisor added successfully!");
+
+        console.log("First Name:", firstName);
+        console.log("Last Name:", lastName);  
+        console.log("Email:", email);  
+        console.log("Phone:", phone);  
+        console.log("Birth Date:", birthDate);  
+        console.log("Gender:", gender);  
+        console.log("Position:", positionTitle);  
+        console.log("Major:", major);  
+
+        // Clear the form fields
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPhone("");
+        setBirthDate(new Date());
+        setGender("");
+        setPositionTitle("");
+        setMajor("");
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while adding the supervisor.");
+      });
   };
 
   return (
@@ -98,7 +143,7 @@ export default function AddSupervisor() {
         Add Supervisor
       </div>
 
-      <form>
+      <form action="/add_supervisor" autoComplete="on" method="POST" enctype="multipart/form-data">
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           {/* Supervisor Name */}
           <div>
@@ -179,6 +224,7 @@ export default function AddSupervisor() {
             <DatePicker
               id="birthDate"
               selected={birthDate}
+              dateFormat="dd/MM/yyyy" // Specify the date format here
               onChange={handleDateChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
               placeholderText="Select a date"
@@ -284,7 +330,6 @@ export default function AddSupervisor() {
 
         </div>
 
-      </form>
       {loading ? (
         <button
           disabled
@@ -319,6 +364,8 @@ export default function AddSupervisor() {
           Submit
         </button>
       )}
+
+      </form>
     </>
   );
 }
