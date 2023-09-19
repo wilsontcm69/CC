@@ -104,7 +104,6 @@ export default function AddSupervisor() {
     console.log("Gender: " + gender);
     console.log("Position: " + positionTitle);
     console.log("Major of Study: " + major);
-    
 
     handleAddSupervisor()
 
@@ -165,6 +164,7 @@ export default function AddSupervisor() {
       </div>
 
       <form action="/add_supervisor" autoComplete="on" method="POST" enctype="multipart/form-data" className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
+
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           {/* Staff ID */}
           <div>
