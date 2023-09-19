@@ -5,7 +5,11 @@ import Logo from "../images/TARUMT-Logo.png";
 import ThemeToggle from "../components/ThemeToggle";
 import Help from "../components/DropdownHelp";
 import toast from "react-hot-toast";
-import { PencilIcon, TrashIcon, CheckBadgeIcon } from "@heroicons/react/24/solid";
+import {
+  PencilIcon,
+  TrashIcon,
+  CheckBadgeIcon,
+} from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -353,20 +357,21 @@ export default function SupervisorHome() {
 
                       {/* Edit Button */}
                       <td className="p-4">
-                      <div className="flex flex-col">
+                        <div className="flex flex-col">
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            <a href={`SupervisorHome/${name}`}
-                    className="text-blue-600 dark:text-blue-500 hover:underline">
+                            <a
+                              href={`SupervisorHome/${name}`}
+                              className="text-blue-600 dark:text-blue-500 hover:underline"
+                            >
                               Check
                             </a>
                           </Typography>
                         </div>
                       </td>
-
                     </tr>
                   )
                 )}
@@ -403,7 +408,7 @@ export default function SupervisorHome() {
           </CardFooter>
         </Card>
       </section>
-      
+
       {/* Quick Links */}
       <section>
         <div class="w-full p-2 sm:p-4 xl:px-28 xl:py-4">
@@ -428,16 +433,15 @@ export default function SupervisorHome() {
                 </svg>
 
                 <p class="leading-tight">
-                  
                   <a
-                    href="https://mail.google.com/mail/u/0/"
+                    href="mailto:gohks.tarc.edu.my"
                     className="text-blue-600 dark:text-blue-500 hover:underline"
                   >
                     Mr Harry Goh
                   </a>
                   <span className="text-sm"> (gohks.tarc.edu.my)</span>, or{" "}
                   <a
-                    href="https://mail.google.com/mail/u/0/"
+                    href="mailto:kanimolij@tarc.edu.my"
                     className="text-blue-600 dark:text-blue-500 hover:underline"
                   >
                     Ms Kanimoli d/o Jeevanantham
@@ -492,7 +496,6 @@ export default function SupervisorHome() {
                 </svg>
 
                 <p class="leading-tight">
-                  
                   <a
                     href="https://www.tarc.edu.my/dsa/a/student-career-development-center/contact-information/"
                     className="text-blue-600 dark:text-blue-500 hover:underline"
