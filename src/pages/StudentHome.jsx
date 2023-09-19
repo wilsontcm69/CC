@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../images/TARUMT-Logo.png";
 import ThemeToggle from "../components/ThemeToggle";
+import Help from '../components/DropdownHelp';
 import toast from "react-hot-toast";
+import { useUserRole, useUserRoleUpdate } from "../UserRoleContext";
 
 export default function StudentHome() {
   const navigate = useNavigate();
+  const userRole = useUserRole();
   const status = 1;
   const [companyName, setCompanyName] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
@@ -17,6 +20,7 @@ export default function StudentHome() {
   const [indemnity, setIndemnity] = useState("");
   const [hiredEvidence, setHiredEvidence] = useState("");
   const [loading, setLoading] = useState(false);
+  const setForUserRole = useUserRoleUpdate();
 
   const dummyCompany = [
     {
@@ -133,11 +137,18 @@ export default function StudentHome() {
     });
   }, [companyName]);
 
+  // useEffect(() => {
+  //   if (userRole !== "Student") {
+  //     toast.error("You are not authorized to view this page");
+  //     navigate("/");
+  //   }
+  // }, []);
+
   return (
     <>
       <header>
         <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 shadow-md">
-          <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+          <div class="flex flex-wrap sm:items-center sm:justify-between p-4 sm:p-6 xl:px-28 xl:py-2">
             <div class="flex items-center">
               <img src={Logo} class="mr-3 h-6 sm:h-9" alt="Logo" />
               <span class="self-center text-xl font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">
@@ -145,9 +156,11 @@ export default function StudentHome() {
               </span>
             </div>
             <div className="flex items-center space-x-3">
+              <Help align="right" />
               <ThemeToggle />
               <button
                 onClick={() => {
+                  setForUserRole("");
                   navigate("/");
                   toast.success("You have successfully logged out!");
                 }}

@@ -1,22 +1,29 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-
-import Sidebar from '../components/Sidebar';
-import Header from '../components/Header';
+import React, { useState, useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useUserRole } from "../UserRoleContext";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
+import toast from "react-hot-toast";
 
 function Dashboard() {
-
+  const userRole = useUserRole();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // useEffect(() => {
+  //   if (userRole !== "Admin") {
+  //     toast.error("You are not authorized to view this page");
+  //     navigate("/");
+  //   }
+  // }, []);
 
   return (
     <div className="flex h-screen overflow-hidden">
-
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {/* Content area */}
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-
         {/*  Site header */}
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -25,7 +32,6 @@ function Dashboard() {
             <Outlet />
           </div>
         </main>
-
       </div>
     </div>
   );
