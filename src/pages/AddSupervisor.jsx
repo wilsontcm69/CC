@@ -106,9 +106,10 @@ export default function AddSupervisor() {
     console.log("Major of Study: " + major);
 
     handleAddSupervisor();
-    setLoading(false);
-    toast.success("Supervisor added successfully");
-    window.history.back();
+    setTimeout(() => {
+      toast.success("Supervisor added successfully");
+      navigate("/Dashboard/ViewSupervisor");
+    }, 1500);
   };
 
   // ---------- Add Supervisor ----------
