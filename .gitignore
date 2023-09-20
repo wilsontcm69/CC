@@ -1,4 +1,3 @@
 # dependencies
-node_modules
-/.pnp
-.pnp.js
+__/pycache__/
+*.pyc
