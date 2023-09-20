@@ -99,13 +99,77 @@ export default function AddSupervisor() {
     console.log("Phone: " + phone);
     console.log("Birth Date: " + birthDate);
     console.log("Gender: " + gender);
-    console.log("Position Title: " + positionTitle);
-    console.log("Major: " + major);
+    console.log("Position: " + positionTitle);
+    console.log("Major of Study: " + major);
+
+    handleAddSupervisor()
 
     setTimeout(() => {
       toast.success("Supervisor added successfully");
       navigate("/dashboard");
     }, 1500);
+  };
+
+  // ---------- Add Supervisor ----------
+  const handleAddSupervisor = () => {
+    // Create a data object to send to your Flask API
+    const data = {
+      supervisor_id: supervisorID,
+      first_name: firstName,
+      last_name: lastName,
+      password: password,
+      email: email,
+      phone: phone,
+      birth_date: formatDate(birthDate), //birthDate.toISOString().split('T')[0]
+      gender: gender,
+      position_title: positionTitle,
+      major: major,
+    };
+
+    // Send a POST request to your Flask API endpoint for adding supervisors
+    fetch("http://localhost:5000/add_supervisor", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Supervisor added successfully!");
+
+        // Clear the form fields
+        setSupervisorID("");
+        setFirstName("");
+        setLastName("");
+        setPassword("");
+        setEmail("");
+        setPhone("");
+        setBirthDate(new Date());
+        setGender("");
+        setPositionTitle("");
+        setMajor("");
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while adding the supervisor.");
+      });
+  };
+  // ---------- Add Supervisor ----------
+
+  // Function to format the date as DD/MM/YYYY
+  const formatDate = (date) => {
+    if (!date) return ''; // Return an empty string if date is null
+
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Adding 1 because months are zero-indexed
+    const year = date.getFullYear();
+
+    // Use template literals to format the date as DD/MM/YYYY
+    return `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}/${year}`;
   };
 
   return (
@@ -114,7 +178,8 @@ export default function AddSupervisor() {
         Add Supervisor
       </div>
 
-      <form className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
+      <form action="/add_supervisor" autoComplete="on" method="POST" enctype="multipart/form-data" className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
+
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           {/* Staff ID */}
           <div>

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 //import { Card, Typography } from "@material-tailwind/react";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
@@ -18,6 +19,7 @@ import {
 } from "@material-tailwind/react";
 
 const TABLE_HEAD = [
+  "ID",
   "Name",
   "Email",
   "Phone",
@@ -29,90 +31,6 @@ const TABLE_HEAD = [
   "Remove",
 ];
 
-const TABLE_ROWS = [
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-];
-
 const ROWS_PER_PAGE = 5; // Number of rows per page
 
 export default function ViewSupervisor() {
@@ -122,11 +40,12 @@ export default function ViewSupervisor() {
   // Calculate the start and end indexes for the current page
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
+  const [supervisors, setSupervisors] = useState([]);
 
   // Slice the data to display only the rows for the current page
-  const rowsToDisplay = TABLE_ROWS.slice(startIndex, endIndex);
+  const rowsToDisplay = supervisors.slice(startIndex, endIndex);
 
-  const totalPages = Math.ceil(TABLE_ROWS.length / ROWS_PER_PAGE);
+  const totalPages = Math.ceil(supervisors.length / ROWS_PER_PAGE);
 
   const handlePreviousPage = () => {
     if (currentPage > 1) {
@@ -143,8 +62,64 @@ export default function ViewSupervisor() {
   const [deleteTarget, setDeleteTarget] = useState("");
   
   const deleteAction = () => {
-    toast.success(`${deleteTarget} has been deleted!`);
+
+    handleDeleteSupervisor()
+    
+    setTimeout(() => {
+      toast.success(`${deleteTarget} has been deleted!`);
+      navigate("/dashboard");
+    }, 1500);
+    
   }
+
+  // ---------- Get all Supervisor Data ----------
+  useEffect(() => {
+    // Make a GET request to retrieve supervisor data
+    fetch("http://localhost:5000/get_supervisors", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      // Set the retrieved supervisor data in your state
+      setSupervisors(data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+  }, []);
+  // ---------- Get all Supervisor Data ----------
+
+  // ---------- Delete Supervisor ----------
+  const handleDeleteSupervisor = () => {
+    // Create a data object to send to your Flask API
+    const data = {
+      supervisor_id: deleteTarget,
+    };
+
+    // Send a POST request to your Flask API endpoint for adding supervisors
+    fetch("http://localhost:5000/delete_supervisor", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Supervisor deleted successfully!");
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while adding the supervisor.");
+      });
+  };
+  // ---------- Delete Supervisor ----------
 
   return (
     <>
@@ -154,7 +129,7 @@ export default function ViewSupervisor() {
 
       <Card className="h-full w-full">
         {/* ... other parts of your component ... */}
-
+        <form action="/edit_supervisor" autoComplete="on" method="POST" enctype="multipart/form-data">
         <CardBody className="overflow-x-auto px-0 bg-white text-black dark:bg-gray-800 dark:text-white rounded-t-lg">
           <table className="w-full min-w-max table-auto text-left">
             <thead>
@@ -178,12 +153,23 @@ export default function ViewSupervisor() {
             </thead>
 
             <tbody>
-              {rowsToDisplay.map(
-                (
-                  { name, email, phone, dob, gender, position, major },
-                  index
-                ) => (
-                  <tr key={index}>
+              {rowsToDisplay.map((supervisor) => (
+                  <tr key={supervisor.id}>
+                    {/* Supervisor ID */}
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex flex-col">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {supervisor.id}
+                          </Typography>
+                        </div>
+                      </div>
+                    </td>
+
                     {/* Supervisor Name */}
                     <td className="p-4">
                       <div className="flex items-center gap-3">
@@ -193,7 +179,7 @@ export default function ViewSupervisor() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {name}
+                            {supervisor.first_name + " " + supervisor.last_name}
                           </Typography>
                         </div>
                       </div>
@@ -207,7 +193,7 @@ export default function ViewSupervisor() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {email}
+                          {supervisor.email}
                         </Typography>
                       </div>
                     </td>
@@ -220,7 +206,7 @@ export default function ViewSupervisor() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {phone}
+                          {supervisor.phone}
                         </Typography>
                       </div>
                     </td>
@@ -233,7 +219,7 @@ export default function ViewSupervisor() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {dob}
+                          {supervisor.birth_date}
                         </Typography>
                       </div>
                     </td>
@@ -246,7 +232,7 @@ export default function ViewSupervisor() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {gender}
+                          {supervisor.gender}
                         </Typography>
                       </div>
                     </td>
@@ -259,7 +245,7 @@ export default function ViewSupervisor() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {position}
+                          {supervisor.position_title}
                         </Typography>
                       </div>
                     </td>
@@ -272,7 +258,7 @@ export default function ViewSupervisor() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {major}
+                          {supervisor.major}
                         </Typography>
                       </div>
                     </td>
@@ -281,7 +267,7 @@ export default function ViewSupervisor() {
                     <td className="p-4">
                       <Tooltip content="Edit User">
                         <IconButton variant="text" onClick={() => {
-                            navigate(`/Dashboard/EditSupervisor/${name}`);
+                            navigate(`/Dashboard/EditSupervisor/${supervisor.id}`);
                           }}>
                           <PencilIcon className="h-4 w-4 dark:text-white hover:opacity-50 transition duration-75 ease-in-out" />
                         </IconButton>
@@ -294,7 +280,7 @@ export default function ViewSupervisor() {
                         <IconButton
                           variant="text"
                           onClick={() => {
-                            setDeleteTarget(name);
+                            setDeleteTarget(supervisor.id);
                             setModalOpen(true);
                           }}
                         >
@@ -308,6 +294,7 @@ export default function ViewSupervisor() {
             </tbody>
           </table>
         </CardBody>
+        </form>
 
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4 bg-white text-black dark:bg-gray-800 dark:text-white rounded-b-lg">
           <Typography variant="small" color="blue-gray" className="font-normal">

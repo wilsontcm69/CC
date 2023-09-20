@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useParams } from "react-router-dom";
 
 export default function EditSupervisor() {
+  const { id } = useParams();
   const [supervisorID, setSupervisorID] = useState("");
   const [firstName, setFirstName] = useState("");
   const [password, setPassword] = useState("");
@@ -91,30 +95,134 @@ export default function EditSupervisor() {
 
   const onSubmit = () => {
     setLoading(true);
-    console.log("Supervisor ID: " + supervisorID);
+    
+    console.log("First Name: " + firstName);
+    console.log("Last Name: " + lastName);
+    console.log("Last Name: " + password);
     console.log("Email: " + email);
-    console.log("Password: " + password);
-    console.log("Confirm Password: " + confirmPassword);
-    console.log("Name: " + firstName + " " + lastName);
     console.log("Phone: " + phone);
     console.log("Birth Date: " + birthDate);
     console.log("Gender: " + gender);
-    console.log("Position Title: " + positionTitle);
-    console.log("Major: " + major);
+    console.log("Position: " + positionTitle);
+    console.log("Major of Study: " + major);
+
+    handleEditSupervisor()
 
     setTimeout(() => {
-      toast.success("Supervisor added successfully");
+      toast.success("Supervisor updated successfully");
       navigate("/dashboard");
     }, 1500);
+  };
+
+  // ---------- Edit Supervisor ----------
+  const handleEditSupervisor = () => {
+    
+    // Create a data object to send to your Flask API
+    const data = {
+      supervisor_id: supervisorID,
+      first_name: firstName,
+      last_name: lastName,
+      password: password,
+      email: email,
+      phone: phone,
+      birth_date: formatDate(birthDate),
+      gender: gender,
+      position_title: positionTitle,
+      major: major,
+    };
+
+    // Send a POST request to your Flask API endpoint for adding supervisors
+    fetch("http://localhost:5000/edit_supervisor", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Supervisor updated successfully!");
+
+        // Clear the form fields
+        setSupervisorID("");
+        setFirstName("");
+        setLastName("");
+        setPassword("");
+        setEmail("");
+        setPhone("");
+        setBirthDate(new Date());
+        setGender("");
+        setPositionTitle("");
+        setMajor("");
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while adding the supervisor.");
+      });
+  };
+  // ---------- Edit Supervisor ----------
+
+  // ---------- Get Supervisor Data ----------
+  useEffect(() => {
+    // Make a GET request to retrieve supervisor data
+    fetch(`http://localhost:5000/get_supervisor/${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Set the retrieved supervisor data in your state
+        setSupervisorID(data.id);
+        setEmail(data.email);
+        setPassword(data.password);
+        setConfirmPassword(data.password);
+        setFirstName(data.first_name);
+        setLastName(data.last_name);
+        setPhone(data.phone);
+
+        // Parse the birth date from the database into a JavaScript Date object
+        const birthDateParts = data.birth_date.split('/');
+        const birthDateObject = new Date(
+          parseInt(birthDateParts[2], 10),
+          parseInt(birthDateParts[1], 10) - 1, // Subtract 1 from the month since it's zero-indexed
+          parseInt(birthDateParts[0], 10)
+        );
+        setBirthDate(birthDateObject);
+        setGender(data.gender);
+        setPositionTitle(data.position_title);
+        setMajor(data.major);
+
+        console.log("Birth Date: " + data.birth_date);
+
+        // Set other fields as needed
+      })
+      .catch((error) => {
+        // Handle errors
+      });
+}, [id]);
+  // ---------- Get Supervisor Data ----------
+
+
+  // Function to format the date as DD/MM/YYYY
+  const formatDate = (date) => {
+    if (!date) return ''; // Return an empty string if date is null
+
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Adding 1 because months are zero-indexed
+    const year = date.getFullYear();
+
+    // Use template literals to format the date as DD/MM/YYYY
+    return `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}/${year}`;
   };
 
   return (
     <>
       <div class="block mb-4 text-2xl font-semibold text-gray-900 dark:text-white">
-        Edit Supervisor
+        Edit Supervisor ID: {id}
       </div>
 
-      <form className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
+      <form action="/edit_supervisor" autoComplete="on" method="POST" enctype="multipart/form-data" className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
+
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           {/* Staff ID */}
           <div>
@@ -126,6 +234,8 @@ export default function EditSupervisor() {
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               maxLength={4}
               placeholder="4096"
+              value={supervisorID}
+              disabled={true}
               onChange={(e) => setSupervisorID(e.target.value)}
             />
           </div>
@@ -143,6 +253,7 @@ export default function EditSupervisor() {
               id="email"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="johndoe@tarc.edu.my"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
@@ -156,6 +267,7 @@ export default function EditSupervisor() {
               type={hide1 ? "password" : "text"}
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="••••••••"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
             <div className="absolute inset-y-0 flex right-0 items-center pr-1 pt-7">
@@ -223,6 +335,7 @@ export default function EditSupervisor() {
               id="first_name"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Tan"
+              value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
           </div>
@@ -236,6 +349,7 @@ export default function EditSupervisor() {
               type={hide2 ? "password" : "text"}
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="••••••••"
+              value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
             <div className="absolute inset-y-0 flex right-0 items-center pr-1 pt-7">
@@ -303,6 +417,7 @@ export default function EditSupervisor() {
               id="last_name"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Li Peng"
+              value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
           </div>
@@ -321,6 +436,7 @@ export default function EditSupervisor() {
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="0126855400"
               maxLength={10}
+              value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
           </div>
@@ -338,6 +454,7 @@ export default function EditSupervisor() {
               id="position_title"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Senior Lecturer"
+              value={positionTitle}
               onChange={(e) => setPositionTitle(e.target.value)}
             />
           </div>
@@ -379,6 +496,7 @@ export default function EditSupervisor() {
                   value=""
                   name="gender"
                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  checked={gender === "Male"} // Check if gender is Male
                   onClick={() => setGender("Male")}
                 />
                 <label
@@ -395,6 +513,7 @@ export default function EditSupervisor() {
                   value=""
                   name="gender"
                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  checked={gender === "Female"} // Check if gender is Female
                   onClick={() => setGender("Female")}
                 />
                 <label
@@ -419,6 +538,7 @@ export default function EditSupervisor() {
               <div class="relative">
                 <select
                   id="major"
+                  value={major}
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   onChange={(e) => setMajor(e.target.value)}
                 >

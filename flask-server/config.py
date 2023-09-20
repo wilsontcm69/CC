@@ -1,0 +1,6 @@
+customhost = "database-2.cifqmvyqmuna.us-east-1.rds.amazonaws.com"
+customuser = "aws_assg"
+custompass = "aws_assg54321"
+customdb = "cc_assignment_itp"
+custombucket = "cc-assignment-itp-bucket"
+customregion = "us-east-1"
