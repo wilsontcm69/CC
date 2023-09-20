@@ -9,49 +9,72 @@ import { useUserRole, useUserRoleUpdate } from "../UserRoleContext";
 export default function Evaluation() {
   const navigate = useNavigate();
   const userRole = useUserRole();
+  const [cohort, setCohort] = useState("");
+  const [internPeriod, setInternPeriod] = useState("");
+  const [remark, setRemark] = useState("");
+  const [studentName, setStudentName] = useState("");
+  const [studentEmail, setStudentEmail] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [companyAddress, setCompanyAddress] = useState("");
+  const [supervisorName, setSupervisorName] = useState("");
+  const [supervisorEmail, setSupervisorEmail] = useState("");
+  const [allowance, setAllowance] = useState("");
+  const [comAcceptFormName, setComAcceptFormName] = useState("");
+  const [comAcceptFormLink, setComAcceptFormLink] = useState("");
+  const [parentAckFormName, setParentAckFormName] = useState("");
+  const [parentAckFormLink, setParentAckFormLink] = useState("");
+  const [indemnityName, setIndemnityName] = useState("");
+  const [indemnityLink, setIndemnityLink] = useState("");
+  const [hiredEvidenceName, setHiredEvidenceName] = useState("");
+  const [hiredEvidenceLink, setHiredEvidenceLink] = useState("");
+  const [report1Name, setReport1Name] = useState("");
+  const [report1Link, setReport1Link] = useState("");
+  const [report2Name, setReport2Name] = useState("");
+  const [report2Link, setReport2Link] = useState("");
   const [loading, setLoading] = useState(false);
-  const [companyAddress, setCompanyName] = useState("");
-  const [companyName, setCompanyAddress] = useState("");
   const setForUserRole = useUserRoleUpdate();
-  const status = 2;
+  const [status, setStatus] = useState(1);
 
-  const dummyCompany = [
-    {
-      name: "Aeon Co. (M) Bhd.",
-      address: "No. 1, Jalan 1, Taman 1, 11111 Kuala Lumpur",
-    },
-    {
-      name: "Joah",
-      address: "No. 2, Jalan 2, Taman 2, 22222 Kuala Lumpur",
-    },
-    {
-      name: "TARUC",
-      address: "No. 3, Jalan 3, Taman 3, 33333 Kuala Lumpur",
-    },
-    {
-      name: "XYZ Corporation",
-      address: "123 Main Street, Suite 456, Cityville, 54321",
-    },
-    {
-      name: "ABC Industries",
-      address: "456 Elm Avenue, Apt 789, Townsville, 98765",
-    },
-    {
-      name: "Tech Innovators Inc.",
-      address: "789 Oak Road, Unit 101, Techville, 12345",
-    },
-    {
-      name: "Greenfield Farms Ltd.",
-      address: "101 Willow Lane, Farmville, 67890",
-    },
-  ];
-  useEffect(() => {
-    dummyCompany.map((company) => {
-      if (company.name === companyName) {
-        setCompanyAddress(company.address);
-      }
-    });
-  }, [companyName]);
+  // <--- EDIT HERE: UPDATE STATUS --->
+  const acceptApplication = () => {
+    setLoading(true);
+
+    // <--- set database status to 3 --->
+
+    setTimeout(() => {
+      setLoading(false);
+      toast.success("Application updated!");
+    }, 1000);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+  };
+
+  // <--- EDIT HERE: UPDATE STATUS AND COMPANY DELETE DETAILS--->
+  const rejectApplication = () => {
+    setLoading(true);
+
+    // <--- set database status to 1 and clear previous data--->
+
+    setTimeout(() => {
+      setLoading(false);
+      toast.success("Application updated!");
+    }, 1000);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+  };
+
+  // <--- EDIT HERE: GET STUDENT DATA HERE --->
+  useEffect(() => {}, []);
+
+  // <--- Validate User Role --->
+  // useEffect(() => {
+  //   if (userRole !== "Supervisor") {
+  //     toast.error("You are not authorized to view this page");
+  //     navigate("/");
+  //   }
+  // }, []);
 
   return (
     <>
@@ -216,23 +239,21 @@ export default function Evaluation() {
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Cohort
                 </dt>
-                <dd class="text-base font-semibold">
-                  JUNE 2021 YR1 ENTRY (20/11/2023 - 5/5/2024)
-                </dd>
+                <dd class="text-base font-semibold">{cohort}</dd>
               </div>
               <div class="flex flex-col py-3">
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Intern Period
                 </dt>
-                <dd class="text-base font-semibold">
-                  20 Nov 2023 - 05 May 2024
-                </dd>
+                <dd class="text-base font-semibold">{internPeriod}</dd>
               </div>
               <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Remark
                 </dt>
-                <dd class="text-base font-semibold">-</dd>
+                <dd class="text-base font-semibold">
+                  {remark.length > 0 ? remark : "-"}
+                </dd>
               </div>
             </dl>
           </div>
@@ -246,235 +267,345 @@ export default function Evaluation() {
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Student Name
                 </dt>
-                <dd class="text-base font-semibold">Andrew Hew Jun Sheng</dd>
+                <dd class="text-base font-semibold">{studentName}</dd>
               </div>
               <div class="flex flex-col py-3">
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Student Email
                 </dt>
-                <dd class="text-base font-semibold">
-                  junsheng@student.tarc.edu.my
-                </dd>
+                <dd class="text-base font-semibold">{studentEmail}</dd>
               </div>
             </dl>
           </div>
         </div>
         {/* Company Details */}
-        <div class="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg mb-4">
-          <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
-            Company Details
-          </h1>
-          <form>
-            {/* Company Name */}
-            <div class="mb-6">
-              <label
-                for="address"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Company Name
-              </label>
-              <input
-                list="countries"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Select a company"
-                // onChange={(e) => setCompanyName(e.target.value)}
-              />
-              <datalist id="countries">
-                {dummyCompany.map((company) => (
-                  <option value={company.name} />
-                ))}
-              </datalist>
-            </div>
-            {/* Address */}
-            <div class="mb-6">
-              <label
-                for="address"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Address
-              </label>
-              <input
-                type="text"
-                disabled
-                id="address"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder=""
-                value={companyAddress}
-              />
-              <p className="ml-2 text-xs">
-                * If the address does not match the current address, please
-                contact the administrator
-              </p>
-            </div>
-            <div class="grid gap-6 mb-6 md:grid-cols-2">
-              <div>
+        {status > 1 ? (
+          <div class="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg mb-4 pointer-events-none">
+            <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+              Company Details
+            </h1>
+            <form>
+              {/* Company Name */}
+              <div class="mb-6">
                 <label
-                  for="company_name"
+                  for="address"
                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Company Supervisor Name
+                  Company Name
                 </label>
                 <input
                   type="text"
-                  id="company_name"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="John Doe"
-                  // onChange={(e) => setSupervisorName(e.target.value)}
+                  defaultValue={companyName}
                 />
               </div>
-              {/* Email */}
-              <div>
+              {/* Address */}
+              <div class="mb-6">
                 <label
-                  for="email"
+                  for="address"
                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Company Supervisor Email
+                  Address
                 </label>
                 <input
-                  type="email"
-                  id="email"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="johndoe@acme.com"
-                  // onChange={(e) => setSupervisorEmail(e.target.value)}
+                  type="text"
+                  disabled
+                  id="address"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder=""
+                  value={companyAddress}
                 />
+                <p className="ml-2 text-xs">
+                  * If the address does not match the current address, please
+                  contact the administrator
+                </p>
               </div>
-            </div>
-            {/* Allowance */}
-            <div className="mb-6">
-              <label
-                for="allowance"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Allowance
-              </label>
-              <div class="flex items-center">
-                <div class="relative w-full">
-                  <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <span class="mx-1 text-gray-900 dark:text-gray-300">
-                      RM
-                    </span>
-                  </div>
+              {/* Company Supervisor */}
+              <div class="grid gap-6 mb-6 md:grid-cols-2">
+                <div>
+                  <label
+                    for="company_name"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Company Supervisor Name
+                  </label>
                   <input
-                    type="number"
-                    id="allowance-start"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 pl-12 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="500"
-                    min="0"
-                    max="10000"
-                    step="100"
-                    // onChange={(e) => setAllowance(e.target.value)}
+                    type="text"
+                    id="company_name"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="John Doe"
+                    defaultValue={supervisorName}
+                  />
+                </div>
+                {/* Email */}
+                <div>
+                  <label
+                    for="email"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Company Supervisor Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="johndoe@acme.com"
+                    defaultValue={supervisorEmail}
                   />
                 </div>
               </div>
-            </div>
-            <div class="grid gap-6 mb-6 md:grid-cols-2">
-              <div>
+              {/* Allowance */}
+              <div className="mb-6">
                 <label
+                  for="allowance"
                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  for="file_input"
                 >
-                  Company Acceptance Form
+                  Allowance
                 </label>
-                <input
-                  class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                  id="file_input"
-                  type="file"
-                  // onChange={(e) => setComAcceptanceForm(e.target.value)}
-                />
+                <div class="flex items-center">
+                  <div class="relative w-full">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <span class="mx-1 text-gray-900 dark:text-gray-300">
+                        RM
+                      </span>
+                    </div>
+                    <input
+                      type="number"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 pl-12 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="500"
+                      defaultValue={allowance}
+                    />
+                  </div>
+                </div>
               </div>
-              <div>
-                <label
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  for="file_input"
-                >
-                  Parent Acknowledgement Form
-                </label>
-                <input
-                  class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                  id="file_input"
-                  type="file"
-                  // onChange={(e) => setParentAckForm(e.target.value)}
-                />
-              </div>
-              <div>
-                <label
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  for="file_input"
-                >
-                  Letter of Indemnity
-                </label>
-                <input
-                  class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                  id="file_input"
-                  type="file"
-                  // onChange={(e) => setIndemnity(e.target.value)}
-                />
-              </div>
-              <div>
-                <label
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  for="file_input"
-                >
-                  Hired Evidence{" "}
-                  <span class="text-xs font-light">(Optional)</span>
-                </label>
-                <input
-                  class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                  id="file_input"
-                  type="file"
-                  // onChange={(e) => setHiredEvidence(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="text-right">
-              <button
-                type="button"
-                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 mr-4"
-                onClick={() => {
-                  window.history.back();
-                }}
-              >
-                Cancel
-              </button>
-
-              {loading ? (
-                <button
-                  disabled
-                  type="button"
-                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
-                >
-                  <svg
-                    aria-hidden="true"
-                    role="status"
-                    class="inline w-4 h-4 mr-3 text-white animate-spin"
-                    viewBox="0 0 100 101"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+              {/* File Upload */}
+              <div class="grid gap-6 mb-6 md:grid-cols-2">
+                <div>
+                  <label
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    for="file_input"
                   >
-                    <path
-                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                      fill="#E5E7EB"
-                    />
-                    <path
-                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  Loading...
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => validateInput()}
-                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                >
-                  Submit
-                </button>
+                    Company Acceptance Form
+                  </label>
+                  <a
+                    href={comAcceptFormLink}
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto"
+                  >
+                    {comAcceptFormName}
+                  </a>
+                </div>
+                <div>
+                  <label
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    for="file_input"
+                  >
+                    Parent Acknowledgement Form
+                  </label>
+                  <a
+                    href={parentAckFormLink}
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto"
+                  >
+                    {parentAckFormName}
+                  </a>
+                </div>
+                <div>
+                  <label
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    for="file_input"
+                  >
+                    Letter of Indemnity
+                  </label>
+                  <a
+                    href={indemnityLink}
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto"
+                  >
+                    {indemnityName}
+                  </a>
+                </div>
+                <div>
+                  <label
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    for="file_input"
+                  >
+                    Hired Evidence{" "}
+                    <span class="text-xs font-light">(Optional)</span>
+                  </label>
+                  <a
+                    href={hiredEvidenceLink}
+                    class={`font-medium ${
+                      hiredEvidenceLink &&
+                      "pointer-events-auto text-blue-600 dark:text-blue-500 hover:underline"
+                    }`}
+                  >
+                    {hiredEvidenceName ? hiredEvidenceName : "-"}
+                  </a>
+                </div>
+              </div>
+              {/* Button */}
+              {status === 2 && (
+                <div className="text-right mb-2">
+                  {loading ? (
+                    <div role="status">
+                      <svg
+                        aria-hidden="true"
+                        class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="currentColor"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentFill"
+                        />
+                      </svg>
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => rejectApplication()}
+                        class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-4 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800 pointer-events-auto"
+                      >
+                        Reject
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => acceptApplication()}
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 pointer-events-auto"
+                      >
+                        Approve
+                      </button>
+                    </>
+                  )}
+                </div>
               )}
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        ) : (
+          <div class="flex items-center bg-white rounded-lg text-gray-500 dark:bg-gray-800 dark:text-gray-400 h-auto p-6 shadow-lg my-6">
+            <svg
+              class="flex-shrink-0 inline w-6 h-6 mr-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+            </svg>
+            <h1 class="text-2xl font-medium">
+              Contact your student to submit the application
+            </h1>
+          </div>
+        )}
+        {/* Progress Check */}
+        {status === 3 && (
+          <div class="flex items-center bg-white rounded-lg text-gray-500 dark:bg-gray-800 dark:text-gray-400 h-auto p-6 shadow-lg my-6">
+            <svg
+              class="flex-shrink-0 inline w-6 h-6 mr-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+            </svg>
+            <h1 class="text-2xl font-medium">
+              Contact your student to submit the progress report
+            </h1>
+          </div>
+        )}
+
+        {status === 4 && (
+          <div class="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg mb-4">
+            <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+              Progress Check
+            </h1>
+            <form>
+              <div class="grid gap-6 mb-6 md:grid-cols-2">
+                <div>
+                  <label
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    for="file_input"
+                  >
+                    Internship Report
+                  </label>
+                  <a
+                    href={report1Link}
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  >
+                    {report1Name}
+                  </a>
+                </div>
+                <div>
+                  <label
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    for="file_input"
+                  >
+                    Additional Document{" "}
+                    <span class="text-xs font-light">(Optional)</span>
+                  </label>
+                  <a
+                    href={report2Link}
+                    class={`font-medium${
+                      report2Link &&
+                      "pointer-events-auto text-blue-600 dark:text-blue-500 hover:underline"
+                    }`}
+                  >
+                    {report2Name ? report2Name : "-"}
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+        )}
       </main>
+
+      <button
+        className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+        onClick={() => {
+          setStatus(status + 1);
+          setCohort("UC2F2008SE");
+          setInternPeriod("2021/08/01 - 2021/12/31");
+          setRemark("Remark");
+          setStudentName("John Doe");
+          setStudentEmail("johndoe@tarc.edu.my");
+          setCompanyName("Joah");
+          setCompanyAddress("No. 1, Jalan 1, 1/1, 11111, Kuala Lumpur");
+          setSupervisorName("johndoe");
+          setSupervisorEmail("johndoe@gmail.com");
+          setAllowance(1000);
+          setComAcceptFormName("ComAcceptForm.pdf");
+          setComAcceptFormLink("https://www.google.com");
+          setParentAckFormName("ParentAckForm.pdf");
+          setParentAckFormLink("https://www.google.com");
+          setIndemnityName("Indemnity.pdf");
+          setIndemnityLink("https://www.google.com");
+          setHiredEvidenceName("HiredEvidence.pdf");
+          setHiredEvidenceLink("https://www.google.com");
+          setReport1Name("Report1.pdf");
+          setReport1Link("https://www.google.com");
+          setReport2Name("Report2.pdf");
+          setReport2Link("https://www.google.com");
+        }}
+      >
+        Click Me to test
+      </button>
+      <button
+        className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+        onClick={() => {
+          setHiredEvidenceName("");
+          setHiredEvidenceLink("");
+          setReport2Name("");
+          setReport2Link("");
+        }}
+      >
+        Empty Optional Field
+      </button>
 
       <footer class="bg-white rounded-lg shadow sm:flex sm:items-center sm:justify-between p-4 sm:p-6 xl:px-28 xl:py-8 dark:bg-gray-800 antialiased">
         <p class="mb-4 text-sm text-center text-gray-500 dark:text-gray-400 sm:mb-0">
