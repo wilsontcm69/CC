@@ -19,6 +19,15 @@ export default function AddCompany() {
   const [accomodation, setAccomodation] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thurday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
 
   const validateInput = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -270,13 +279,9 @@ export default function AddCompany() {
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   onChange={(e) => setWorkingDayStart(e.target.value)}
                 >
-                  <option value="Monday">Monday</option>
-                  <option value="Tuesday">Tuesday</option>
-                  <option value="Wednesday">Wednesday</option>
-                  <option value="Thursday">Thurday</option>
-                  <option value="Friday">Friday</option>
-                  <option value="Saturday">Saturday</option>
-                  <option value="Sunday">Sunday</option>
+                  {days.map((day) => (
+                    <option value={day}>{day}</option>
+                  ))}
                 </select>
               </div>
               <span class="mx-4 text-gray-500 dark:text-gray-400">to</span>
@@ -286,15 +291,10 @@ export default function AddCompany() {
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   onChange={(e) => setWorkingDayEnd(e.target.value)}
                 >
-                  <option value="Monday">Monday</option>
-                  <option value="Tuesday">Tuesday</option>
-                  <option value="Wednesday">Wednesday</option>
-                  <option value="Thursday">Thurday</option>
-                  <option selected value="Friday">
-                    Friday
-                  </option>
-                  <option value="Saturday">Saturday</option>
-                  <option value="Sunday">Sunday</option>
+                  {/* Friday is selected */}
+                  {days.map((day) => (
+                    <option value={day} selected={day === "Friday"}>{day}</option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -500,7 +500,7 @@ export default function AddCompany() {
             <button
               type="button"
               onClick={() => validateInput()}
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
               Submit
             </button>

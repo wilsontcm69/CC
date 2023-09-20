@@ -416,7 +416,7 @@ export default function SupervisorHome() {
             Quick Links
           </h2>
 
-          <div class="block w-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:border-gray-700 dark:hover:bg-gray-700 mb-6">
+          <div class="block w-full p-6 bg-white rounded-lg shadow dark:bg-gray-800 mb-6">
             <h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
               Facing Problem?
             </h5>
@@ -507,7 +507,7 @@ export default function SupervisorHome() {
             </ul>
           </div>
 
-          <div class="block w-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:border-gray-700 dark:hover:bg-gray-700">
+          <div class="block w-full p-6 bg-white rounded-lg shadow dark:bg-gray-800">
             <h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
               Quick Direct
             </h5>

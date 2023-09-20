@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 export default function AddSupervisor() {
   const [supervisorID, setSupervisorID] = useState("");
@@ -15,9 +13,6 @@ export default function AddSupervisor() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const handleDateChange = (date) => {
-    setBirthDate(date);
-  };
   const [gender, setGender] = useState("Male");
   const [positionTitle, setPositionTitle] = useState("");
   const [major, setMajor] = useState("Management Information Systems");
@@ -25,7 +20,6 @@ export default function AddSupervisor() {
   const navigate = useNavigate();
 
   const validateInput = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     // Validate Empty Input
     if (supervisorID === "") {
       toast.error("Please enter supervisor ID");
@@ -42,7 +36,7 @@ export default function AddSupervisor() {
       return;
     }
 
-    if (!emailRegex.test(email)) {
+    if (!email.endsWith("@tarc.edu.my")) {
       toast.error("Please enter a valid email");
       return;
     }
@@ -54,6 +48,11 @@ export default function AddSupervisor() {
 
     if (confirmPassword === "") {
       toast.error("Please enter confirm password");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Password and confirm password must be same");
       return;
     }
 
@@ -72,6 +71,11 @@ export default function AddSupervisor() {
       return;
     }
 
+    if (isNaN(phone)) {
+      toast.error("Phone number must contain only digits");
+      return;
+    }
+
     if (positionTitle === "") {
       toast.error("Please enter position title");
       return;
@@ -80,31 +84,23 @@ export default function AddSupervisor() {
     if (birthDate === "") {
       toast.error("Please enter birth date");
       return;
-    }
-
-    // Validate Birth Date
-
-    // Validate Phone length
-    if (isNaN(phone)) {
-      toast.error("Phone number must contain only digits");
-      return;
-    }
+    }   
 
     onSubmit();
   };
 
   const onSubmit = () => {
     setLoading(true);
-    /*
-    console.log("First Name: " + first);
-    console.log("Last Name: " + lastName);
+    console.log("Supervisor ID: " + supervisorID);
     console.log("Email: " + email);
+    console.log("Password: " + password);
+    console.log("Confirm Password: " + confirmPassword);
+    console.log("Name: " + firstName + " " + lastName);
     console.log("Phone: " + phone);
     console.log("Birth Date: " + birthDate);
     console.log("Gender: " + gender);
-    console.log("Position: " + positionTitle);
-    console.log("Major of Study: " + major);
-    */
+    console.log("Position Title: " + positionTitle);
+    console.log("Major: " + major);
 
     setTimeout(() => {
       toast.success("Supervisor added successfully");
@@ -354,13 +350,15 @@ export default function AddSupervisor() {
             >
               Birth Date
             </label>
-            <DatePicker
-              id="birthDate"
-              selected={birthDate}
-              onChange={handleDateChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-              placeholderText="Select a date"
-            />
+            <div className="flex items-center">
+              <div className="relative">
+                <input
+                  type="date"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) => setBirthDate(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Gender */}
@@ -483,7 +481,7 @@ export default function AddSupervisor() {
             <button
               type="button"
               onClick={() => validateInput()}
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
               Submit
             </button>

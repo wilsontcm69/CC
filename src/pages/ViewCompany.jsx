@@ -339,7 +339,7 @@ export default function ViewCompany() {
       {modalOpen && (
         <>
           <div className="w-full h-full bg-slate-400 bg-opacity-50 fixed flex top-0 left-0 z-60 justify-center items-center">
-            <div className="w-auto h-auto rounded-xl bg-white shadow-lg flex flex-col py-8 px-14">
+            <div className="w-auto h-auto rounded-xl bg-white shadow-lg flex flex-col py-6 px-12 dark:bg-gray-700">
               <div className="flex justify-end">
                 <button
                 className="right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
