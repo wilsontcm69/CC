@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -22,7 +21,6 @@ export default function AddSupervisor() {
   const [positionTitle, setPositionTitle] = useState("");
   const [major, setMajor] = useState("Management Information Systems");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const validateInput = () => {
     // Validate Empty Input
@@ -108,11 +106,9 @@ export default function AddSupervisor() {
     console.log("Major of Study: " + major);
 
     handleAddSupervisor()
-
-    setTimeout(() => {
-      toast.success("Supervisor added successfully");
-      navigate("/dashboard");
-    }, 1500);
+    setLoading(false);
+    toast.success("Supervisor added successfully");
+    window.history.back();
   };
 
   // ---------- Add Supervisor ----------
