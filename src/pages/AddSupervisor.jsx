@@ -16,7 +16,7 @@ export default function AddSupervisor() {
   const [birthDate, setBirthDate] = useState("");
   const handleDateChange = (date) => {
     setBirthDate(date);
-  }
+  };
   const [gender, setGender] = useState("Male");
   const [positionTitle, setPositionTitle] = useState("");
   const [major, setMajor] = useState("Management Information Systems");
@@ -87,7 +87,7 @@ export default function AddSupervisor() {
     if (birthDate === "") {
       toast.error("Please enter birth date");
       return;
-    }   
+    }
 
     onSubmit();
   };
@@ -105,7 +105,7 @@ export default function AddSupervisor() {
     console.log("Position: " + positionTitle);
     console.log("Major of Study: " + major);
 
-    handleAddSupervisor()
+    handleAddSupervisor();
     setLoading(false);
     toast.success("Supervisor added successfully");
     window.history.back();
@@ -163,14 +163,16 @@ export default function AddSupervisor() {
 
   // Function to format the date as DD/MM/YYYY
   const formatDate = (date) => {
-    if (!date) return ''; // Return an empty string if date is null
+    if (!date) return ""; // Return an empty string if date is null
 
     const day = date.getDate();
     const month = date.getMonth() + 1; // Adding 1 because months are zero-indexed
     const year = date.getFullYear();
 
     // Use template literals to format the date as DD/MM/YYYY
-    return `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}/${year}`;
+    return `${day < 10 ? "0" : ""}${day}/${
+      month < 10 ? "0" : ""
+    }${month}/${year}`;
   };
 
   return (
@@ -179,8 +181,13 @@ export default function AddSupervisor() {
         Add Supervisor
       </div>
 
-      <form action="/add_supervisor" autoComplete="on" method="POST" enctype="multipart/form-data" className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
-
+      <form
+        action="/add_supervisor"
+        autoComplete="on"
+        method="POST"
+        enctype="multipart/form-data"
+        className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg"
+      >
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           {/* Staff ID */}
           <div>
