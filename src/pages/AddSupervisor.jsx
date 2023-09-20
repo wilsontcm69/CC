@@ -41,12 +41,12 @@ export default function AddSupervisor() {
       toast.error("Please enter email");
       return;
     }
-    /*
+
     if (!emailRegex.test(email)) {
       toast.error("Please enter a valid email");
       return;
     }
-    */
+
     if (password === "") {
       toast.error("Please enter password");
       return;
@@ -54,6 +54,11 @@ export default function AddSupervisor() {
 
     if (confirmPassword === "") {
       toast.error("Please enter confirm password");
+      return;
+    }
+
+    if (confirmPassword != password) {
+      toast.error("Password and Confirm Password need to be matched");
       return;
     }
 
@@ -113,14 +118,17 @@ export default function AddSupervisor() {
     }, 1500);
   };
 
+  // ---------- Add Supervisor ----------
   const handleAddSupervisor = () => {
     // Create a data object to send to your Flask API
     const data = {
+      supervisor_id: supervisorID,
       first_name: firstName,
       last_name: lastName,
+      password: password,
       email: email,
       phone: phone,
-      birth_date: birthDate.toISOString().split('T')[0],
+      birth_date: formatDate(birthDate), //birthDate.toISOString().split('T')[0]
       gender: gender,
       position_title: positionTitle,
       major: major,
@@ -141,8 +149,10 @@ export default function AddSupervisor() {
         alert("Supervisor added successfully!");
 
         // Clear the form fields
+        setSupervisorID("");
         setFirstName("");
         setLastName("");
+        setPassword("");
         setEmail("");
         setPhone("");
         setBirthDate(new Date());
@@ -155,6 +165,19 @@ export default function AddSupervisor() {
         console.error("Error:", error);
         alert("An error occurred while adding the supervisor.");
       });
+  };
+  // ---------- Add Supervisor ----------
+
+  // Function to format the date as DD/MM/YYYY
+  const formatDate = (date) => {
+    if (!date) return ''; // Return an empty string if date is null
+
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Adding 1 because months are zero-indexed
+    const year = date.getFullYear();
+
+    // Use template literals to format the date as DD/MM/YYYY
+    return `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}/${year}`;
   };
 
   return (
