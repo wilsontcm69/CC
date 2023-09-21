@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -20,7 +21,9 @@ export default function AddSupervisor() {
   const [gender, setGender] = useState("Male");
   const [positionTitle, setPositionTitle] = useState("");
   const [major, setMajor] = useState("Management Information Systems");
+  const [dbsupervisorID, setDBSupervisorID] = useState([]); 
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const validateInput = () => {
     // Validate Empty Input
@@ -31,6 +34,12 @@ export default function AddSupervisor() {
 
     if (isNaN(supervisorID) || supervisorID.length !== 4) {
       toast.error("Please enter a valid supervisor ID");
+      return;
+    }
+
+    // Validate Duplicate Supervisor ID
+    if (dbsupervisorID.includes(supervisorID)) {
+      toast.error("Supervisor ID already exists");
       return;
     }
 
@@ -107,9 +116,11 @@ export default function AddSupervisor() {
 
     handleAddSupervisor();
     setTimeout(() => {
+      setLoading(false);
       toast.success("Supervisor added successfully");
       navigate("/Dashboard/ViewSupervisor");
     }, 1500);
+
   };
 
   // ---------- Add Supervisor ----------
@@ -161,6 +172,27 @@ export default function AddSupervisor() {
       });
   };
   // ---------- Add Supervisor ----------
+
+  // ---------- Get all Supervisor ID ----------
+  useEffect(() => {
+    // Make a GET request to retrieve supervisor ID only
+    fetch("http://localhost:5000/get_supervisors", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // map the data and extract the all supervisor ID
+        const supervisorID = data.map((item) => item.id);
+        setDBSupervisorID(supervisorID);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+  // ---------- Get all Supervisor ID ----------
 
   // Function to format the date as DD/MM/YYYY
   const formatDate = (date) => {
