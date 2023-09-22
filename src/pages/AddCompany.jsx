@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -18,6 +18,7 @@ export default function AddCompany() {
   const [openFor, setOpenFor] = useState("Degree");
   const [accomodation, setAccomodation] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [companyList, setCompanyList] = useState([]);
   const navigate = useNavigate();
   const days = [
     "Monday",
@@ -36,6 +37,11 @@ export default function AddCompany() {
     // Validate Empty Input
     if (companyName === "") {
       toast.error("Please enter company name");
+      return;
+    }
+
+    if (companyList.includes(companyName)) {
+      toast.error("Company name already exists");
       return;
     }
 
@@ -193,8 +199,8 @@ export default function AddCompany() {
       .then((data) => {
         // Handle the response, e.g., show a success message
         console.log(data);
-        alert("Company added successfully!");  
-        
+        alert("Company added successfully!");
+
         // Clear the form fields
         setCompanyName("");
         setEmail("");
@@ -231,8 +237,8 @@ export default function AddCompany() {
       .then((response) => response.json())
       .then((data) => {
         // map the data and extract the all Company Name
-        const companyName = data.map((item) => item.id);
-        setCompanyName(companyName);
+        const companyName = data.map((item) => item.company_name);
+        setCompanyList(companyName);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -246,12 +252,12 @@ export default function AddCompany() {
         Add Company
       </div>
 
-      <form 
-      action="/add_company"
-      autoComplete="on"
-      method="POST"
-      enctype="multipart/form-data"
-      className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg"
+      <form
+        action="/add_company"
+        autoComplete="on"
+        method="POST"
+        enctype="multipart/form-data"
+        className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg"
       >
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           {/* Company Name */}
@@ -381,7 +387,9 @@ export default function AddCompany() {
                 >
                   {/* Friday is selected */}
                   {days.map((day) => (
-                    <option value={day} selected={day === "Friday"}>{day}</option>
+                    <option value={day} selected={day === "Friday"}>
+                      {day}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -559,6 +567,16 @@ export default function AddCompany() {
           </label>
         </div>
         <div className="text-right">
+          <button
+            type="button"
+            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 mr-4"
+            onClick={() => {
+              window.history.back();
+            }}
+          >
+            Cancel
+          </button>
+
           {loading ? (
             <button
               disabled
