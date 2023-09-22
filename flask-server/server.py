@@ -202,7 +202,41 @@ def delete_supervisor():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-        
+# ----- Add Company -----
+@app.route("/add_company", methods=["POST"])
+def add_company():
+    try:
+        # Extract data from the request
+        data = request.json
+        # company_id = data.get("company_id")
+        company_name = data.get("company_name")
+        email = data.get("email")
+        website = data.get("website")
+        job_title = data.get("job_title")
+        address = data.get("address")
+        job_description = data.get("job_description")
+        working_day_start = data.get("working_day_start")
+        working_day_end = data.get("working_day_end")
+        working_hour_start = data.get("working_hour_start")
+        working_hour_end = data.get("working_hour_end")
+        allowance_start = data.get("allowance_start")
+        allowance_end = data.get("allowance_end")
+        open_for = data.get("open_for")
+        accomodation = data.get("accomodation")
+
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Insert data into the database
+        insert_query = f"INSERT INTO company (company_name, email, website, job_title, address, job_description, working_day_start, working_day_end, working_hour_start, working_hour_end, allowance_start, allowance_end, open_for, accomodation) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(insert_query, (company_name, email, website, job_title, address, job_description, working_day_start , working_day_end, working_hour_start, working_hour_end, allowance_start, allowance_end, open_for, accomodation))
+        db_conn.commit()
+        cursor.close()
+
+        return jsonify({"message": "Company added successfully."}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     #app.run(debug=True)

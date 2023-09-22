@@ -152,11 +152,72 @@ export default function AddCompany() {
     console.log("Allowance End: " + allowanceEnd);
     console.log("Open For: " + openFor);
     console.log("Accomodation: " + accomodation);
+
+    handleAddCompany();
     setTimeout(() => {
+      setLoading(false);
       toast.success("Company added successfully");
-      navigate("/dashboard");
+      navigate("/dashboard/ViewCompany");
     }, 1000);
   };
+
+  // ---------- Add Company ----------
+  const handleAddCompany = () => {
+    // Create a data object to send to your Flask API
+    const data = {
+      company_name: companyName,
+      email: email,
+      website: website,
+      job_title: jobTitle,
+      address: address,
+      job_description: jobDescription,
+      working_day_start: workingDayStart,
+      working_day_end: workingDayEnd,
+      working_hour_start: workingHourStart,
+      working_hour_end: workingHourEnd,
+      allowance_start: allowanceStart,
+      allowance_end: allowanceEnd,
+      open_for: openFor,
+      accomodation: accomodation,
+    };
+
+    // Send a POST request to your Flask API endpoint for adding supervisors
+    fetch("http://localhost:5000/add_company", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Company added successfully!");  
+        
+        // Clear the form fields
+        setCompanyName("");
+        setEmail("");
+        setWebsite("");
+        setJobTitle("");
+        setAddress("");
+        setJobDescription("");
+        setWorkingDayStart("Monday");
+        setWorkingDayEnd("Friday");
+        setWorkingHourStart("");
+        setWorkingHourEnd("");
+        setAllowanceStart("");
+        setAllowanceEnd("");
+        setOpenFor("Degree");
+        setAccomodation(false);
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while adding the company.");
+      });
+  };
+  // ---------- Add Company----------
 
   return (
     <>
@@ -164,7 +225,13 @@ export default function AddCompany() {
         Add Company
       </div>
 
-      <form className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
+      <form 
+      action="/add_company"
+      autoComplete="on"
+      method="POST"
+      enctype="multipart/form-data"
+      className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg"
+      >
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           {/* Company Name */}
           <div>
