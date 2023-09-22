@@ -208,7 +208,6 @@ def add_company():
     try:
         # Extract data from the request
         data = request.json
-        # company_id = data.get("company_id")
         company_name = data.get("company_name")
         email = data.get("email")
         website = data.get("website")
@@ -237,6 +236,156 @@ def add_company():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ----- Get all company data -----
+@app.route("/get_companies", methods=["GET"])
+def get_companies():
+    try:
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Retrieve company data from the database
+        query = "SELECT company_name, email, website, job_title, address, job_description, working_day_start, working_day_end, working_hour_start, working_hour_end, allowance_start, allowance_end, open_for, accomodation FROM company"
+        cursor.execute(query)
+        companies = cursor.fetchall()
+
+        # Create a list to store the results
+        company_list = []
+        for company in companies:
+            company_data = {
+                "company_name": company[0],
+                "email": company[1],
+                "website": company[2],
+                "job_title": company[3],
+                "address": company[4],
+                "job_description": company[5],
+                "working_day_start": company[6],
+                "working_day_end": company[7],
+                "working_hour_start": company[8],
+                "working_hour_end": company[9],
+                "allowance_start": company[10],
+                "allowance_end": company[11],
+                "open_for": company[12],
+                "accomodation": company[13],
+            }
+            company_list.append(company_data)
+
+        cursor.close()
+
+        return jsonify(company_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ----- Get company data -----
+@app.route("/get_company/<string:cname>", methods=["GET"])
+def get_company(cname):
+    try:
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Retrieve company data from the database based on company_name
+        query = "SELECT company_name, email, website, job_title, address, job_description, working_day_start, working_day_end, working_hour_start, working_hour_end, allowance_start, allowance_end, open_for, accomodation FROM company WHERE company_name = %(company_name)s"
+        cursor.execute(query, {"company_name": cname})
+        company = cursor.fetchone()
+
+        if company:
+            company_data = {
+                "cname": company[0],
+                "email": company[1],
+                "website": company[2],
+                "job_title": company[3],
+                "address": company[4],
+                "job_description": company[5],
+                "working_day_start": company[6],
+                "working_day_end": company[7],
+                "working_hour_start": company[8],
+                "working_hour_end": company[9],
+                "allowance_start": company[10],
+                "allowance_end": company[11],
+                "open_for": company[12],
+                "accomodation": company[13],
+            }
+            cursor.close()
+            return jsonify(company_data), 200
+        else:
+            cursor.close()
+            return jsonify({"error": "Company not found"}), 404
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ----- Edit Company -----
+@app.route("/edit_company", methods=["POST"])
+def edit_company():
+    try:
+        # Extract data from the request
+        data = request.json
+        company_name = data.get("company_name")
+        email = data.get("email")
+        website = data.get("website")
+        job_title = data.get("job_title")
+        address = data.get("address")
+        job_description = data.get("job_description")
+        working_day_start = data.get("working_day_start")
+        working_day_end = data.get("working_day_end")
+        working_hour_start = data.get("working_hour_start")
+        working_hour_end = data.get("working_hour_end")
+        allowance_start = data.get("allowance_start")
+        allowance_end = data.get("allowance_end")
+        open_for = data.get("open_for")
+        accomodation = data.get("accomodation")
+
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Update the company's data in the database using parameterized query
+        update_query = "UPDATE company SET email = %(email)s, website = %(website)s, job_title = %(job_title)s, address = %(address)s, job_description = %(job_description)s, working_day_start = %(working_day_start)s, working_day_end = %(working_day_end)s, working_hour_start = %(working_hour_start)s, working_hour_end = %(working_hour_end)s, allowance_start = %(allowance_start)s, allowance_end = %(allowance_end)s, open_for = %(open_for)s, accomodation = %(accomodation)s WHERE company_name = %(company_name)s"
+
+        cursor.execute(update_query, {
+            "company_name": company_name,
+            "email": email,
+            "website": website,
+            "job_title": job_title,
+            "address": address,
+            "job_description": job_description,
+            "working_day_start": working_day_start,
+            "working_day_end": working_day_end,
+            "working_hour_start": working_hour_start,
+            "working_hour_end": working_hour_end,
+            "allowance_start": allowance_start,
+            "allowance_end": allowance_end,
+            "open_for": open_for,
+            "accomodation": accomodation,
+        })
+
+        db_conn.commit()
+        cursor.close()
+
+        return jsonify({"message": "Company updated successfully."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ----- Delete Supervisor -----
+@app.route("/delete_company", methods=["POST"])
+def delete_company():
+    try:
+        data = request.json
+        company_name = data.get("company_name")
+
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Delete the company's data in the database using parameterized query
+        update_query = "DELETE from company WHERE company_name = %(company_name)s"
+        
+        cursor.execute(update_query, {"company_name": company_name,})
+
+        db_conn.commit()
+        cursor.close()
+
+        return jsonify({"message": "Company deleted successfully."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 
 if __name__ == "__main__":
     #app.run(debug=True)

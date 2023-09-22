@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -218,6 +218,27 @@ export default function AddCompany() {
       });
   };
   // ---------- Add Company----------
+
+  // ---------- Get all Company Name ----------
+  useEffect(() => {
+    // Make a GET request to retrieve Company Name only
+    fetch("http://localhost:5000/get_companies", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // map the data and extract the all Company Name
+        const companyName = data.map((item) => item.id);
+        setCompanyName(companyName);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+  // ---------- Get all Company Name----------
 
   return (
     <>

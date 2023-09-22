@@ -97,7 +97,7 @@ export default function ViewSupervisor() {
       supervisor_id: deleteTarget,
     };
 
-    // Send a POST request to your Flask API endpoint for adding supervisors
+    // Send a POST request to your Flask API endpoint for deleting supervisors
     fetch("http://localhost:5000/delete_supervisor", {
       method: "POST",
       headers: {
@@ -114,7 +114,7 @@ export default function ViewSupervisor() {
       .catch((error) => {
         // Handle errors, e.g., display an error message
         console.error("Error:", error);
-        alert("An error occurred while adding the supervisor.");
+        alert("An error occurred while deleting the supervisor.");
       });
   };
   // ---------- Delete Supervisor ----------

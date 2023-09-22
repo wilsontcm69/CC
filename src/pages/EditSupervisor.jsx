@@ -161,7 +161,7 @@ export default function EditSupervisor() {
       .catch((error) => {
         // Handle errors, e.g., display an error message
         console.error("Error:", error);
-        alert("An error occurred while adding the supervisor.");
+        alert("An error occurred while updating the supervisor.");
       });
   };
   // ---------- Edit Supervisor ----------
@@ -194,6 +194,7 @@ export default function EditSupervisor() {
         setMajor(data.major);
 
         console.log("Birth Date: " + data.birth_date);
+        console.log(id);
 
         // Set other fields as needed
       })
