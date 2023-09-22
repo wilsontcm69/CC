@@ -364,7 +364,7 @@ def edit_company():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ----- Delete Supervisor -----
+# ----- Delete Company -----
 @app.route("/delete_company", methods=["POST"])
 def delete_company():
     try:
@@ -387,6 +387,166 @@ def delete_company():
         return jsonify({"error": str(e)}), 500
     
 
+# ----- Add Student -----
+@app.route("/add_student", methods=["POST"])
+def add_student():
+    try:
+        # Extract data from the request
+        data = request.json
+        student_id = data.get("student_id")
+        first_name = data.get("first_name")
+        last_name = data.get("last_name")
+        email = data.get("email")
+        ic_no = data.get("ic_no")
+        cohort = data.get("cohort")
+        intern_start = data.get("intern_start")
+        intern_end = data.get("intern_end")
+        remarks = data.get("remarks")
+        
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Insert data into the database
+        insert_query = f"INSERT INTO student (student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(insert_query, (student_id, first_name, last_name, email, ic_no, cohort, intern_start, intern_end, remarks))
+        db_conn.commit()
+        cursor.close()
+
+        return jsonify({"message": "Student added successfully."}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ----- Get all Student data -----
+@app.route("/get_students", methods=["GET"])
+def get_students():
+    try:
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Retrieve student data from the database
+        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks FROM student"
+        cursor.execute(query)
+        students = cursor.fetchall()
+
+        # Create a list to store the results
+        student_list = []
+        for student in students:
+            student_data = {
+                "id": student[0],
+                "first_name": student[1],
+                "last_name": student[2],
+                "email": student[3],
+                "ic_no": student[4],
+                "cohort": student[5],
+                "intern_start": student[6],
+                "intern_end": student[7],
+                "remarks": student[8],
+            }
+            student_list.append(student_data)
+
+        cursor.close()
+
+        return jsonify(student_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+# ----- Get Student data -----
+@app.route("/get_student/<string:student_id>", methods=["GET"])
+def get_student(student_id):
+    try:
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Retrieve student data from the database based on supervisor_id
+        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks FROM student WHERE student_id = %(student_id)s"
+        cursor.execute(query, {"student_id": student_id})
+        student = cursor.fetchone()
+
+        if student:
+            student_data = {
+                "id": student[0],
+                "first_name": student[1],
+                "last_name": student[2],
+                "email": student[3],
+                "ic_no": student[4],
+                "cohort": student[5],
+                "intern_start": student[6],
+                "intern_end": student[7],
+                "remarks": student[8],
+            }
+            cursor.close()
+            return jsonify(student_data), 200
+        else:
+            cursor.close()
+            return jsonify({"error": "Student not found"}), 404
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ----- Edit Student -----
+@app.route("/edit_student", methods=["POST"])
+def edit_student():
+    try:
+        data = request.json
+        student_id = data.get("student_id")
+        first_name = data.get("first_name")
+        last_name = data.get("last_name")
+        email = data.get("email")
+        ic_no = data.get("ic_no")
+        cohort = data.get("cohort")
+        intern_start = data.get("intern_start")
+        intern_end = data.get("intern_end")
+        remarks = data.get("remarks")
+
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Update the supervisor's data in the database using parameterized query
+        update_query = "UPDATE student SET firstname = %(first_name)s, lastname = %(last_name)s, email = %(email)s, ic_no = %(ic_no)s, cohort = %(cohort)s, intern_start = %(intern_start)s, intern_end = %(intern_end)s, remarks = %(remarks)s WHERE student_id = %(student_id)s"
+        
+        cursor.execute(update_query, {
+            "student_id": student_id,
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "ic_no": ic_no,
+            "cohort": cohort,
+            "intern_start": intern_start,
+            "intern_end": intern_end,
+            "remarks": remarks,
+        })
+
+        db_conn.commit()
+        cursor.close()
+
+        return jsonify({"message": "Student updated successfully."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ----- Delete STudent -----
+@app.route("/delete_student", methods=["POST"])
+def delete_student():
+    try:
+        data = request.json
+        student_id = data.get("student_id")
+
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Update the student's data in the database using parameterized query
+        update_query = "DELETE from student WHERE student_id = %(student_id)s"
+        
+        cursor.execute(update_query, {"student_id": student_id,})
+
+        db_conn.commit()
+        cursor.close()
+
+        return jsonify({"message": "Student deleted successfully."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 if __name__ == "__main__":
     #app.run(debug=True)
     app.run(host='0.0.0.0', port=5000, debug=True)

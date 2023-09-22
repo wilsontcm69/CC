@@ -24,7 +24,7 @@ export default function EditCompany() {
     "Monday",
     "Tuesday",
     "Wednesday",
-    "Thurday",
+    "Thursday",
     "Friday",
     "Saturday",
     "Sunday",

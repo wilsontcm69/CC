@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -25,6 +25,7 @@ export default function AddStudent() {
   const [internStart, setInternStart] = useState("");
   const [internEnd, setInternEnd] = useState("");
   const [remarks, setRemarks] = useState("");
+  const [dbstudentID, setDBStudentID] = useState([]); 
   const [loading, setLoading] = useState(false);
 
   const validateInput = () => {
@@ -34,7 +35,13 @@ export default function AddStudent() {
     }
 
     if (isNaN(studentID) || studentID.length !== 7) {
-      toast.error("Please enter a valid supervisor ID");
+      toast.error("Please enter a valid student ID");
+      return;
+    }
+
+    // Validate Duplicate Student ID
+    if (dbstudentID.includes(studentID)) {
+      toast.error("Student ID already exists");
       return;
     }
 
@@ -96,11 +103,84 @@ export default function AddStudent() {
     console.log("Internship Start: " + internStart);
     console.log("Internship End: " + internEnd);
     console.log("Remarks: " + remarks);
+
+    handleAddStudent();
     setTimeout(() => {
+      setLoading(false);
       toast.success("Student added successfully");
-      navigate("/dashboard");
-    }, 1000);
+      navigate("/Dashboard/ViewStudent");
+    }, 1500);
   };
+
+  // ---------- Add Student ----------
+  const handleAddStudent = () => {
+    // Create a data object to send to your Flask API
+    const data = {
+      student_id: studentID,
+      first_name: studentName,
+      last_name: lastName,
+      email: email,
+      ic_no: icNum,
+      cohort: cohort,
+      intern_start: internStart,
+      intern_end: internEnd,
+      remarks: remarks,
+    };
+
+    // Send a POST request to your Flask API endpoint for adding students
+    fetch("http://localhost:5000/add_student", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Student added successfully!");
+
+        // Clear the form fields
+        setStudentID("");
+        setStudentName("");
+        setLastName("");
+        setEmail("");
+        setICNum("");
+        setCohort("");
+        setInternStart("");
+        setInternEnd("");
+        setRemarks("");
+
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while adding the student.");
+      });
+  };
+  // ---------- Add Student ----------
+
+  // ---------- Get all Student ID ----------
+  useEffect(() => {
+    // Make a GET request to retrieve student ID only
+    fetch("http://localhost:5000/get_students", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // map the data and extract the all student ID
+        const studentID = data.map((item) => item.id);
+        setDBStudentID(studentID);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+  // ---------- Get all student ID ----------
 
   return (
     <>
@@ -158,7 +238,7 @@ export default function AddStudent() {
             />
           </div>
 
-          {/* Supervisor Last Name */}
+          {/* student Last Name */}
           <div>
             <label
               for="last_name"

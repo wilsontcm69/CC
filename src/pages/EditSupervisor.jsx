@@ -192,10 +192,6 @@ export default function EditSupervisor() {
         setGender(data.gender);
         setPositionTitle(data.position_title);
         setMajor(data.major);
-
-        console.log("Birth Date: " + data.birth_date);
-        console.log(id);
-
         // Set other fields as needed
       })
       .catch((error) => {

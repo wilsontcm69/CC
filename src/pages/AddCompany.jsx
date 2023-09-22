@@ -23,7 +23,7 @@ export default function AddCompany() {
     "Monday",
     "Tuesday",
     "Wednesday",
-    "Thurday",
+    "Thursday",
     "Friday",
     "Saturday",
     "Sunday",

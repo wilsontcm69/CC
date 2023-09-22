@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export default function EditStudent() {
+  const { id } = useParams();
   const cohortlist = [
     "Oct 2021",
     "Feb 2022",
@@ -34,7 +36,7 @@ export default function EditStudent() {
     }
 
     if (isNaN(studentID) || studentID.length !== 7) {
-      toast.error("Please enter a valid supervisor ID");
+      toast.error("Please enter a valid student ID");
       return;
     }
 
@@ -96,19 +98,96 @@ export default function EditStudent() {
     console.log("Internship Start: " + internStart);
     console.log("Internship End: " + internEnd);
     console.log("Remarks: " + remarks);
+
+    handleEditStudent()
+
     setTimeout(() => {
       toast.success("Student added successfully");
-      navigate("/dashboard");
+      window.history.back();
     }, 1000);
   };
+
+  // ---------- Edit Student ----------
+  const handleEditStudent = () => {
+    
+    // Create a data object to send to your Flask API
+    const data = {
+      student_id: studentID,
+      first_name: studentName,
+      last_name: lastName,
+      email: email,
+      ic_no: icNum,
+      cohort: cohort,
+      intern_start: internStart,
+      intern_end: internEnd,
+      remarks: remarks,
+    };
+
+    // Send a POST request to your Flask API endpoint for editing student
+    fetch("http://localhost:5000/edit_student", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Student updated successfully!");
+
+        // Clear the form fields
+        setStudentID("");
+        setStudentName("");
+        setLastName("");
+        setEmail("");
+        setICNum("");
+        setCohort("");
+        setInternStart("");
+        setInternEnd("");
+        setRemarks("");
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while updating the student.");
+      });
+  };
+  // ---------- Edit Student ----------
+
+  // ---------- Get Student Data ----------
+  useEffect(() => {
+    // Make a GET request to retrieve student data
+    fetch(`http://localhost:5000/get_student/${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Set the retrieved student data in your state
+        setStudentID(data.id);
+        setStudentName(data.first_name);
+        setLastName(data.last_name);
+        setEmail(data.email);
+        setICNum(data.ic_no);
+        setCohort(data.cohort);
+        setInternStart(data.intern_start);
+        setInternEnd(data.intern_end);
+        setRemarks(data.remarks);
+        // Set other fields as needed
+      })
+      .catch((error) => {
+        // Handle errors
+      });
+}, [id]);
+  // ---------- Get Student Data ----------
 
   return (
     <>
       <div class="block mb-4 text-2xl font-semibold text-gray-900 dark:text-white">
-        Edit Student
+        Edit Student ID: {id}
       </div>
 
-      <form className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
+      {studentID !== "" ? (
+      <form action="/edit_student" autoComplete="on" method="POST" enctype="multipart/form-data" className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           {/* Student ID */}
           <div>
@@ -120,6 +199,8 @@ export default function EditStudent() {
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="2001987"
               maxLength={7}
+              value={studentID}
+              disabled={true}
               onChange={(e) => setStudentID(e.target.value)}
             />
           </div>
@@ -137,6 +218,7 @@ export default function EditStudent() {
               id="first_name"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Tan"
+              value={studentName}
               onChange={(e) => setStudentName(e.target.value)}
             />
           </div>
@@ -154,11 +236,12 @@ export default function EditStudent() {
               id="email"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="johndoe-wp19@student.tarc.edu.my"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
-          {/* Supervisor Last Name */}
+          {/* Student Last Name */}
           <div>
             <label
               for="last_name"
@@ -171,6 +254,7 @@ export default function EditStudent() {
               id="last_name"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Li Peng"
+              value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
           </div>
@@ -185,6 +269,7 @@ export default function EditStudent() {
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="990106125821"
               maxLength={12}
+              value={icNum}
               onChange={(e) => setICNum(e.target.value)}
             />
           </div>
@@ -198,6 +283,7 @@ export default function EditStudent() {
               type="text"
               placeholder="Addition information about the student"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
             />
           </div>
@@ -214,6 +300,7 @@ export default function EditStudent() {
               <div class="relative">
                 <select
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={cohort}
                   onChange={(e) => setCohort(e.target.value)}
                 >
                   {cohortlist.map((cohort) => (
@@ -234,6 +321,7 @@ export default function EditStudent() {
                 <input
                   type="date"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={internStart}
                   onChange={(e) => setInternStart(e.target.value)}
                 />
               </div>
@@ -242,6 +330,7 @@ export default function EditStudent() {
                 <input
                   type="date"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={internEnd}
                   onChange={(e) => setInternEnd(e.target.value)}
                 />
               </div>
@@ -294,6 +383,29 @@ export default function EditStudent() {
           )}
         </div>
       </form>
+      ): (
+        <div class="text-center">
+        <div role="status">
+          <svg
+            aria-hidden="true"
+            class="inline w-10 h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="currentFill"
+            />
+          </svg>
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    )}  
     </>
   );
 }
