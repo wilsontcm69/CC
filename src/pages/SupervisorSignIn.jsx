@@ -8,24 +8,51 @@ export default function SupervisorSignIn() {
   const navigate = useNavigate();
   const userRole = useUserRole();
   const [hide1, setHide1] = useState(true);
-  const [username, setUsername] = useState("");
+  const [supervisor_id, setSupervisorId] = useState("");
   const [password, setPassword] = useState("");
 
   // <--- EDIT HERE: READ STUDENT EMAIL & IC NUM --->
-  const onSubmit = () => {
-    if (username === "" || password === "") {
+  const onSubmit = async () => {
+    if (supervisor_id === "" || password === "") {
       toast.error("Please fill all the fields");
       return;
     }
 
-    // <--- find username from database --->
+    // Perform supervisor ID and password validation here
+    const data = {
+      supervisor_id: supervisor_id,
+      password: password
+    };
 
-    // <--- if valid, find password from username --->
+    try {
+      const response = await fetch("http://localhost:5000/login_supervisor", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      console.log(response.status === 200)
+      console.log(response)
+      if (response.status === 200) {
+        // Sign-in was successful, navigate to the dashboard
+        navigate("/SupervisorHome");
+        toast.success("Login Successful");
 
-    // <--- compare input and database  --->
+      } else if (response.status === 401) {
+        // Invalid supervisor ID or password
+        toast.error("Invalid Supervisor ID or Password");
+        
+      } else {
+        // Handle other errors
+        toast.error("An error occurred while signing in.");
+      }
+    } catch (error) {
+      // Handle network or other errors
+      console.error("Error:", error);
+      toast.error("An error occurred while signing in.");
+    }
 
-    navigate("/SupervisorHome");
-    toast.success("Login Successful");
   };
 
   // <--- EDIT HERE: READ SUPERVISOR EMAIL & IC NUM --->
@@ -88,7 +115,7 @@ export default function SupervisorSignIn() {
                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="4905"
                     onChange={(e) => {
-                      setUsername(e.target.value);
+                      setSupervisorId(e.target.value);
                     }}
                   />
                 </div>

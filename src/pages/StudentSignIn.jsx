@@ -7,24 +7,53 @@ import { useUserRole } from "../UserRoleContext";
 export default function StudentSignIn() {
   const navigate = useNavigate();
   const userRole = useUserRole();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [ic, setIC] = useState("");
 
   // <--- EDIT HERE: READ STUDENT EMAIL & IC NUM --->
-  const onSubmit = () => {
-    if (username === "" || password === "") {
+  const onSubmit = async () => {
+    if (email === "" || ic === "") {
       toast.error("Please fill all the fields");
       return;
     }
 
-    // <--- find username from database --->
+    
+    // Perform student ID and password validation here
+    const data = {
+      email: email,
+      ic: ic
+    };
 
-    // <--- if valid, find password from username --->
+    try {
+      const response = await fetch("http://localhost:5000/login_student", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      console.log(response.status === 200)
+      console.log(response)
+      if (response.status === 200) {
+        // Sign-in was successful, navigate to the dashboard
+        navigate("/StudentHome");
+        toast.success("Login Successful");
 
-    // <--- compare input and database  --->
+      } else if (response.status === 401) {
+        // Invalid student ID or password
+        toast.error("Invalid Student Email or IC");
+        
+      } else {
+        // Handle other errors
+        toast.error("An error occurred while signing in.");
+      }
+    } catch (error) {
+      // Handle network or other errors
+      console.error("Error:", error);
+      toast.error("An error occurred while signing in.");
+    }
 
-    navigate("/StudentHome");
-    toast.success("Login Successful");
+
   };
 
   // <--- EDIT HERE: READ STUDENT EMAIL & IC NUM --->
@@ -87,7 +116,7 @@ export default function StudentSignIn() {
                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="limjj-wp19@student.tarc.edu.my"
                     onChange={(e) => {
-                      setUsername(e.target.value);
+                      setEmail(e.target.value);
                     }}
                   />
                 </div>
@@ -100,12 +129,12 @@ export default function StudentSignIn() {
                   </label>
                   <input
                     type="password"
-                    name="password"
-                    id="password"
+                    name="ic"
+                    id="ic"
                     placeholder="001223144890"
                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     onChange={(e) => {
-                      setPassword(e.target.value);
+                      setIC(e.target.value);
                     }}
                   />
                 </div>

@@ -35,6 +35,8 @@ def index():
         "about" :"Hello! I'm a full stack developer that loves python and javascript"
     }
 
+# ------------------------- Supervisor -------------------------
+
 # ----- Add Supervisor -----
 @app.route("/add_supervisor", methods=["POST"])
 def add_supervisor():
@@ -200,6 +202,44 @@ def delete_supervisor():
         return jsonify({"message": "Supervisor deleted successfully."}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+# ----- Sign In Supervisor -----
+@app.route("/login_supervisor", methods=["POST"])
+def login_supervisor():
+    try:
+        data = request.json
+        supervisor_id = data.get("supervisor_id")
+        password = data.get("password")
+
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Query the database to check if the provided username and password match
+        select_query = "SELECT supervisor_id, password FROM supervisor WHERE supervisor_id = %(supervisor_id)s AND password = %(password)s"
+        cursor.execute(select_query, {"supervisor_id": supervisor_id, "password": password})
+
+        # Fetch the result
+        supervisor = cursor.fetchone()
+
+        db_conn.commit()
+        cursor.close()
+
+        if supervisor:
+        # If a supervisor with the provided username and password is found, return a success message
+            return jsonify({"message": "Successful"}), 200
+        else:
+            # If no matching supervisor is found, return an error message
+            return jsonify({"message": "Invalid Supervisor ID or Password"}), 401
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ------------------------- Supervisor -------------------------
+
+
+# ------------------------- Company -------------------------
 
 # ----- Add Company -----
 @app.route("/add_company", methods=["POST"])
@@ -386,6 +426,12 @@ def delete_company():
         return jsonify({"error": str(e)}), 500
     
 
+# ------------------------- Company -------------------------
+
+
+
+# ------------------------- Student -------------------------
+
 # ----- Add Student -----
 @app.route("/add_student", methods=["POST"])
 def add_student():
@@ -524,7 +570,7 @@ def edit_student():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ----- Delete STudent -----
+# ----- Delete Student -----
 @app.route("/delete_student", methods=["POST"])
 def delete_student():
     try:
@@ -545,7 +591,45 @@ def delete_student():
         return jsonify({"message": "Student deleted successfully."}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+# ----- Sign In Student -----
+@app.route("/login_student", methods=["POST"])
+def login_student():
+    try:
+        data = request.json
+        email = data.get("email")
+        ic = data.get("ic")
+
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Query the database to check if the provided username and password match
+        select_query = "SELECT * FROM student WHERE email = %(email)s AND ic_no = %(ic)s"
+        cursor.execute(select_query, {"email": email, "ic": ic})
+
+        # Fetch the result
+        student = cursor.fetchone()
+
+        db_conn.commit()
+        cursor.close()
+
+        if student:
+        # If a supervisor with the provided username and password is found, return a success message
+            return jsonify({"message": "Successful"}), 200
+        else:
+            # If no matching supervisor is found, return an error message
+            return jsonify({"message": "Invalid Student Email or IC"}), 401
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     
+
+# ------------------------- Student -------------------------
+
+
+
+
 if __name__ == "__main__":
     #app.run(debug=True)
     app.run(host='0.0.0.0', port=5000, debug=True)
