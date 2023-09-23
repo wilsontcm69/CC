@@ -128,7 +128,7 @@ export default function AddStudent() {
     };
 
     // Send a POST request to your Flask API endpoint for adding students
-    fetch("http://localhost:5000/add_student", {
+    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/add_student", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -164,7 +164,7 @@ export default function AddStudent() {
   // ---------- Get all Student ID ----------
   useEffect(() => {
     // Make a GET request to retrieve student ID only
-    fetch("http://localhost:5000/get_students", {
+    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/get_students", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

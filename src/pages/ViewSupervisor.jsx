@@ -73,7 +73,7 @@ export default function ViewSupervisor() {
   // ---------- Get all Supervisor Data ----------
   useEffect(() => {
     // Make a GET request to retrieve supervisor data
-    fetch("http://localhost:5000/get_supervisors", {
+    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/get_supervisors", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -92,7 +92,7 @@ export default function ViewSupervisor() {
 
   const getAllSupervisor = () => {
     // Make a GET request to retrieve supervisor data
-    fetch("http://localhost:5000/get_supervisors", {
+    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/get_supervisors", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -116,7 +116,7 @@ export default function ViewSupervisor() {
     };
 
     // Send a POST request to your Flask API endpoint for deleting supervisors
-    fetch("http://localhost:5000/delete_supervisor", {
+    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/delete_supervisor", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
