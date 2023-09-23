@@ -1,5 +1,5 @@
-Flask==2.0.1
-SQLAlchemy==1.4.22
-psycopg2-binary==2.9.1  # If you're using PostgreSQL as your RDS database
-Flask-Cors==3.1.1      # If you need Cross-Origin Resource Sharing (CORS) support
-gunicorn==20.1.1        # For running your Flask app in production
+Flask==2.3.3
+Flask-Cors==4.0.0
+Flask-Bcrypt==1.0.1
+Flask-JWT-Extended==4.5.2
+boto3==1.28.38
