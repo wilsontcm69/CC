@@ -18,6 +18,7 @@ import {
 } from "@material-tailwind/react";
 
 const TABLE_HEAD = [
+
   "Name",
   "Email",
   "Website",
@@ -272,8 +273,8 @@ export default function ViewCompany() {
                             className="font-normal"
                           >
                             {company.working_day_start +
-                              " - " +
-                              company.working_day_end}
+                            " - " +
+                            company.working_day_end} 
                           </Typography>
                         </div>
                       </td>
@@ -287,8 +288,8 @@ export default function ViewCompany() {
                             className="font-normal"
                           >
                             {company.working_hour_start +
-                              " - " +
-                              company.working_hour_end}
+                            " - " +
+                            company.working_hour_end} 
                           </Typography>
                         </div>
                       </td>
@@ -302,12 +303,12 @@ export default function ViewCompany() {
                             className="font-normal"
                           >
                             {company.allowance_start +
-                              " - " +
-                              company.allowance_end}
+                            " - " +
+                            company.allowance_end}
                           </Typography>
                         </div>
                       </td>
-
+                      
                       {/* Open For */}
                       <td className="p-4">
                         <div className="flex flex-col">
@@ -329,7 +330,7 @@ export default function ViewCompany() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {company.accomodation === "1" ? "Yes" : "No"}
+                            {company.accomodation}
                           </Typography>
                         </div>
                       </td>

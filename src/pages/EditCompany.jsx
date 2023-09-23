@@ -154,7 +154,7 @@ export default function EditCompany() {
     console.log("Open For: " + openFor);
     console.log("Accomodation: " + accomodation);
 
-    handleEditCompany();
+    handleEditCompany()
 
     setTimeout(() => {
       toast.success("Company updated successfully");
@@ -164,6 +164,7 @@ export default function EditCompany() {
 
   // ---------- Edit Company ----------
   const handleEditCompany = () => {
+    
     // Create a data object to send to your Flask API
     const data = {
       company_name: companyName,
@@ -182,78 +183,74 @@ export default function EditCompany() {
       accomodation: accomodation,
     };
 
-    // Send a POST request to your Flask API endpoint for editing company
-    fetch("http://localhost:5000/edit_company", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+  // Send a POST request to your Flask API endpoint for editing company
+  fetch("http://localhost:5000/edit_company", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle the response, e.g., show a success message
+      console.log(data);
+      alert("Company updated successfully!");
+
+      // Clear the form fields
+      setCompanyName("");
+      setEmail("");
+      setWebsite("");
+      setJobTitle("");
+      setAddress("");
+      setJobDescription("");
+      setWorkingDayStart("Monday");
+      setWorkingDayEnd("Friday");
+      setWorkingHourStart("");
+      setWorkingHourEnd("");
+      setAllowanceStart("");
+      setAllowanceEnd("");
+      setOpenFor("Degree");
+      setAccomodation(false);
     })
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle the response, e.g., show a success message
-        console.log(data);
-        alert("Company updated successfully!");
+    .catch((error) => {
+      // Handle errors, e.g., display an error message
+      console.error("Error:", error);
+      alert("An error occurred while updating the company.");
+    });
+};
+// ---------- Edit Company ----------
 
-        // Clear the form fields
-        setCompanyName("");
-        setEmail("");
-        setWebsite("");
-        setJobTitle("");
-        setAddress("");
-        setJobDescription("");
-        setWorkingDayStart("Monday");
-        setWorkingDayEnd("Friday");
-        setWorkingHourStart("");
-        setWorkingHourEnd("");
-        setAllowanceStart("");
-        setAllowanceEnd("");
-        setOpenFor("Degree");
-        setAccomodation(false);
-      })
-      .catch((error) => {
-        // Handle errors, e.g., display an error message
-        console.error("Error:", error);
-        alert("An error occurred while updating the company.");
-      });
-  };
-  // ---------- Edit Company ----------
+// ---------- Get Company Data ----------
+useEffect(() => {
+  // Make a GET request to retrieve company data
+  fetch(`http://localhost:5000/get_company/${id}`)
+    .then((response) => response.json())
+    .then((data) => {
+      // Set the retrieved company data in your state
+      setCompanyName(data.cname);
+      setEmail(data.email);
+      setWebsite(data.website);
+      setJobTitle(data.job_title);
+      setAddress(data.address);
+      setJobDescription(data.job_description);
+      setWorkingDayStart(data.working_day_start);
+      setWorkingDayEnd(data.working_day_end);
+      setWorkingHourStart(data.working_hour_start);
+      setWorkingHourEnd(data.working_hour_end);
+      setAllowanceStart(data.allowance_start);
+      setAllowanceEnd(data.allowance_end);
+      setOpenFor(data.open_for);
+      setAccomodation(data.accomodation);
 
-  // ---------- Get Company Data ----------
-  useEffect(() => {
-    // Make a GET request to retrieve company data
-    fetch(`http://localhost:5000/get_company/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        // Set the retrieved company data in your state
-        setCompanyName(data.cname);
-        setEmail(data.email);
-        setWebsite(data.website);
-        setJobTitle(data.job_title);
-        setAddress(data.address);
-        setJobDescription(data.job_description);
-        setWorkingDayStart(data.working_day_start);
-        setWorkingDayEnd(data.working_day_end);
-        setWorkingHourStart(data.working_hour_start);
-        setWorkingHourEnd(data.working_hour_end);
-        setAllowanceStart(data.allowance_start);
-        setAllowanceEnd(data.allowance_end);
-        setOpenFor(data.open_for);
-        if (data.accomodation === "1") {
-          setAccomodation(true);
-        } else {
-          setAccomodation(false);
-        }
-
-        console.log(data.email);
-        console.log(data.website);
-      })
-      .catch((error) => {
-        // Handle errors
-      });
-  }, [id]);
-  // ---------- Get Company Data ----------
+      console.log(data.email);
+      console.log(data.website);
+    })
+    .catch((error) => {
+      // Handle errors
+    });
+}, [id]);
+// ---------- Get Company Data ----------
 
   return (
     <>
@@ -262,412 +259,400 @@ export default function EditCompany() {
       </div>
 
       {companyName !== "" ? (
-        <form
-          action="/edit_company"
-          autoComplete="on"
-          method="POST"
-          enctype="multipart/form-data"
-          className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg"
-        >
-          <div class="grid gap-6 mb-6 md:grid-cols-2">
-            {/* Company Name */}
-            <div>
-              <label
-                for="company_name"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Company Name
-              </label>
-              <input
-                type="text"
-                id="company_name"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                value={companyName}
-                disabled={true}
-                onChange={(e) => setCompanyName(e.target.value)}
-              />
-            </div>
-            {/* Email */}
-            <div>
-              <label
-                for="email"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="johndoe@acme.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            {/* Website */}
-            <div>
-              <label
-                for="website"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Website URL <span class="text-xs font-light">(Optional)</span>
-              </label>
-              <input
-                type="url"
-                id="website"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="www.acmeinc.com"
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
-              />
-            </div>
-            {/* Job Title */}
-            <div>
-              <label
-                for="job_title"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Job Title
-              </label>
-              <input
-                type="text"
-                id="job_title"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Software Engineer, Frontend Developer"
-                value={jobTitle}
-                onChange={(e) => setJobTitle(e.target.value)}
-              />
-            </div>
-          </div>
-          {/* Address */}
-          <div class="mb-6">
+      <form action="/edit_company" autoComplete="on" method="POST" enctype="multipart/form-data" className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
+        
+        <div class="grid gap-6 mb-6 md:grid-cols-2">
+          {/* Company Name */}
+          <div>
             <label
-              for="address"
+              for="company_name"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Address
+              Company Name
+            </label>
+            <input
+              type="text"
+              id="company_name"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              value={companyName}
+              disabled={true}
+              onChange={(e) => setCompanyName(e.target.value)}
+            />
+          </div>
+          {/* Email */}
+          <div>
+            <label
+              for="email"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Email
             </label>
             <input
               type="email"
-              id="address"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Jalan Genting Kelang, Setapak, 53300 Kuala Lumpur, Federal Territory of Kuala Lumpur"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              id="email"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="johndoe@acme.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          {/* Job Description */}
-          <div class="mb-6">
+          {/* Website */}
+          <div>
             <label
-              for="job_description"
+              for="website"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Job Description
+              Website URL <span class="text-xs font-light">(Optional)</span>
             </label>
-            <textarea
-              id="job_description"
-              rows="4"
-              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Write a description for this job (E.g. Individual with the knowledge of HTML, CSS, Javascript)"
-              value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
-            ></textarea>
+            <input
+              type="url"
+              id="website"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="www.acmeinc.com"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+            />
           </div>
-          <div class="grid gap-6 mb-6 md:grid-cols-2">
-            {/* Working Day */}
-            <div>
-              <label
-                for="workingday"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Working Day
-              </label>
-              <div class="flex items-center">
-                <div class="relative">
-                  <select
-                    id="workingday-start"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    value={workingDayStart}
-                    onChange={(e) => setWorkingDayStart(e.target.value)}
-                  >
-                    {days.map((day) => (
-                      <option value={day}>{day}</option>
-                    ))}
-                  </select>
-                </div>
-                <span class="mx-4 text-gray-500 dark:text-gray-400">to</span>
-                <div class="relative">
-                  <select
-                    id="workingday-end"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    value={workingDayEnd}
-                    onChange={(e) => setWorkingDayEnd(e.target.value)}
-                  >
-                    {/* Friday is selected */}
-                    {days.map((day) => (
-                      <option value={day} selected={day === "Friday"}>
-                        {day}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-            {/* Working Hour */}
-            <div>
-              <label
-                for="workinghour"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Working Hours
-              </label>
-              <div class="flex items-center">
-                <div class="relative">
-                  <input
-                    name="workinghour-start"
-                    type="time"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-5 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    value={workingHourStart}
-                    onChange={(e) => setWorkingHourStart(e.target.value)}
-                  />
-                </div>
-                <span class="mx-4 text-gray-500 dark:text-gray-400">to</span>
-                <div class="relative">
-                  <input
-                    name="workinghour-end"
-                    type="time"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-5 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    value={workingHourEnd}
-                    onChange={(e) => setWorkingHourEnd(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-            {/* Allowance */}
-            <div>
-              <label
-                for="allowance"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Allowance
-              </label>
-              <div class="flex items-center">
-                <div class="relative w-1/4">
-                  <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <span class="mx-1 text-gray-900 dark:text-gray-300">
-                      RM
-                    </span>
-                  </div>
-                  <input
-                    type="number"
-                    id="allowance-start"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 pl-12 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="500"
-                    min="0"
-                    max="10000"
-                    step="100"
-                    value={allowanceStart}
-                    onChange={(e) => setAllowanceStart(e.target.value)}
-                  />
-                </div>
-                <span class="mx-4 text-gray-500 dark:text-gray-400">to</span>
-                <div class="relative w-1/4">
-                  <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <span class="mx-1 text-gray-900 dark:text-gray-300">
-                      RM
-                    </span>
-                  </div>
-                  <input
-                    type="number"
-                    id="allowance-end"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 pl-12 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="800"
-                    min={allowanceStart}
-                    max="10000"
-                    step="100"
-                    value={allowanceEnd}
-                    onChange={(e) => setAllowanceEnd(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-            {/* Open For*/}
-            <div>
-              <label
-                for="openFor"
-                class="block mb-3 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Open For
-              </label>
-
-              <div class="flex">
-                <div class="flex items-center mr-4">
-                  <input
-                    defaultChecked
-                    id="Degree"
-                    type="radio"
-                    value=""
-                    name="openFor"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    checked={openFor === "Degree"} // Check if degree is selected
-                    onClick={() => setOpenFor("Degree")}
-                  />
-                  <label
-                    for="Degree"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >
-                    Degree
-                  </label>
-                </div>
-                <div class="flex items-center mr-4">
-                  <input
-                    id="Diploma"
-                    type="radio"
-                    value=""
-                    name="openFor"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    checked={openFor === "Diploma"}
-                    onClick={() => setOpenFor("Diploma")}
-                  />
-                  <label
-                    for="Diploma"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >
-                    Diploma
-                  </label>
-                </div>
-                <div class="flex items-center mr-4">
-                  <input
-                    id="Master"
-                    type="radio"
-                    value=""
-                    name="openFor"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    checked={openFor === "Master"}
-                    onClick={() => setOpenFor("Master")}
-                  />
-                  <label
-                    for="Master"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >
-                    Master
-                  </label>
-                </div>
-                <div class="flex items-center">
-                  <input
-                    id="Degree & Diploma"
-                    type="radio"
-                    value=""
-                    name="openFor"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    checked={openFor === "Degree & Diploma"}
-                    onClick={() => setOpenFor("Degree & Diploma")}
-                  />
-                  <label
-                    for="Degree & Diploma"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >
-                    Degree & Diploma
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* Accomodation */}
-          <div class="mb-6">
+          {/* Job Title */}
+          <div>
             <label
-              for="accomodation"
+              for="job_title"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Accomodation
+              Job Title
             </label>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                //value=""
-                class="sr-only peer"
-                checked={accomodation}
-                onClick={() => {
-                  setAccomodation(!accomodation);
-                  console.log(accomodation);
-                }}
-              />
-              <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-              <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                {accomodation ? "Yes" : "No"}
-              </span>
-            </label>
-          </div>
-          <div className="text-right">
-            <button
-              type="button"
-              class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 mr-4"
-              onClick={() => {
-                window.history.back();
-              }}
-            >
-              Cancel
-            </button>
-
-            {loading ? (
-              <button
-                disabled
-                type="button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
-              >
-                <svg
-                  aria-hidden="true"
-                  role="status"
-                  class="inline w-4 h-4 mr-3 text-white animate-spin"
-                  viewBox="0 0 100 101"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                    fill="#E5E7EB"
-                  />
-                  <path
-                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                    fill="currentColor"
-                  />
-                </svg>
-                Loading...
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => validateInput()}
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-              >
-                Submit
-              </button>
-            )}
-          </div>
-        </form>
-      ) : (
-        <div class="text-center">
-          <div role="status">
-            <svg
-              aria-hidden="true"
-              class="inline w-10 h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-              viewBox="0 0 100 101"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                fill="currentColor"
-              />
-              <path
-                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                fill="currentFill"
-              />
-            </svg>
-            <span class="sr-only">Loading...</span>
+            <input
+              type="text"
+              id="job_title"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Software Engineer, Frontend Developer"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+            />
           </div>
         </div>
-      )}
-    </>
+        {/* Address */}
+        <div class="mb-6">
+          <label
+            for="address"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Address
+          </label>
+          <input
+            type="email"
+            id="address"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Jalan Genting Kelang, Setapak, 53300 Kuala Lumpur, Federal Territory of Kuala Lumpur"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+        </div>
+        {/* Job Description */}
+        <div class="mb-6">
+          <label
+            for="job_description"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Job Description
+          </label>
+          <textarea
+            id="job_description"
+            rows="4"
+            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Write a description for this job (E.g. Individual with the knowledge of HTML, CSS, Javascript)"
+            value={jobDescription}
+            onChange={(e) => setJobDescription(e.target.value)}
+          ></textarea>
+        </div>
+        <div class="grid gap-6 mb-6 md:grid-cols-2">
+          {/* Working Day */}
+          <div>
+            <label
+              for="workingday"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Working Day
+            </label>
+            <div class="flex items-center">
+              <div class="relative">
+                <select
+                  id="workingday-start"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={workingDayStart}
+                  onChange={(e) => setWorkingDayStart(e.target.value)}
+                >
+                  {days.map((day) => (
+                    <option value={day}>{day}</option>
+                  ))}
+                </select>
+              </div>
+              <span class="mx-4 text-gray-500 dark:text-gray-400">to</span>
+              <div class="relative">
+                <select
+                  id="workingday-end"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={workingDayEnd}
+                  onChange={(e) => setWorkingDayEnd(e.target.value)}
+                >
+                  {/* Friday is selected */}
+                  {days.map((day) => (
+                    <option value={day} selected={day === "Friday"}>
+                      {day}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+          {/* Working Hour */}
+          <div>
+            <label
+              for="workinghour"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Working Hours
+            </label>
+            <div class="flex items-center">
+              <div class="relative">
+                <input
+                  name="workinghour-start"
+                  type="time"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-5 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={workingHourStart}
+                  onChange={(e) => setWorkingHourStart(e.target.value)}
+                />
+              </div>
+              <span class="mx-4 text-gray-500 dark:text-gray-400">to</span>
+              <div class="relative">
+                <input
+                  name="workinghour-end"
+                  type="time"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-5 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={workingHourEnd}
+                  onChange={(e) => setWorkingHourEnd(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          {/* Allowance */}
+          <div>
+            <label
+              for="allowance"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Allowance
+            </label>
+            <div class="flex items-center">
+              <div class="relative w-1/4">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <span class="mx-1 text-gray-900 dark:text-gray-300">RM</span>
+                </div>
+                <input
+                  type="number"
+                  id="allowance-start"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 pl-12 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="500"
+                  min="0"
+                  max="10000"
+                  step="100"
+                  value={allowanceStart}
+                  onChange={(e) => setAllowanceStart(e.target.value)}
+                />
+              </div>
+              <span class="mx-4 text-gray-500 dark:text-gray-400">to</span>
+              <div class="relative w-1/4">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <span class="mx-1 text-gray-900 dark:text-gray-300">RM</span>
+                </div>
+                <input
+                  type="number"
+                  id="allowance-end"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 pl-12 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="800"
+                  min={allowanceStart}
+                  max="10000"
+                  step="100"
+                  value={allowanceEnd}
+                  onChange={(e) => setAllowanceEnd(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          {/* Open For*/}
+          <div>
+            <label
+              for="openFor"
+              class="block mb-3 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Open For
+            </label>
+
+            <div class="flex">
+              <div class="flex items-center mr-4">
+                <input
+                  defaultChecked
+                  id="Degree"
+                  type="radio"
+                  value=""
+                  name="openFor"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  checked={openFor === "Degree"} // Check if degree is selected
+                  onClick={() => setOpenFor("Degree")}
+                />
+                <label
+                  for="Degree"
+                  class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >
+                  Degree
+                </label>
+              </div>
+              <div class="flex items-center mr-4">
+                <input
+                  id="Diploma"
+                  type="radio"
+                  value=""
+                  name="openFor"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  checked={openFor === "Diploma"} 
+                  onClick={() => setOpenFor("Diploma")}
+                />
+                <label
+                  for="Diploma"
+                  class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >
+                  Diploma
+                </label>
+              </div>
+              <div class="flex items-center mr-4">
+                <input
+                  id="Master"
+                  type="radio"
+                  value=""
+                  name="openFor"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  checked={openFor === "Master"} 
+                  onClick={() => setOpenFor("Master")}
+                />
+                <label
+                  for="Master"
+                  class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >
+                  Master
+                </label>
+              </div>
+              <div class="flex items-center">
+                <input
+                  id="Degree & Diploma"
+                  type="radio"
+                  value=""
+                  name="openFor"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  checked={openFor === "Degree & Diploma"} 
+                  onClick={() => setOpenFor("Degree & Diploma")}
+                />
+                <label
+                  for="Degree & Diploma"
+                  class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >
+                  Degree & Diploma
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Accomodation */}
+        <div class="mb-6">
+          <label
+            for="accomodation"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Accomodation
+          </label>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              //value=""
+              class="sr-only peer"
+              value={accomodation}
+              onClick={() => {
+                setAccomodation(!accomodation);
+              }}
+            />
+            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+              {accomodation ? "Yes" : "No"}
+            </span>
+          </label>
+        </div>
+        <div className="text-right">
+          <button
+            type="button"
+            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 mr-4"
+            onClick={() => {window.history.back()}}
+          >
+            Cancel
+          </button>
+
+          {loading ? (
+            <button
+              disabled
+              type="button"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
+            >
+              <svg
+                aria-hidden="true"
+                role="status"
+                class="inline w-4 h-4 mr-3 text-white animate-spin"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="#E5E7EB"
+                />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentColor"
+                />
+              </svg>
+              Loading...
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => validateInput()}
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            >
+              Submit
+            </button>
+          )}
+        </div>
+      </form>
+      ): (
+        <div class="text-center">
+        <div role="status">
+          <svg
+            aria-hidden="true"
+            class="inline w-10 h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="currentFill"
+            />
+          </svg>
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    )}
+  </>
   );
 }

@@ -619,7 +619,7 @@ def login_student():
             return jsonify({"message": "Successful"}), 200
         else:
             # If no matching supervisor is found, return an error message
-            return jsonify({"message": "Invalid Student Email or IC"}), 401
+            return jsonify({"message": "Invalid Student ID or IC"}), 401
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
