@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import Logo from "../images/TARUMT-Logo.png";
 import { useUserRole } from "../UserRoleContext";
 
+
 export default function StudentSignIn() {
   const navigate = useNavigate();
   const userRole = useUserRole();
@@ -38,6 +39,8 @@ export default function StudentSignIn() {
         // Sign-in was successful, navigate to the dashboard
         navigate("/StudentHome");
         toast.success("Login Successful");
+        // Store student email into session
+        sessionStorage.setItem("studentEmail", email);
 
       } else if (response.status === 401) {
         // Invalid student ID or password

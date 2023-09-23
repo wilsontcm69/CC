@@ -25,99 +25,15 @@ import {
 } from "@material-tailwind/react";
 
 const TABLE_HEAD = [
+  "ID",
   "Name",
   "Email",
-  "Phone",
-  "Birth Date",
-  "Gender",
-  "Position",
-  "Major of Study",
+  "IC",
+  "Cohort",
+  "Intern Duration",
+  "Remarks",
   "Status",
   "Evaluate",
-];
-
-const TABLE_ROWS = [
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
-  {
-    name: "Tan Li Peng",
-    email: "tanlipeng@gmail.com",
-    phone: "0129677589",
-    dob: "16/5/1980",
-    gender: "Female",
-    position: "Senior Lecturer",
-    major: "Software Engineering",
-  },
 ];
 
 const ROWS_PER_PAGE = 7; // Number of rows per page
@@ -127,15 +43,18 @@ export default function SupervisorHome() {
   const userRole = useUserRole();
   const setForUserRole = useUserRoleUpdate();
   const [currentPage, setCurrentPage] = useState(1);
+   // Retrieve student email from sessionStorage
+   const session_supervisorId = sessionStorage.getItem("supervisorId");
 
   // Calculate the start and end indexes for the current page
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
+  const [students, setStudents] = useState([]);
 
   // Slice the data to display only the rows for the current page
-  const rowsToDisplay = TABLE_ROWS.slice(startIndex, endIndex);
+  const rowsToDisplay = students.slice(startIndex, endIndex);
 
-  const totalPages = Math.ceil(TABLE_ROWS.length / ROWS_PER_PAGE);
+  const totalPages = Math.ceil(students.length / ROWS_PER_PAGE);
 
   const handlePreviousPage = () => {
     if (currentPage > 1) {
@@ -149,12 +68,25 @@ export default function SupervisorHome() {
     }
   };
 
-  // useEffect(() => {
-  //   if (userRole !== "Supervisor") {
-  //     toast.error("You are not authorized to view this page");
-  //     navigate("/");
-  //   }
-  // }, []);
+  // ---------- Get all Students Data ----------
+  useEffect(() => {
+    // Make a GET request to retrieve students data
+    fetch("http://localhost:5000/get_students", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Set the retrieved student data in your state
+        setStudents(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+  // ---------- Get all Students Data ----------
 
   return (
     <>
@@ -210,14 +142,94 @@ export default function SupervisorHome() {
         </nav>
       </header>
 
-      <div class="sm:flex sm:items-center sm:justify-between p-6 sm:p-8 xl:px-28 block text-2xl font-semibold text-gray-900 dark:text-white">
-        <h2 class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-          Hello, Welcome Back!
-        </h2>
-      </div>
+      <main class="p-4 h-auto sm:p-4 xl:px-28 xl:py-6">
+
+      {/* Welcome Banner */}
+      <div className="relative bg-indigo-200 dark:bg-indigo-500 p-4 sm:p-6 rounded-sm overflow-hidden mb-2">
+          {/* Background illustration */}
+          <div className="absolute right-0 top-0 -mt-4 mr-16 pointer-events-none hidden xl:block" aria-hidden="true">
+            <svg width="319" height="198" xmlnsXlink="http://www.w3.org/1999/xlink">
+              <defs>
+                <path id="welcome-a" d="M64 0l64 128-64-20-64 20z" />
+                <path id="welcome-e" d="M40 0l40 80-40-12.5L0 80z" />
+                <path id="welcome-g" d="M40 0l40 80-40-12.5L0 80z" />
+                <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="welcome-b">
+                  <stop stopColor="#A5B4FC" offset="0%" />
+                  <stop stopColor="#818CF8" offset="100%" />
+                </linearGradient>
+                <linearGradient x1="50%" y1="24.537%" x2="50%" y2="100%" id="welcome-c">
+                  <stop stopColor="#4338CA" offset="0%" />
+                  <stop stopColor="#6366F1" stopOpacity="0" offset="100%" />
+                </linearGradient>
+              </defs>
+              <g fill="none" fillRule="evenodd">
+                <g transform="rotate(64 36.592 105.604)">
+                  <mask id="welcome-d" fill="#fff">
+                    <use xlinkHref="#welcome-a" />
+                  </mask>
+                  <use fill="url(#welcome-b)" xlinkHref="#welcome-a" />
+                  <path fill="url(#welcome-c)" mask="url(#welcome-d)" d="M64-24h80v152H64z" />
+                </g>
+                <g transform="rotate(-51 91.324 -105.372)">
+                  <mask id="welcome-f" fill="#fff">
+                    <use xlinkHref="#welcome-e" />
+                  </mask>
+                  <use fill="url(#welcome-b)" xlinkHref="#welcome-e" />
+                  <path fill="url(#welcome-c)" mask="url(#welcome-f)" d="M40.333-15.147h50v95h-50z" />
+                </g>
+                <g transform="rotate(44 61.546 392.623)">
+                  <mask id="welcome-h" fill="#fff">
+                    <use xlinkHref="#welcome-g" />
+                  </mask>
+                  <use fill="url(#welcome-b)" xlinkHref="#welcome-g" />
+                  <path fill="url(#welcome-c)" mask="url(#welcome-h)" d="M40.333-15.147h50v95h-50z" />
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          {/* Content */}
+          <div className="relative">
+            <h1 className="text-4xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold mb-1">Welcome, Staff {session_supervisorId}. 👋</h1>
+            <p className="dark:text-indigo-200">A journey of a thousand miles begins with a single step.</p>
+          </div>
+        </div>
+        
+      </main>
+
       <section className="sm:flex sm:items-center sm:justify-between p-2 sm:p-4 xl:px-28 xl:py-4">
+        
+      {students.length === 0 ? (
+        <div class="text-center">
+          <div role="status">
+            <svg
+              aria-hidden="true"
+              class="inline w-10 h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+              viewBox="0 0 100 101"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                fill="currentColor"
+              />
+              <path
+                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                fill="currentFill"
+              />
+            </svg>
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      ) : (
         <Card className="h-full w-full">
           {/* ... other parts of your component ... */}
+          <form
+            action="/edit_student"
+            autoComplete="on"
+            method="POST"
+            enctype="multipart/form-data"
+          >
 
           <CardBody className="overflow-x-auto px-0 bg-white text-black dark:bg-gray-800 dark:text-white rounded-t-lg">
             <table className="w-full min-w-max table-auto text-left">
@@ -240,15 +252,11 @@ export default function SupervisorHome() {
                   ))}
                 </tr>
               </thead>
-
+              
               <tbody>
-                {rowsToDisplay.map(
-                  (
-                    { name, email, phone, dob, gender, position, major },
-                    index
-                  ) => (
-                    <tr key={index}>
-                      {/* Supervisor Name */}
+                  {rowsToDisplay.map((student) => (
+                    <tr key={student.id}>
+                      {/* Student ID */}
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="flex flex-col">
@@ -257,7 +265,24 @@ export default function SupervisorHome() {
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {name}
+                              {student.id}
+                            </Typography>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Student Name */}
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {student.first_name +
+                                " " +
+                                student.last_name}
                             </Typography>
                           </div>
                         </div>
@@ -271,12 +296,12 @@ export default function SupervisorHome() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {email}
+                            {student.email}
                           </Typography>
                         </div>
                       </td>
 
-                      {/* Phone */}
+                      {/* IC No */}
                       <td className="p-4">
                         <div className="flex flex-col">
                           <Typography
@@ -284,12 +309,12 @@ export default function SupervisorHome() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {phone}
+                            {student.ic_no}
                           </Typography>
                         </div>
                       </td>
 
-                      {/* DOB */}
+                      {/* Cohort */}
                       <td className="p-4">
                         <div className="flex flex-col">
                           <Typography
@@ -297,12 +322,12 @@ export default function SupervisorHome() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {dob}
+                            {student.cohort}
                           </Typography>
                         </div>
                       </td>
 
-                      {/* Gender */}
+                      {/* Intern Period*/}
                       <td className="p-4">
                         <div className="flex flex-col">
                           <Typography
@@ -310,12 +335,14 @@ export default function SupervisorHome() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {gender}
+                            {student.intern_start +
+                                " - " +
+                                student.intern_end}
                           </Typography>
                         </div>
                       </td>
 
-                      {/* Position */}
+                      {/* Remarks */}
                       <td className="p-4">
                         <div className="flex flex-col">
                           <Typography
@@ -323,20 +350,7 @@ export default function SupervisorHome() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {position}
-                          </Typography>
-                        </div>
-                      </td>
-
-                      {/* Major of Study */}
-                      <td className="p-4">
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {major}
+                            {student.remarks}
                           </Typography>
                         </div>
                       </td>
@@ -357,27 +371,26 @@ export default function SupervisorHome() {
 
                       {/* Edit Button */}
                       <td className="p-4">
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
+                        <Tooltip content="Edit User">
+                          <button
+                            className="text-sm text-blue-600 dark:text-blue-500 hover:underline"
+                            onClick={() => {
+                              navigate(`${student.id}`);
+                            }}
                           >
-                            <a
-                              href={`SupervisorHome/${name}`}
-                              className="text-blue-600 dark:text-blue-500 hover:underline"
-                            >
-                              Check
-                            </a>
-                          </Typography>
-                        </div>
+                            Click to Edit
+                          </button>
+                        </Tooltip>
                       </td>
+
                     </tr>
-                  )
-                )}
-              </tbody>
+                  ))}
+                </tbody>
+
             </table>
           </CardBody>
+
+          </form>
 
           <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4 bg-white text-black dark:bg-gray-800 dark:text-white rounded-b-lg">
             <Typography
@@ -407,6 +420,8 @@ export default function SupervisorHome() {
             </div>
           </CardFooter>
         </Card>
+      )}
+      
       </section>
 
       {/* Quick Links */}

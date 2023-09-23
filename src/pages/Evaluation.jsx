@@ -5,19 +5,30 @@ import ThemeToggle from "../components/ThemeToggle";
 import Help from "../components/DropdownHelp";
 import toast from "react-hot-toast";
 import { useUserRole, useUserRoleUpdate } from "../UserRoleContext";
+import { useParams } from 'react-router-dom';
 
 export default function Evaluation() {
   const navigate = useNavigate();
   const userRole = useUserRole();
-  const [cohort, setCohort] = useState("");
-  const [internPeriod, setInternPeriod] = useState("");
-  const [remark, setRemark] = useState("");
+
+  //Set Student Data
+  const [studentID, setStudentID] = useState("");
   const [studentName, setStudentName] = useState("");
-  const [studentEmail, setStudentEmail] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [companyAddress, setCompanyAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [icNum, setICNum] = useState("");
+  const [cohort, setCohort] = useState("");
+  const [internStart, setInternStart] = useState("");
+  const [internEnd, setInternEnd] = useState("");
+  const [remarks, setRemarks] = useState("");
+
+  //Set Supervisor Data
   const [supervisorName, setSupervisorName] = useState("");
   const [supervisorEmail, setSupervisorEmail] = useState("");
+
+  //Set Company Data
+  const [companyName, setCompanyName] = useState("");
+  const [companyAddress, setCompanyAddress] = useState("");
   const [allowance, setAllowance] = useState("");
   const [comAcceptFormName, setComAcceptFormName] = useState("");
   const [comAcceptFormLink, setComAcceptFormLink] = useState("");
@@ -34,6 +45,7 @@ export default function Evaluation() {
   const [loading, setLoading] = useState(false);
   const setForUserRole = useUserRoleUpdate();
   const [status, setStatus] = useState(1);
+  const { id } = useParams();
 
   // <--- EDIT HERE: UPDATE STATUS --->
   const acceptApplication = () => {
@@ -66,7 +78,32 @@ export default function Evaluation() {
   };
 
   // <--- EDIT HERE: GET STUDENT DATA HERE --->
-  useEffect(() => {}, []);
+  // ---------- Get Student Data ----------
+  useEffect(() => {
+    // Make a GET request to retrieve student data
+    fetch(`http://localhost:5000/get_student/${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Set the retrieved student data in your state
+        setStudentID(data.id);
+        setStudentName(data.first_name + " " + data.last_name);
+        setEmail(data.email);
+        setICNum(data.ic_no);
+        setCohort(data.cohort);
+        setInternStart(data.intern_start);
+        setInternEnd(data.intern_end);
+        setRemarks(data.remarks);
+        console.log(data.id);
+        // Set other fields as needed
+      })
+      .catch((error) => {
+        // Handle errors
+        console.log("Error");
+      });
+  }, [id]);
+
+  // ---------- Get Student Data ----------
+  
 
   // <--- Validate User Role --->
   // useEffect(() => {
@@ -245,14 +282,14 @@ export default function Evaluation() {
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Intern Period
                 </dt>
-                <dd class="text-base font-semibold">{internPeriod}</dd>
+                <dd class="text-base font-semibold">{internStart} - {internEnd}</dd>
               </div>
               <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Remark
                 </dt>
                 <dd class="text-base font-semibold">
-                  {remark.length > 0 ? remark : "-"}
+                  {remarks.length > 0 ? remarks : "-"}
                 </dd>
               </div>
             </dl>
@@ -267,13 +304,13 @@ export default function Evaluation() {
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Student Name
                 </dt>
-                <dd class="text-base font-semibold">{studentName}</dd>
+                <dd class="text-base font-semibold">{studentName} </dd>
               </div>
               <div class="flex flex-col py-3">
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Student Email
                 </dt>
-                <dd class="text-base font-semibold">{studentEmail}</dd>
+                <dd class="text-base font-semibold">{email}</dd>
               </div>
             </dl>
           </div>
@@ -569,15 +606,13 @@ export default function Evaluation() {
         className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
         onClick={() => {
           setStatus(status + 1);
-          setCohort("UC2F2008SE");
-          setInternPeriod("2021/08/01 - 2021/12/31");
-          setRemark("Remark");
-          setStudentName("John Doe");
-          setStudentEmail("johndoe@tarc.edu.my");
+
           setCompanyName("Joah");
           setCompanyAddress("No. 1, Jalan 1, 1/1, 11111, Kuala Lumpur");
+          
           setSupervisorName("johndoe");
           setSupervisorEmail("johndoe@gmail.com");
+          
           setAllowance(1000);
           setComAcceptFormName("ComAcceptForm.pdf");
           setComAcceptFormLink("https://www.google.com");
