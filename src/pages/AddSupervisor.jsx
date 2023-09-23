@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import toast from "react-hot-toast";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -21,11 +21,11 @@ export default function AddSupervisor() {
   const [gender, setGender] = useState("Male");
   const [positionTitle, setPositionTitle] = useState("");
   const [major, setMajor] = useState("Management Information Systems");
+  const [dbsupervisorID, setDBSupervisorID] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const validateInput = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     // Validate Empty Input
     if (supervisorID === "") {
       toast.error("Please enter supervisor ID");
@@ -37,12 +37,18 @@ export default function AddSupervisor() {
       return;
     }
 
+    // Validate Duplicate Supervisor ID
+    if (dbsupervisorID.includes(supervisorID)) {
+      toast.error("Supervisor ID already exists");
+      return;
+    }
+
     if (email === "") {
       toast.error("Please enter email");
       return;
     }
 
-    if (!emailRegex.test(email)) {
+    if (!email.endsWith("@tarc.edu.my")) {
       toast.error("Please enter a valid email");
       return;
     }
@@ -57,8 +63,8 @@ export default function AddSupervisor() {
       return;
     }
 
-    if (confirmPassword != password) {
-      toast.error("Password and Confirm Password need to be matched");
+    if (password !== confirmPassword) {
+      toast.error("Password and confirm password must be same");
       return;
     }
 
@@ -77,6 +83,11 @@ export default function AddSupervisor() {
       return;
     }
 
+    if (isNaN(phone)) {
+      toast.error("Phone number must contain only digits");
+      return;
+    }
+
     if (positionTitle === "") {
       toast.error("Please enter position title");
       return;
@@ -87,34 +98,27 @@ export default function AddSupervisor() {
       return;
     }
 
-    // Validate Birth Date
-
-    // Validate Phone length
-    if (isNaN(phone)) {
-      toast.error("Phone number must contain only digits");
-      return;
-    }
-
     onSubmit();
   };
 
   const onSubmit = () => {
     setLoading(true);
-    
-    console.log("First Name: " + firstName);
-    console.log("Last Name: " + lastName);
+    console.log("Supervisor ID: " + supervisorID);
     console.log("Email: " + email);
+    console.log("Password: " + password);
+    console.log("Confirm Password: " + confirmPassword);
+    console.log("Name: " + firstName + " " + lastName);
     console.log("Phone: " + phone);
     console.log("Birth Date: " + birthDate);
     console.log("Gender: " + gender);
     console.log("Position: " + positionTitle);
     console.log("Major of Study: " + major);
 
-    handleAddSupervisor()
-
+    handleAddSupervisor();
     setTimeout(() => {
+      setLoading(false);
       toast.success("Supervisor added successfully");
-      navigate("/dashboard");
+      navigate("/Dashboard/ViewSupervisor");
     }, 1500);
   };
 
@@ -168,16 +172,39 @@ export default function AddSupervisor() {
   };
   // ---------- Add Supervisor ----------
 
+  // ---------- Get all Supervisor ID ----------
+  useEffect(() => {
+    // Make a GET request to retrieve supervisor ID only
+    fetch("http://localhost:5000/get_supervisors", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // map the data and extract the all supervisor ID
+        const supervisorID = data.map((item) => item.id);
+        setDBSupervisorID(supervisorID);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+  // ---------- Get all Supervisor ID ----------
+
   // Function to format the date as DD/MM/YYYY
   const formatDate = (date) => {
-    if (!date) return ''; // Return an empty string if date is null
+    if (!date) return ""; // Return an empty string if date is null
 
     const day = date.getDate();
     const month = date.getMonth() + 1; // Adding 1 because months are zero-indexed
     const year = date.getFullYear();
 
     // Use template literals to format the date as DD/MM/YYYY
-    return `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}/${year}`;
+    return `${day < 10 ? "0" : ""}${day}/${
+      month < 10 ? "0" : ""
+    }${month}/${year}`;
   };
 
   return (
@@ -186,8 +213,13 @@ export default function AddSupervisor() {
         Add Supervisor
       </div>
 
-      <form action="/add_supervisor" autoComplete="on" method="POST" enctype="multipart/form-data" className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
-
+      <form
+        action="/add_supervisor"
+        autoComplete="on"
+        method="POST"
+        enctype="multipart/form-data"
+        className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg"
+      >
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           {/* Staff ID */}
           <div>
@@ -523,6 +555,16 @@ export default function AddSupervisor() {
 
         <div class="grid gap-6 mb-6 md:grid-cols-2"></div>
         <div className="text-right">
+          <button
+            type="button"
+            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 mr-4"
+            onClick={() => {
+              window.history.back();
+            }}
+          >
+            Cancel
+          </button>
+
           {loading ? (
             <button
               disabled
@@ -552,7 +594,7 @@ export default function AddSupervisor() {
             <button
               type="button"
               onClick={() => validateInput()}
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
               Submit
             </button>

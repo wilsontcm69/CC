@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -18,7 +18,17 @@ export default function AddCompany() {
   const [openFor, setOpenFor] = useState("Degree");
   const [accomodation, setAccomodation] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [companyList, setCompanyList] = useState([]);
   const navigate = useNavigate();
+  const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
 
   const validateInput = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -27,6 +37,11 @@ export default function AddCompany() {
     // Validate Empty Input
     if (companyName === "") {
       toast.error("Please enter company name");
+      return;
+    }
+
+    if (companyList.includes(companyName)) {
+      toast.error("Company name already exists");
       return;
     }
 
@@ -143,11 +158,93 @@ export default function AddCompany() {
     console.log("Allowance End: " + allowanceEnd);
     console.log("Open For: " + openFor);
     console.log("Accomodation: " + accomodation);
+
+    handleAddCompany();
     setTimeout(() => {
+      setLoading(false);
       toast.success("Company added successfully");
-      navigate("/dashboard");
+      navigate("/dashboard/ViewCompany");
     }, 1000);
   };
+
+  // ---------- Add Company ----------
+  const handleAddCompany = () => {
+    // Create a data object to send to your Flask API
+    const data = {
+      company_name: companyName,
+      email: email,
+      website: website,
+      job_title: jobTitle,
+      address: address,
+      job_description: jobDescription,
+      working_day_start: workingDayStart,
+      working_day_end: workingDayEnd,
+      working_hour_start: workingHourStart,
+      working_hour_end: workingHourEnd,
+      allowance_start: allowanceStart,
+      allowance_end: allowanceEnd,
+      open_for: openFor,
+      accomodation: accomodation,
+    };
+
+    // Send a POST request to your Flask API endpoint for adding supervisors
+    fetch("http://localhost:5000/add_company", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Company added successfully!");
+
+        // Clear the form fields
+        setCompanyName("");
+        setEmail("");
+        setWebsite("");
+        setJobTitle("");
+        setAddress("");
+        setJobDescription("");
+        setWorkingDayStart("Monday");
+        setWorkingDayEnd("Friday");
+        setWorkingHourStart("");
+        setWorkingHourEnd("");
+        setAllowanceStart("");
+        setAllowanceEnd("");
+        setOpenFor("Degree");
+        setAccomodation(false);
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while adding the company.");
+      });
+  };
+  // ---------- Add Company----------
+
+  // ---------- Get all Company Name ----------
+  useEffect(() => {
+    // Make a GET request to retrieve Company Name only
+    fetch("http://localhost:5000/get_companies", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // map the data and extract the all Company Name
+        const companyName = data.map((item) => item.company_name);
+        setCompanyList(companyName);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+  // ---------- Get all Company Name----------
 
   return (
     <>
@@ -155,7 +252,13 @@ export default function AddCompany() {
         Add Company
       </div>
 
-      <form className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg">
+      <form
+        action="/add_company"
+        autoComplete="on"
+        method="POST"
+        enctype="multipart/form-data"
+        className="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg"
+      >
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           {/* Company Name */}
           <div>
@@ -270,13 +373,9 @@ export default function AddCompany() {
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   onChange={(e) => setWorkingDayStart(e.target.value)}
                 >
-                  <option value="Monday">Monday</option>
-                  <option value="Tuesday">Tuesday</option>
-                  <option value="Wednesday">Wednesday</option>
-                  <option value="Thursday">Thurday</option>
-                  <option value="Friday">Friday</option>
-                  <option value="Saturday">Saturday</option>
-                  <option value="Sunday">Sunday</option>
+                  {days.map((day) => (
+                    <option value={day}>{day}</option>
+                  ))}
                 </select>
               </div>
               <span class="mx-4 text-gray-500 dark:text-gray-400">to</span>
@@ -286,15 +385,12 @@ export default function AddCompany() {
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   onChange={(e) => setWorkingDayEnd(e.target.value)}
                 >
-                  <option value="Monday">Monday</option>
-                  <option value="Tuesday">Tuesday</option>
-                  <option value="Wednesday">Wednesday</option>
-                  <option value="Thursday">Thurday</option>
-                  <option selected value="Friday">
-                    Friday
-                  </option>
-                  <option value="Saturday">Saturday</option>
-                  <option value="Sunday">Sunday</option>
+                  {/* Friday is selected */}
+                  {days.map((day) => (
+                    <option value={day} selected={day === "Friday"}>
+                      {day}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -471,6 +567,16 @@ export default function AddCompany() {
           </label>
         </div>
         <div className="text-right">
+          <button
+            type="button"
+            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 mr-4"
+            onClick={() => {
+              window.history.back();
+            }}
+          >
+            Cancel
+          </button>
+
           {loading ? (
             <button
               disabled
@@ -500,7 +606,7 @@ export default function AddCompany() {
             <button
               type="button"
               onClick={() => validateInput()}
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
               Submit
             </button>

@@ -1,24 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
 
 export default function AddStudent() {
   const cohortlist = [
-    "Management Information Systems",
-    "Information Security",
-    "Networking",
-    "Software Engineering",
-    "ICT",
-    "Information Technology",
-    "Mathematics and Statistics",
-    "Computer Science",
-    "Artificial Intelligent",
-    "Grahpic Computing",
+    "Oct 2021",
+    "Feb 2022",
+    "Jun 2022",
+    "Oct 2022",
+    "Feb 2023",
+    "Jun 2023",
+    "Oct 2023",
+    "Feb 2024",
+    "Jun 2024",
+    "Oct 2024",
   ];
-
+  const navigate = useNavigate();
   const [studentID, setStudentID] = useState("");
   const [studentName, setStudentName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,8 +25,162 @@ export default function AddStudent() {
   const [internStart, setInternStart] = useState("");
   const [internEnd, setInternEnd] = useState("");
   const [remarks, setRemarks] = useState("");
+  const [dbstudentID, setDBStudentID] = useState([]); 
   const [loading, setLoading] = useState(false);
 
+  const validateInput = () => {
+    if (studentID === "") {
+      toast.error("Please enter student ID");
+      return;
+    }
+
+    if (isNaN(studentID) || studentID.length !== 7) {
+      toast.error("Please enter a valid student ID");
+      return;
+    }
+
+    // Validate Duplicate Student ID
+    if (dbstudentID.includes(studentID)) {
+      toast.error("Student ID already exists");
+      return;
+    }
+
+    if (studentName === "") {
+      toast.error("Please enter student first name");
+      return;
+    }
+
+    if (email === "") {
+      toast.error("Please enter student email");
+      return;
+    }
+
+    if (!email.endsWith("@student.tarc.edu.my")) {
+      toast.error("Please enter a valid student email");
+      return;
+    }
+
+    if (lastName === "") {
+      toast.error("Please enter student last name");
+      return;
+    }
+
+    if (icNum === "") {
+      toast.error("Please enter student IC number");
+      return;
+    }
+
+    if (isNaN(icNum) || icNum.length !== 12) {
+      toast.error("Please enter a valid IC Number");
+      return;
+    }
+
+    if (cohort === "") {
+      toast.error("Please select student cohort");
+      return;
+    }
+
+    if (internStart === "") {
+      toast.error("Please select internship start date");
+      return;
+    }
+
+    if (internEnd === "") {
+      toast.error("Please select internship end date");
+      return;
+    }
+
+    onSubmit();
+  };
+
+  const onSubmit = () => {
+    setLoading(true);
+    console.log("Student ID: " + studentID);
+    console.log("Student Name: " + studentName + " " + lastName);
+    console.log("Email: " + email);
+    console.log("IC Number: " + icNum);
+    console.log("Cohort: " + cohort);
+    console.log("Internship Start: " + internStart);
+    console.log("Internship End: " + internEnd);
+    console.log("Remarks: " + remarks);
+
+    handleAddStudent();
+    setTimeout(() => {
+      setLoading(false);
+      toast.success("Student added successfully");
+      navigate("/Dashboard/ViewStudent");
+    }, 1500);
+  };
+
+  // ---------- Add Student ----------
+  const handleAddStudent = () => {
+    // Create a data object to send to your Flask API
+    const data = {
+      student_id: studentID,
+      first_name: studentName,
+      last_name: lastName,
+      email: email,
+      ic_no: icNum,
+      cohort: cohort,
+      intern_start: internStart,
+      intern_end: internEnd,
+      remarks: remarks,
+    };
+
+    // Send a POST request to your Flask API endpoint for adding students
+    fetch("http://localhost:5000/add_student", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Student added successfully!");
+
+        // Clear the form fields
+        setStudentID("");
+        setStudentName("");
+        setLastName("");
+        setEmail("");
+        setICNum("");
+        setCohort("");
+        setInternStart("");
+        setInternEnd("");
+        setRemarks("");
+
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while adding the student.");
+      });
+  };
+  // ---------- Add Student ----------
+
+  // ---------- Get all Student ID ----------
+  useEffect(() => {
+    // Make a GET request to retrieve student ID only
+    fetch("http://localhost:5000/get_students", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // map the data and extract the all student ID
+        const studentID = data.map((item) => item.id);
+        setDBStudentID(studentID);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+  // ---------- Get all student ID ----------
 
   return (
     <>
@@ -87,7 +238,7 @@ export default function AddStudent() {
             />
           </div>
 
-          {/* Supervisor Last Name */}
+          {/* student Last Name */}
           <div>
             <label
               for="last_name"
@@ -121,10 +272,11 @@ export default function AddStudent() {
           {/* Remarks */}
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Remarks
+              Remarks<span class="text-xs font-light"> (Optional)</span>
             </label>
             <input
               type="text"
+              placeholder="Addition information about the student"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               onChange={(e) => setRemarks(e.target.value)}
             />
@@ -153,28 +305,41 @@ export default function AddStudent() {
           </div>
 
           {/* Intership Period */}
-          {/* <div>
-            <label
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Intership Period
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              Internship Period
             </label>
-            <DatePicker
-              onChange={() => setInternStart()}
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholderText="Select start date"
-            />
-            <span class="mx-4 text-gray-500">to</span>
-            <DatePicker
-              onChange={() => setInternEnd()}
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholderText="Select end date"
-            />
-          </div> */}
+            <div className="flex items-center">
+              <div className="relative">
+                <input
+                  type="date"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) => setInternStart(e.target.value)}
+                />
+              </div>
+              <span class="mx-4 text-gray-500">to</span>
+              <div className="relative">
+                <input
+                  type="date"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) => setInternEnd(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="grid gap-6 mb-6 md:grid-cols-2"></div>
         <div className="text-right">
+          <button
+            type="button"
+            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 mr-4"
+            onClick={() => {
+              window.history.back();
+            }}
+          >
+            Cancel
+          </button>
+
           {loading ? (
             <button
               disabled
@@ -204,7 +369,7 @@ export default function AddStudent() {
             <button
               type="button"
               onClick={() => validateInput()}
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
               Submit
             </button>
