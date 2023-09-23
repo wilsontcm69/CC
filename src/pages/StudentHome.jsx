@@ -9,9 +9,18 @@ import { useUserRole, useUserRoleUpdate } from "../UserRoleContext";
 export default function StudentHome() {
   const navigate = useNavigate();
   const userRole = useUserRole();
+
+  //Set Student Data
+  const [studentID, setStudentID] = useState("");
+  const [studentName, setStudentName] = useState("");
+  const [email, setEmail] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [icNum, setICNum] = useState("");
   const [cohort, setCohort] = useState("");
-  const [internPeriod, setInternPeriod] = useState("");
-  const [remark, setRemark] = useState("");
+  const [internStart, setInternStart] = useState("");
+  const [internEnd, setInternEnd] = useState("");
+  const [remarks, setRemarks] = useState("");
+  
   const [uniSupervisorName, setUniSupervisorName] = useState("");
   const [uniSupervisorEmail, setUniSupervisorEmail] = useState("");
   const [status, setStatus] = useState(1);
@@ -43,6 +52,8 @@ export default function StudentHome() {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(true);
   const setForUserRole = useUserRoleUpdate();
+  // Retrieve student email from sessionStorage
+  const studentEmail = sessionStorage.getItem("studentEmail");
 
   const dummyCompany = [
     {
@@ -172,21 +183,47 @@ export default function StudentHome() {
   };
 
   // <--- EDIT HERE: READ DATA --->
+  // ---------- Get Student Data ----------
   useEffect(() => {
-    // <--- READ SUMMARY, SUPERVISOR AND STATUS --->
 
-    // <--- IF STATUS = 1, READ COMPANY NAME AND ADDRESS --->
-    if (status === 1) {
-    }
+    const data = {
+      email: studentEmail,
+    };
 
-    // <--- IF STATUS = 2, READ COMPANY DETAILS --->
-    if (status === 2) {
-    }
+    // Make a GET request to retrieve student data
+    fetch("http://localhost:5000/get_login_student", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle the response from the Flask API
+      // Set the retrieved student data in your state
+      setStudentID(data.id);
+      setStudentName(data.first_name + " " + data.last_name);
+      setEmail(data.email);
+      setICNum(data.ic_no);
+      setCohort(data.cohort);
+      setInternStart(data.intern_start);
+      setInternEnd(data.intern_end);
+      setRemarks(data.remarks);
+      setUniSupervisorName("Ridzuan");
+      setUniSupervisorEmail("ridzuan@gmail.com");
 
-    // <--- IF STATUS = 4, READ PROGRESS CHECK REPORT --->
-    if (status === 4) {
-    }
-  }, []);
+      console.log(data);
+    })
+    .catch((error) => {
+      // Handle errors, e.g., display an error message
+      console.error("Error:", error);
+      alert("An error occurred while communicating with the server.");
+    });
+
+      
+  }, [studentEmail]);
+
 
   useEffect(() => {
     dummyCompany.map((company) => {
@@ -304,6 +341,61 @@ export default function StudentHome() {
             </button>
           </div>
         )}
+
+        {/* Welcome Banner */}
+        <div className="relative bg-indigo-200 dark:bg-indigo-500 p-4 sm:p-6 rounded-sm overflow-hidden mb-2">
+          {/* Background illustration */}
+          <div className="absolute right-0 top-0 -mt-4 mr-16 pointer-events-none hidden xl:block" aria-hidden="true">
+            <svg width="319" height="198" xmlnsXlink="http://www.w3.org/1999/xlink">
+              <defs>
+                <path id="welcome-a" d="M64 0l64 128-64-20-64 20z" />
+                <path id="welcome-e" d="M40 0l40 80-40-12.5L0 80z" />
+                <path id="welcome-g" d="M40 0l40 80-40-12.5L0 80z" />
+                <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="welcome-b">
+                  <stop stopColor="#A5B4FC" offset="0%" />
+                  <stop stopColor="#818CF8" offset="100%" />
+                </linearGradient>
+                <linearGradient x1="50%" y1="24.537%" x2="50%" y2="100%" id="welcome-c">
+                  <stop stopColor="#4338CA" offset="0%" />
+                  <stop stopColor="#6366F1" stopOpacity="0" offset="100%" />
+                </linearGradient>
+              </defs>
+              <g fill="none" fillRule="evenodd">
+                <g transform="rotate(64 36.592 105.604)">
+                  <mask id="welcome-d" fill="#fff">
+                    <use xlinkHref="#welcome-a" />
+                  </mask>
+                  <use fill="url(#welcome-b)" xlinkHref="#welcome-a" />
+                  <path fill="url(#welcome-c)" mask="url(#welcome-d)" d="M64-24h80v152H64z" />
+                </g>
+                <g transform="rotate(-51 91.324 -105.372)">
+                  <mask id="welcome-f" fill="#fff">
+                    <use xlinkHref="#welcome-e" />
+                  </mask>
+                  <use fill="url(#welcome-b)" xlinkHref="#welcome-e" />
+                  <path fill="url(#welcome-c)" mask="url(#welcome-f)" d="M40.333-15.147h50v95h-50z" />
+                </g>
+                <g transform="rotate(44 61.546 392.623)">
+                  <mask id="welcome-h" fill="#fff">
+                    <use xlinkHref="#welcome-g" />
+                  </mask>
+                  <use fill="url(#welcome-b)" xlinkHref="#welcome-g" />
+                  <path fill="url(#welcome-c)" mask="url(#welcome-h)" d="M40.333-15.147h50v95h-50z" />
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          {/* Content */}
+          <div className="relative">
+            <h1 className="text-2xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold mb-1">Welcome, {studentEmail}. 👋</h1>
+            <p className="dark:text-indigo-200">A journey of a thousand miles begins with a single step.</p>
+          </div>
+        </div>
+
+        <br /><br />
+        
+
         {/* Stepper */}
         <div className="px-4 pb-4">
           <ol class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
@@ -416,15 +508,7 @@ export default function StudentHome() {
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Intern Period
                 </dt>
-                <dd class="text-base font-semibold">{internPeriod}</dd>
-              </div>
-              <div class="flex flex-col pt-3">
-                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
-                  Remark
-                </dt>
-                <dd class="text-base font-semibold truncate">
-                  {remark.length > 0 ? remark : "-"}
-                </dd>
+                <dd class="text-base font-semibold">{internStart} - {internEnd}</dd>
               </div>
             </dl>
           </div>

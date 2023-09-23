@@ -38,6 +38,8 @@ export default function SupervisorSignIn() {
         // Sign-in was successful, navigate to the dashboard
         navigate("/SupervisorHome");
         toast.success("Login Successful");
+        // Store supervisor ID into session
+        sessionStorage.setItem("supervisorId", supervisor_id);
 
       } else if (response.status === 401) {
         // Invalid supervisor ID or password

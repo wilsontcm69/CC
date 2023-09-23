@@ -73,7 +73,7 @@ export default function ViewSupervisor() {
   // ---------- Get all Supervisor Data ----------
   useEffect(() => {
     // Make a GET request to retrieve supervisor data
-    fetch("http://localhost:5000/get_supervisors", {
+    fetch("http://127.0.0.1:5000/get_supervisors", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
