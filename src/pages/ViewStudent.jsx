@@ -71,7 +71,7 @@ export default function ViewStudent() {
   // ---------- Get all Students Data ----------
   useEffect(() => {
     // Make a GET request to retrieve students data
-    fetch("http://localhost:5000/get_students", {
+    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/get_students", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +96,7 @@ export default function ViewStudent() {
     };
 
     // Send a POST request to your Flask API endpoint for deleting students
-    fetch("http://localhost:5000/delete_student", {
+    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/delete_student", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
