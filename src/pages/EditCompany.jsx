@@ -184,7 +184,7 @@ export default function EditCompany() {
     };
 
   // Send a POST request to your Flask API endpoint for editing company
-  fetch("http://localhost:5000/edit_company", {
+  fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/edit_company", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -224,7 +224,7 @@ export default function EditCompany() {
 // ---------- Get Company Data ----------
 useEffect(() => {
   // Make a GET request to retrieve company data
-  fetch(`http://localhost:5000/get_company/${id}`)
+  fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_company/${id}`)
     .then((response) => response.json())
     .then((data) => {
       // Set the retrieved company data in your state

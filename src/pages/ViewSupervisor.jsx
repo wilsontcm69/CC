@@ -99,7 +99,7 @@ export default function ViewSupervisor() {
     };
 
     // Send a POST request to your Flask API endpoint for deleting supervisors
-    fetch("http://localhost:5000/delete_supervisor", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/delete_supervisor", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

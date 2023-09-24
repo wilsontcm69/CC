@@ -19,7 +19,6 @@ export default function StudentHome() {
   const [cohort, setCohort] = useState("");
   const [internStart, setInternStart] = useState("");
   const [internEnd, setInternEnd] = useState("");
-  const [remarks, setRemarks] = useState("");
   
   const [uniSupervisorName, setUniSupervisorName] = useState("");
   const [uniSupervisorEmail, setUniSupervisorEmail] = useState("");
@@ -169,7 +168,7 @@ export default function StudentHome() {
   useEffect(() => {
 
     // Make a GET request to retrieve company data
-    fetch("http://localhost:5000/get_companies", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -534,20 +533,28 @@ export default function StudentHome() {
               </label>
               {status === 1 ? (
                 <>
-                  <input
-                    list="companies"
+                {/* Company Selection */}
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Select a Company
+                  </label>
+                  <select
                     id="companyInput"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Select a company"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
-                  />
-                  <datalist id="companies">
-                      {companies.map((company) => (
-                        <option key={company.company_name} value={company.company_name} />
-                      ))}
-                  </datalist>
-                  
+                  >
+                    <option value="">Select a company</option>
+                    {companies.map((company) => (
+                      <option
+                        key={company.company_name}
+                        value={company.company_name}
+                      >
+                        {company.company_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 </>
               ) : (
                 <input

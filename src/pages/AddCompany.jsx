@@ -182,7 +182,7 @@ export default function AddCompany() {
     };
 
     // Send a POST request to your Flask API endpoint for adding supervisors
-    fetch("http://localhost:5000/add_company", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_company", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -24,9 +24,12 @@ export default function AddStudent() {
   const [cohort, setCohort] = useState("");
   const [internStart, setInternStart] = useState("");
   const [internEnd, setInternEnd] = useState("");
-  const [remarks, setRemarks] = useState("");
+  const [supervisorAssigned, setSupervisorAssigned] = useState("");
   const [dbstudentID, setDBStudentID] = useState([]); 
   const [loading, setLoading] = useState(false);
+
+  // ---------- Get all Company Data ----------
+  const [supervisors, setSupervisors] = useState([]);
 
   const validateInput = () => {
     if (studentID === "") {
@@ -90,6 +93,11 @@ export default function AddStudent() {
       return;
     }
 
+    if (supervisorAssigned === "") {
+      toast.error("Please enter assigned supervisor");
+      return;
+    }
+
     onSubmit();
   };
 
@@ -102,7 +110,7 @@ export default function AddStudent() {
     console.log("Cohort: " + cohort);
     console.log("Internship Start: " + internStart);
     console.log("Internship End: " + internEnd);
-    console.log("Remarks: " + remarks);
+    console.log("Supervisor Assigned: " + supervisorAssigned);
 
     handleAddStudent();
     setTimeout(() => {
@@ -111,6 +119,29 @@ export default function AddStudent() {
       navigate("/Dashboard/ViewStudent");
     }, 1500);
   };
+
+  // ---------- Get All Supervisor Data ----------
+  useEffect(() => {
+
+    // Make a GET request to retrieve company data
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_supervisors", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Set the retrieved student data in your state
+        setSupervisors(data);
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+     
+  }, []);
+
 
   // ---------- Add Student ----------
   const handleAddStudent = () => {
@@ -124,11 +155,11 @@ export default function AddStudent() {
       cohort: cohort,
       intern_start: internStart,
       intern_end: internEnd,
-      remarks: remarks,
+      supervisor_assigned: supervisorAssigned,
     };
 
     // Send a POST request to your Flask API endpoint for adding students
-    fetch("http://localhost:5000/add_student", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_student", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -150,8 +181,7 @@ export default function AddStudent() {
         setCohort("");
         setInternStart("");
         setInternEnd("");
-        setRemarks("");
-
+        setSupervisorAssigned("");
       })
       .catch((error) => {
         // Handle errors, e.g., display an error message
@@ -164,7 +194,7 @@ export default function AddStudent() {
   // ---------- Get all Student ID ----------
   useEffect(() => {
     // Make a GET request to retrieve student ID only
-    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/get_students", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_students", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -269,18 +299,28 @@ export default function AddStudent() {
             />
           </div>
 
-          {/* Remarks */}
-          <div>
-            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Remarks<span class="text-xs font-light"> (Optional)</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Addition information about the student"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              onChange={(e) => setRemarks(e.target.value)}
-            />
-          </div>
+          {/* Supervisor Assigned */}
+        <div>
+          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Supervisor Assigned
+          </label>
+          <select
+            id="supervisorInput"
+            value={supervisorAssigned}
+            onChange={(e) => setSupervisorAssigned(e.target.value)}
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          >
+            <option value="">Select a supervisor</option>
+            {supervisors.map((supervisor) => (
+              <option
+                key={supervisor.first_name + supervisor.last_name}
+                value={supervisor.first_name + supervisor.last_name}
+              >
+                {supervisor.first_name + supervisor.last_name}
+              </option>
+            ))}
+          </select>
+        </div>
 
           {/* Cohort */}
           <div>
