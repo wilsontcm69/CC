@@ -30,6 +30,8 @@ export default function StudentHome() {
   const [comSupervisorEmail, setComSupervisorEmail] = useState("");
   const [allowance, setAllowance] = useState("");
   // <-- DOUBLE CHECK WHAT ATTRIBUTE IS STORED WHEN FILE UPLOAD -->
+  const [supervisorName, setSupervisorName] = useState("");
+  const [supervisorEmail, setSupervisorEmail] = useState("");
   const [comAcceptanceForm, setComAcceptanceForm] = useState("");
   const [parentAckForm, setParentAckForm] = useState("");
   const [indemnity, setIndemnity] = useState("");
@@ -157,13 +159,14 @@ export default function StudentHome() {
     setLoading(true);
 
     // <--- add application --->
+    handleAddCompany();
 
     setTimeout(() => {
       setLoading(false);
       toast.success("Application updated!");
     }, 1000);
     setTimeout(() => {
-      window.location.reload();
+      //window.location.reload();
     }, 2000);
   };
 
@@ -178,8 +181,55 @@ export default function StudentHome() {
       toast.success("Progress updated!");
     }, 1000);
     setTimeout(() => {
-      window.location.reload();
+      //window.location.reload();
     }, 2000);
+  };
+
+  // <--- EDIT HERE: ADD APPLICATION --->
+  const handleAddCompany = () => {
+    //create a data object to send to your Flask API
+    const data = {
+      //company_name: companyName,
+      //company_address: companyAddress,
+      //supervisor_name: supervisorName,
+      //supervisor_email: supervisorEmail,
+      //allowance: allowance,
+      com_acceptance_form: comAcceptanceForm,
+      parent_ack_form: parentAckForm,
+      //indemnity: indemnity,
+    };
+
+    console.log(comAcceptanceForm);
+    const formData = new FormData();
+    formData.append("com_acceptance_form", comAcceptanceForm);
+    formData.append("parent_ack_form", parentAckForm);
+
+
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_Application", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: formData,
+    })
+      .then((response) => {
+        // handle the response, e.g., show the success message 
+        alert("Application submitted successfully!");
+
+        // clear the form
+        //setCompanyName("");
+        //setCompanyAddress("");
+        //setSupervisorName("");
+        //setSupervisorEmail("");
+        //setAllowance("");
+        setComAcceptanceForm("");
+        setParentAckForm("");
+        //setIndemnity("");
+      })
+      .catch((error) => {
+        // handle the error
+        alert("An error occurred while submitting the form.");
+      });
   };
 
   // <--- EDIT HERE: READ DATA --->
@@ -191,7 +241,7 @@ export default function StudentHome() {
     };
 
     // Make a GET request to retrieve student data
-    fetch("http://localhost:5000/get_login_student", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_login_student", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -673,7 +723,7 @@ export default function StudentHome() {
                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                     id="file_input"
                     type="file"
-                    onChange={(e) => setComAcceptanceForm(e.target.value)}
+                    onChange={(e) => setComAcceptanceForm(e.target.files[0])}
                   />
                 ) : (
                   <a

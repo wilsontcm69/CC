@@ -140,7 +140,7 @@ export default function AddSupervisor() {
     };
 
     // Send a POST request to your Flask API endpoint for adding supervisors
-    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/add_supervisor", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_supervisor", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -176,7 +176,7 @@ export default function AddSupervisor() {
   // ---------- Get all Supervisor ID ----------
   useEffect(() => {
     // Make a GET request to retrieve supervisor ID only
-    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/get_supervisors", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_supervisors", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

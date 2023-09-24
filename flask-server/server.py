@@ -664,6 +664,59 @@ def get_login_student():
 
 # ------------------------- Student -------------------------
 
+# ------------------------- Application -------------------------
+
+# ----- Add Application -----
+@app.route("/add_Application", methods=["POST"])
+def add_application():
+
+
+    print("I am here")
+    try:
+        # Extract data from the request
+        data = request.json
+        # company_name = data.get("company_name")
+        # company_address = data.get("company_address")
+        # supervisor_name = data.get("supervisorName")
+        # supervisor_email = data.get("supervisor_email")
+        # allowance = data.get("allowance")
+        # 
+        # 
+        # 
+        com_acceptance_form = request.files.get("com_acceptance_form")
+        parent_ack_form = request.files.get("parent_ack_form")
+        indemnity = request.files.get("indemnity")
+
+        print(com_acceptance_form)
+
+        if com_acceptance_form is None:
+            return jsonify({"error": "Please select a file for company acceptance file"}), 400
+        
+        if parent_ack_form.filename == "":
+            return "Please select a file for parent acknowledgement form"  
+        
+        if indemnity.filename == "":
+            return "Please select a file for indemnity form"
+        
+        if com_acceptance_form: 
+            
+            s3 = boto3.client('s3')
+
+            com_acceptance_file_name_in_s3 = com_acceptance_form.filename + "_files"
+            try: 
+                s3.upload_fileobj(com_acceptance_form, custombucket, com_acceptance_file_name_in_s3)
+            except Exception as e: 
+                return jsonify({"error": str(e)}), 500
+        
+            s3_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{com_acceptance_file_name_in_s3}"
+
+            return jsonify({"message": "File uploaded successfully", "s3_url": s3_url}), 200
+        return jsonify({"error" : "no file provided"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+ 
+
 
 
 
