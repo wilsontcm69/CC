@@ -640,6 +640,34 @@ def login_student():
         return jsonify({"error": str(e)}), 500
     
 
+# ----- Update student status -----
+@app.route("/edit_student_status", methods=["POST"])
+def edit_student_status():
+    try:
+        data = request.json
+        student_id = data.get("student_id")
+        remarks = data.get("remarks")
+        
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Update the supervisor's data in the database using parameterized query
+        update_query = "UPDATE student SET remarks = %(remarks)s WHERE student_id = %(student_id)s"
+        
+        cursor.execute(update_query, {
+            "remarks": remarks,
+            "student_id": student_id,
+        })
+
+        db_conn.commit()
+        cursor.close()
+
+        return jsonify({"message": "Student Application is Approved."}), 200
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
 # ------------------------- Student -------------------------
 
 
@@ -708,31 +736,9 @@ def get_application(student_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
     
 
-# ----- Update  -----
-@app.route("/approve_application", methods=["POST"])
-def approve_application():
-    try:
-        data = request.json
-        student_id = data.get("student_id")
-        remarks = data.get("remarks")
-        
-        # Connect to the database
-        cursor = db_conn.cursor()
-
-        # Update the supervisor's data in the database using parameterized query
-        update_query = "UPDATE student SET remarks = %(remarks)s WHERE student_id = %(student_id)s"
-        
-        cursor.execute(update_query, {
-            "remarks": remarks,
-            "student_id": student_id,
-        })
-
-        db_conn.commit()
-        cursor.close()
-
-        return jsonify({"message": "Student Application is Approved successfully."}), 200
 
         # #---------------------
         # if com_acceptance_form is None:
