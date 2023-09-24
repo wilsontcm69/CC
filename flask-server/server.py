@@ -470,7 +470,7 @@ def get_students():
         cursor = db_conn.cursor()
 
         # Retrieve student data from the database
-        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, supervisor_assigned FROM student"
+        query = "SELECT * FROM student"
         cursor.execute(query)
         students = cursor.fetchall()
 
@@ -486,7 +486,8 @@ def get_students():
                 "cohort": student[5],
                 "intern_start": student[6],
                 "intern_end": student[7],
-                "supervisor_assigned": student[8],
+                "remarks": student[8],
+                "supervisor_assigned": student[9],
             }
             student_list.append(student_data)
 
@@ -504,7 +505,7 @@ def get_student(student_id):
         cursor = db_conn.cursor()
 
         # Retrieve student data from the database based on supervisor_id
-        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, supervisor_assigned  FROM student WHERE student_id = %(student_id)s"
+        query = "SELECT * FROM student WHERE student_id = %(student_id)s"
         cursor.execute(query, {"student_id": student_id})
         student = cursor.fetchone()
 
@@ -518,7 +519,8 @@ def get_student(student_id):
                 "cohort": student[5],
                 "intern_start": student[6],
                 "intern_end": student[7],
-                "supervisor_assigned": student[8],
+                "remarks": student[8],
+                "supervisor_assigned": student[9],
             }
             cursor.close()
             return jsonify(student_data), 200
@@ -610,7 +612,7 @@ def login_student():
 
         # Fetch the result
         student = cursor.fetchone()
-
+        print(student)
         db_conn.commit()
         cursor.close()
 
@@ -624,7 +626,8 @@ def login_student():
                 "cohort": student[5],
                 "intern_start": student[6],
                 "intern_end": student[7],
-                "supervisor_assigned": student[8],
+                "remarks": student[8],
+                "supervisor_assigned": student[9],
             }
             cursor.close()
             return jsonify(student_data), 200
@@ -636,12 +639,15 @@ def login_student():
         return jsonify({"error": str(e)}), 500
     
 
+# ------------------------- Student -------------------------
+
+
 
 # ------------------------- Application -------------------------
 
 # ----- Add Application -----
 @app.route("/add_application", methods=["POST"])
-def add_internship_application():
+def add_application():
     try:
         # Extract data from the request
         data = request.json
@@ -652,12 +658,6 @@ def add_internship_application():
         company_supervisor_email = data.get("company_supervisor_email")
         allowance = data.get("allowance")
 
-        # Extract file uploads
-        # com_acceptance_form = request.files("com_acceptance_form")
-        # parent_ack_form = request.files("parent_ack_form")
-        # indemnity = request.files("indemnity")
-        #-------------------------------
-
         # Connect to the database
         cursor = db_conn.cursor()
 
@@ -666,6 +666,72 @@ def add_internship_application():
         cursor.execute(insert_query, (student_id, company_name, company_address, company_supervisor_name, company_supervisor_email, allowance))
         db_conn.commit()
         cursor.close()
+
+        return jsonify({"message": "Internship Application added successfully."}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ----- Get Application -----
+@app.route("/get_application/<string:student_id>", methods=["GET"])
+def get_application(student_id):
+    try:
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Query the database to check if the provided username and password match
+        select_query = "SELECT * FROM application WHERE student_id = %(student_id)s"
+        cursor.execute(select_query, {"student_id": student_id})
+
+        # Fetch the result
+        application = cursor.fetchone()
+
+        db_conn.commit()
+        cursor.close()
+
+        if application:
+            application_data = {
+                "application_id": application[0],
+                "student_id": application[1],
+                "com_name": application[2],
+                "com_address": application[3],
+                "com_supervisor_name": application[4],
+                "com_supervisor_email": application[5],
+                "allowance": application[6],
+            }
+            cursor.close()
+            return jsonify(application_data), 200
+        else:
+            cursor.close()
+            return jsonify({"error": "Invalid Data"}), 401
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+# ----- Update  -----
+@app.route("/approve_application", methods=["POST"])
+def approve_application():
+    try:
+        data = request.json
+        student_id = data.get("student_id")
+        remarks = data.get("remarks")
+        
+        # Connect to the database
+        cursor = db_conn.cursor()
+
+        # Update the supervisor's data in the database using parameterized query
+        update_query = "UPDATE student SET remarks = %(remarks)s WHERE student_id = %(student_id)s"
+        
+        cursor.execute(update_query, {
+            "remarks": remarks,
+            "student_id": student_id,
+        })
+
+        db_conn.commit()
+        cursor.close()
+
+        return jsonify({"message": "Student Application is Approved successfully."}), 200
 
         # #---------------------
         # if com_acceptance_form is None:
@@ -745,8 +811,10 @@ def add_internship_application():
         #----------------------------------------------
 
         return jsonify({"message": "Internship Application added successfully.", "s3_url": s3_url}), 201
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 
 
 # ------------------------- Application -------------------------

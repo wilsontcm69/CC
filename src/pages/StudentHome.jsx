@@ -22,14 +22,13 @@ export default function StudentHome() {
   const [remarks, setRemarks] = useState("");
   const [uniSupervisorName, setUniSupervisorName] = useState("");
   const [uniSupervisorEmail, setUniSupervisorEmail] = useState("");
-  const [status, setStatus] = useState(1);
 
   // <-- Set Company Data -->
   const [companyName, setCompanyName] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
   const [comSupervisorName, setComSupervisorName] = useState("");
   const [comSupervisorEmail, setComSupervisorEmail] = useState("");
-  const [allowance, setAllowance] = useState("");
+  const [allowance, setAllowance] = useState();
 
   // <-- DOUBLE CHECK WHAT ATTRIBUTE IS STORED WHEN FILE UPLOAD -->
   const [comAcceptanceForm, setComAcceptanceForm] = useState("");
@@ -64,10 +63,36 @@ export default function StudentHome() {
   const sessionCohort = sessionStorage.getItem("cohort");
   const sessionInternStart = sessionStorage.getItem("intern_start");
   const sessionInternEnd = sessionStorage.getItem("intern_end");
+  const sessionSupervisorAssigned = sessionStorage.getItem("supervisor_assigned");
+  const sessionStatus = sessionStorage.getItem("status");
+  const status_no = Number(sessionStatus);
+
+  const [status, setStatus] = useState(status_no);
 
   // ---------- Get all Company Data ----------
   const [companies, setCompanies] = useState([]);
+
+  // ---------- Check User Session available ----------
+  if (sessionEmail === null) {
+    navigate("/"); 
+  }
   
+  // ---------- Handle Logout ----------
+  const handleLogout = () =>  {
+    setForUserRole("");
+    navigate("/");
+    sessionStorage.removeItem("studentId");
+    sessionStorage.removeItem("studentEmail");
+    sessionStorage.removeItem("studentName");
+    sessionStorage.removeItem("studentIc");
+    sessionStorage.removeItem("cohort");
+    sessionStorage.removeItem("intern_start");
+    sessionStorage.removeItem("intern_end");
+    sessionStorage.removeItem("supervisor_assigned");
+    sessionStorage.removeItem("status");
+
+    toast.success("You have successfully logged out!");
+  };
 
   const validateInputCompany = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -174,42 +199,84 @@ export default function StudentHome() {
   };
 
 
-  // ---------- Get All Company Data ----------
+  // --------------- Application Progress ---------------
   useEffect(() => {
 
-    // Make a GET request to retrieve company data
-    fetch("http://localhost:5000/get_companies", {
+    if(status_no == 1) {
+
+      // Make a GET request to retrieve company data
+      fetch("http://localhost:5000/get_companies", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Set the retrieved student data in your state
+          setCompanies(data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+        
+      companies.map((company) => {
+        console.log("Company names: " + company.company_name);
+        const address = company.address;
+
+        if (company.company_name === companyName) {
+          console.log("Company address:  " + address);
+          setCompanyAddress(address);
+        } 
+        else if (companyName == "") {
+          setCompanyAddress("");
+        }
+      });
+
+    }
+    else if(status_no == 2 || status_no == 3) {
+      getApplication(sessionId);
+    }
+    else if(status_no == 4) {
+      getApplication(sessionId);
+    }
+    else {
+      console.log("Error ");
+    }
+
+  }, []);
+
+
+  // --------------- Application Progress ---------------
+
+  const getApplication = (student_id) => {
+
+    // Send a GET request to your Flask API endpoint with the student_id in the URL
+    fetch(`http://127.0.0.1:5000/get_application/${student_id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        // Set the retrieved student data in your state
-        setCompanies(data);
-        console.log(data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-     
-  }, []);
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle the response from the server
+      setCompanyName(data.com_name);
+      setCompanyAddress(data.com_address);
+      setComSupervisorName(data.com_supervisor_name);
+      setComSupervisorEmail(data.com_supervisor_email);
+      console.log(data);
 
-  useEffect(() => {
-    companies.map((company) => {
-      console.log("Company names: " + company.company_name);
-      const address = company.address;
-
-      if (company.company_name === companyName) {
-        console.log("Company address:  " + address);
-        setCompanyAddress(address);
-      } 
-      else if (companyName == "") {
-        setCompanyAddress("");
-      }
+      // Assuming data.allowance is a decimal number
+      setAllowance(data.allowance);
+    })
+    .catch((error) => {
+      // Handle errors, e.g., display an error message
+      console.error("Error:", error);
+      alert("An error occurred while updating the company.");
     });
-  }, [companyName]);
+
+  };
 
   
   // ---------- Add Internship Application ----------
@@ -224,19 +291,6 @@ export default function StudentHome() {
       allowance: allowance,
     };
 
-    const formData = new FormData();
-
-    formData.append("student_id", sessionId);
-    formData.append("company_name", companyName);
-    formData.append("company_address", companyAddress);
-    formData.append("company_supervisor_name", comSupervisorName);
-    formData.append("company_supervisor_email", comSupervisorEmail);
-    formData.append("allowance", allowance);
-
-    formData.append("com_acceptance_form", comAcceptanceForm);
-    formData.append("parent_ack_form", parentAckForm);
-    formData.append("indemnity", indemnity);
-
     //console.log(data.student_id);
     //console.log(data.company_name);
     //console.log(data.company_address);
@@ -245,12 +299,12 @@ export default function StudentHome() {
     //console.log(data.allowance);
 
     // Send a POST request to your Flask API endpoint for adding supervisors
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_application", {
+    fetch("http://localhost:5000/add_application", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: formData,
+      body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -273,15 +327,6 @@ export default function StudentHome() {
   };
   // ---------- Add Supervisor ----------
 
-
-  // <--- Validate User Role --->
-  // useEffect(() => {
-  //   if (userRole !== "Student") {
-  //     toast.error("You are not authorized to view this page");
-  //     navigate("/");
-  //   }
-  // }, []);
-
   return (
     <>
       <header>
@@ -298,9 +343,7 @@ export default function StudentHome() {
               <ThemeToggle />
               <button
                 onClick={() => {
-                  setForUserRole("");
-                  navigate("/");
-                  toast.success("You have successfully logged out!");
+                  handleLogout(); // Call the logout method
                 }}
                 className="flex items-center justify-center cursor-pointer w-8 h-8 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600/80 rounded-full"
                 data-popover-target="popover-description"
@@ -562,13 +605,7 @@ export default function StudentHome() {
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   University Supervisor
                 </dt>
-                <dd class="text-base font-semibold">{uniSupervisorName}</dd>
-              </div>
-              <div class="flex flex-col py-3">
-                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
-                  University Supervisor Email
-                </dt>
-                <dd class="text-base font-semibold">{uniSupervisorEmail}</dd>
+                <dd class="text-base font-semibold">{sessionSupervisorAssigned}</dd>
               </div>
             </dl>
           </div>
@@ -716,7 +753,7 @@ export default function StudentHome() {
                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                     id="file_input"
                     type="file"
-                    onChange={(e) => setComAcceptanceForm(e.target.files[0])}
+                    onChange={(e) => setComAcceptanceForm(e.target.value)}
                   />
                 ) : (
                   <a

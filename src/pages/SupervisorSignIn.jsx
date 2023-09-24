@@ -25,7 +25,7 @@ export default function SupervisorSignIn() {
     };
 
     try {
-      const response = await fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/login_supervisor", {
+      const response = await fetch("http://localhost:5000/login_supervisor", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
