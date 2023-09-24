@@ -635,93 +635,37 @@ def login_student():
         return jsonify({"error": str(e)}), 500
     
 
-def get_studentsdfsdf(student_id):
-    try:
-        # Connect to the database
-        cursor = db_conn.cursor()
-
-        # Retrieve student data from the database based on supervisor_id
-        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, supervisor_assigned FROM student WHERE student_id = %(student_id)s"
-        cursor.execute(query, {"student_id": student_id})
-        student = cursor.fetchone()
-
-        if student:
-            student_data = {
-                "id": student[0],
-                "first_name": student[1],
-                "last_name": student[2],
-                "email": student[3],
-                "ic_no": student[4],
-                "cohort": student[5],
-                "intern_start": student[6],
-                "intern_end": student[7],
-                "supervisor_assigned": [8],
-            }
-            cursor.close()
-            return jsonify(student_data), 200
-        else:
-            cursor.close()
-            return jsonify({"error": "Student not found"}), 404
-        
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
-
-# ------------------------- Student -------------------------
 
 # ------------------------- Application -------------------------
 
 # ----- Add Application -----
-@app.route("/add_Application", methods=["POST"])
-def add_application():
-
-
-    print("I am here")
+@app.route("/add_application", methods=["POST"])
+def add_internship_application():
     try:
         # Extract data from the request
         data = request.json
-        # company_name = data.get("company_name")
-        # company_address = data.get("company_address")
-        # supervisor_name = data.get("supervisorName")
-        # supervisor_email = data.get("supervisor_email")
-        # allowance = data.get("allowance")
-        # 
-        # 
-        # 
-        com_acceptance_form = request.files.get("com_acceptance_form")
-        parent_ack_form = request.files.get("parent_ack_form")
-        indemnity = request.files.get("indemnity")
+        student_id = data.get("student_id")
+        company_name = data.get("company_name")
+        company_address = data.get("company_address")
+        company_supervisor_name = data.get("company_supervisor_name")
+        company_supervisor_email = data.get("company_supervisor_email")
+        allowance = data.get("allowance")
+ 
+        # Connect to the database
+        cursor = db_conn.cursor()
 
-        print(com_acceptance_form)
+        # Insert data into the database
+        insert_query = f"INSERT INTO application (student_id, com_name, com_address, com_supervisor_name, com_supervisor_email, allowance) VALUES (%s, %s, %s, %s, %s, %s)"
+        cursor.execute(insert_query, (student_id, company_name, company_address, company_supervisor_name, company_supervisor_email, allowance))
+        db_conn.commit()
+        cursor.close()
 
-        if com_acceptance_form is None:
-            return jsonify({"error": "Please select a file for company acceptance file"}), 400
-        
-        if parent_ack_form.filename == "":
-            return "Please select a file for parent acknowledgement form"  
-        
-        if indemnity.filename == "":
-            return "Please select a file for indemnity form"
-        
-        if com_acceptance_form: 
-            
-            s3 = boto3.client('s3')
-
-            com_acceptance_file_name_in_s3 = com_acceptance_form.filename + "_files"
-            try: 
-                s3.upload_fileobj(com_acceptance_form, custombucket, com_acceptance_file_name_in_s3)
-            except Exception as e: 
-                return jsonify({"error": str(e)}), 500
-        
-            s3_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{com_acceptance_file_name_in_s3}"
-
-            return jsonify({"message": "File uploaded successfully", "s3_url": s3_url}), 200
-        return jsonify({"error" : "no file provided"}), 400
+        return jsonify({"message": "Internship Application added successfully."}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
- 
-
+    
+    
+# ------------------------- Application -------------------------
 
 
 
