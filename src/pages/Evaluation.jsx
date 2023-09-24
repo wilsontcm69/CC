@@ -81,7 +81,7 @@ export default function Evaluation() {
   // ---------- Get Student Data ----------
   useEffect(() => {
     // Make a GET request to retrieve student data
-    fetch(`http://localhost:5000/get_student/${id}`)
+    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_student/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // Set the retrieved student data in your state

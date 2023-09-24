@@ -133,7 +133,7 @@ export default function EditSupervisor() {
     };
 
     // Send a POST request to your Flask API endpoint for adding supervisors
-    fetch("http://localhost:5000/edit_supervisor", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/edit_supervisor", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -169,7 +169,7 @@ export default function EditSupervisor() {
   // ---------- Get Supervisor Data ----------
   useEffect(() => {
     // Make a GET request to retrieve supervisor data
-    fetch(`http://localhost:5000/get_supervisor/${id}`)
+    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_supervisor/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // Set the retrieved supervisor data in your state

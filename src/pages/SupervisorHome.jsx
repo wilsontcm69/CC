@@ -31,7 +31,7 @@ const TABLE_HEAD = [
   "IC",
   "Cohort",
   "Intern Duration",
-  "Remarks",
+  "Supervisor Assigned",
   "Status",
   "Evaluate",
 ];
@@ -71,7 +71,7 @@ export default function SupervisorHome() {
   // ---------- Get all Students Data ----------
   useEffect(() => {
     // Make a GET request to retrieve students data
-    fetch("http://localhost:5000/get_students", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_students", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -342,7 +342,7 @@ export default function SupervisorHome() {
                         </div>
                       </td>
 
-                      {/* Remarks */}
+                      {/* Supervisor Assigned */}
                       <td className="p-4">
                         <div className="flex flex-col">
                           <Typography
@@ -350,7 +350,7 @@ export default function SupervisorHome() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {student.remarks}
+                            {student.supervisor_assigned}
                           </Typography>
                         </div>
                       </td>

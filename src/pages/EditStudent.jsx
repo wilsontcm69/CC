@@ -26,8 +26,11 @@ export default function EditStudent() {
   const [cohort, setCohort] = useState("");
   const [internStart, setInternStart] = useState("");
   const [internEnd, setInternEnd] = useState("");
-  const [remarks, setRemarks] = useState("");
+  const [supervisorAssigned, setSupervisorAssigned] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // ---------- Get all Supervisor Data ----------
+  const [supervisors, setSupervisors] = useState([]);
 
   const validateInput = () => {
     if (studentID === "") {
@@ -85,6 +88,11 @@ export default function EditStudent() {
       return;
     }
 
+    if (supervisorAssigned === "") {
+      toast.error("Please enter assigned supervisor");
+      return;
+    }
+
     onSubmit();
   };
 
@@ -97,7 +105,7 @@ export default function EditStudent() {
     console.log("Cohort: " + cohort);
     console.log("Internship Start: " + internStart);
     console.log("Internship End: " + internEnd);
-    console.log("Remarks: " + remarks);
+    console.log("Supervisor Assigned:" + supervisorAssigned);
 
     handleEditStudent()
 
@@ -120,11 +128,11 @@ export default function EditStudent() {
       cohort: cohort,
       intern_start: internStart,
       intern_end: internEnd,
-      remarks: remarks,
+      supervisor_assigned: supervisorAssigned,
     };
 
     // Send a POST request to your Flask API endpoint for editing student
-    fetch("http://localhost:5000/edit_student", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/edit_student", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -146,7 +154,7 @@ export default function EditStudent() {
         setCohort("");
         setInternStart("");
         setInternEnd("");
-        setRemarks("");
+        setSupervisorAssigned("");
       })
       .catch((error) => {
         // Handle errors, e.g., display an error message
@@ -159,7 +167,7 @@ export default function EditStudent() {
   // ---------- Get Student Data ----------
   useEffect(() => {
     // Make a GET request to retrieve student data
-    fetch(`http://localhost:5000/get_student/${id}`)
+    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_student/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // Set the retrieved student data in your state
@@ -171,7 +179,7 @@ export default function EditStudent() {
         setCohort(data.cohort);
         setInternStart(data.intern_start);
         setInternEnd(data.intern_end);
-        setRemarks(data.remarks);
+        setSupervisorAssigned(data.supervisor_assigned);
         // Set other fields as needed
       })
       .catch((error) => {
@@ -179,6 +187,28 @@ export default function EditStudent() {
       });
 }, [id]);
   // ---------- Get Student Data ----------
+
+  // ---------- Get All Supervisor Data ----------
+  useEffect(() => {
+
+    // Make a GET request to retrieve company data
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_supervisors", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Set the retrieved student data in your state
+        setSupervisors(data);
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+     
+  }, []);
 
   return (
     <>
@@ -274,19 +304,28 @@ export default function EditStudent() {
             />
           </div>
 
-          {/* Remarks */}
-          <div>
-            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Remarks<span class="text-xs font-light"> (Optional)</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Addition information about the student"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              value={remarks}
-              onChange={(e) => setRemarks(e.target.value)}
-            />
-          </div>
+          {/* Supervisor Assigned */}
+        <div>
+          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Supervisor Assigned
+          </label>
+          <select
+            id="supervisorInput"
+            value={supervisorAssigned}
+            onChange={(e) => setSupervisorAssigned(e.target.value)}
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          >
+            <option value="">Select a supervisor</option>
+            {supervisors.map((supervisor) => (
+              <option
+                key={supervisor.first_name + supervisor.last_name}
+                value={supervisor.first_name + supervisor.last_name}
+              >
+                {supervisor.first_name + supervisor.last_name}
+              </option>
+            ))}
+          </select>
+        </div>
 
           {/* Cohort */}
           <div>

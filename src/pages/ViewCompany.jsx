@@ -76,7 +76,7 @@ export default function ViewCompany() {
   // ---------- Get all Company Data ----------
   useEffect(() => {
     // Make a GET request to retrieve company data
-    fetch("http://localhost:5000/get_companies", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -101,7 +101,7 @@ export default function ViewCompany() {
     };
 
     // Send a POST request to your Flask API endpoint for deleting companies
-    fetch("http://localhost:5000/delete_company", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/delete_company", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
