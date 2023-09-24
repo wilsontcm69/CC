@@ -644,17 +644,17 @@ def login_student():
 def add_internship_application():
     try:
         # Extract data from the request
-        student_id = request.form.get("student_id")
-        company_name = request.form.get("company_name")
-        company_address = request.form.get("company_address")
-        company_supervisor_name = request.form.get("company_supervisor_name")
-        company_supervisor_email = request.form.get("company_supervisor_email")
-        allowance = request.form.get("allowance")
+        student_id = request.form("student_id")
+        company_name = request.form("company_name")
+        company_address = request.form("company_address")
+        company_supervisor_name = request.form("company_supervisor_name")
+        company_supervisor_email = request.form("company_supervisor_email")
+        allowance = request.form("allowance")
 
         # Extract file uploads
-        com_acceptance_form = request.files.get("com_acceptance_form")
-        parent_ack_form = request.files.get("parent_ack_form")
-        indemnity = request.files.get("indemnity")
+        com_acceptance_form = request.files("com_acceptance_form")
+        parent_ack_form = request.files("parent_ack_form")
+        indemnity = request.files("indemnity")
         #-------------------------------
 
         # Connect to the database
