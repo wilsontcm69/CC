@@ -644,15 +644,14 @@ def login_student():
 def add_internship_application():
     try:
         # Extract data from the request
-        data = request.json
-        student_id = data.get("student_id")
-        company_name = data.get("company_name")
-        company_address = data.get("company_address")
-        company_supervisor_name = data.get("company_supervisor_name")
-        company_supervisor_email = data.get("company_supervisor_email")
-        allowance = data.get("allowance")
+        student_id = request.form.get("student_id")
+        company_name = request.form.get("company_name")
+        company_address = request.form.get("company_address")
+        company_supervisor_name = request.form.get("company_supervisor_name")
+        company_supervisor_email = request.form.get("company_supervisor_email")
+        allowance = request.form.get("allowance")
 
-        #--------------------------
+        # Extract file uploads
         com_acceptance_form = request.files.get("com_acceptance_form")
         parent_ack_form = request.files.get("parent_ack_form")
         indemnity = request.files.get("indemnity")
