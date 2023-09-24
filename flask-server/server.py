@@ -451,8 +451,9 @@ def add_student():
         cursor = db_conn.cursor()
 
         # Insert data into the database
-        insert_query = f"INSERT INTO student (student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, supervisor_assigned) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s,%s)"
+        insert_query = "INSERT INTO student (student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, supervisor_assigned) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         cursor.execute(insert_query, (student_id, first_name, last_name, email, ic_no, cohort, intern_start, intern_end, supervisor_assigned))
+
         db_conn.commit()
         cursor.close()
 
