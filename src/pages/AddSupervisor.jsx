@@ -140,7 +140,7 @@ export default function AddSupervisor() {
     };
 
     // Send a POST request to your Flask API endpoint for adding supervisors
-    fetch("http://127.0.0.1:5000/add_supervisor", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_supervisor", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
