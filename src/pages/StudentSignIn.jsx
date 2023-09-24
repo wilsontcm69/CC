@@ -33,19 +33,28 @@ export default function StudentSignIn() {
         },
         body: JSON.stringify(data),
       });
-      console.log(response.status === 200)
-      console.log(response)
+    
       if (response.status === 200) {
-        // Sign-in was successful, navigate to the dashboard
+        // Sign-in was successful, parse response data as JSON
+        const responseData = await response.json();
+    
+        // Store student data in session storage
+        sessionStorage.setItem("studentId", responseData.id);
+        sessionStorage.setItem("studentEmail", responseData.email);
+        sessionStorage.setItem("studentName", responseData.first_name + " " + responseData.last_name);
+        sessionStorage.setItem("studentIc", responseData.ic_no);
+        sessionStorage.setItem("cohort", responseData.cohort);
+        sessionStorage.setItem("intern_start", responseData.intern_start);
+        sessionStorage.setItem("intern_end", responseData.intern_end);
+    
+        // Navigate to the "/StudentHome" page
         navigate("/StudentHome");
+    
+        // Display a success toast message
         toast.success("Login Successful");
-        // Store student email into session
-        sessionStorage.setItem("studentEmail", email);
-
       } else if (response.status === 401) {
         // Invalid student ID or password
         toast.error("Invalid Student Email or IC");
-        
       } else {
         // Handle other errors
         toast.error("An error occurred while signing in.");
@@ -55,7 +64,6 @@ export default function StudentSignIn() {
       console.error("Error:", error);
       toast.error("An error occurred while signing in.");
     }
-
 
   };
 

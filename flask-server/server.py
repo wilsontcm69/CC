@@ -615,29 +615,35 @@ def login_student():
         cursor.close()
 
         if student:
-        # If a supervisor with the provided username and password is found, return a success message
-            return jsonify({"message": "Successful"}), 200
+            student_data = {
+                "id": student[0],
+                "first_name": student[1],
+                "last_name": student[2],
+                "email": student[3],
+                "ic_no": student[4],
+                "cohort": student[5],
+                "intern_start": student[6],
+                "intern_end": student[7],
+                "remarks": student[8],
+            }
+            cursor.close()
+            return jsonify(student_data), 200
         else:
-            # If no matching supervisor is found, return an error message
-            return jsonify({"message": "Invalid Student ID or IC"}), 401
+            cursor.close()
+            return jsonify({"error": "Invalid Student ID or IC"}), 401
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 
-
-# ----- Get Student data -----
-@app.route("/get_login_student", methods=["POST"])
-def get_login_student():
+def get_studentsdfsdf(student_id):
     try:
-        data = request.json
-        email = data.get("email")
-
         # Connect to the database
         cursor = db_conn.cursor()
 
         # Retrieve student data from the database based on supervisor_id
-        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks FROM student WHERE email = %(email)s"
-        cursor.execute(query, {"email": email})
+        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks FROM student WHERE student_id = %(student_id)s"
+        cursor.execute(query, {"student_id": student_id})
         student = cursor.fetchone()
 
         if student:

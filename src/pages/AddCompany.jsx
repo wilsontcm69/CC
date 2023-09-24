@@ -182,7 +182,7 @@ export default function AddCompany() {
     };
 
     // Send a POST request to your Flask API endpoint for adding supervisors
-    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/add_company", {
+    fetch("http://localhost:5000/add_company", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -192,8 +192,7 @@ export default function AddCompany() {
       .then((response) => response.json())
       .then((data) => {
         // Handle the response, e.g., show a success message
-        console.log(data);
-        alert("Company added successfully!");  
+        console.log(data); 
         
         // Clear the form fields
         setCompanyName("");

@@ -43,7 +43,7 @@ export default function ViewCompany() {
   // Calculate the start and end indexes for the current page
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
-  const [companies, setCompanies] = useState("");
+  const [companies, setCompanies] = useState([]);
 
   // Slice the data to display only the rows for the current page
   const rowsToDisplay = companies.slice(startIndex, endIndex);
@@ -76,7 +76,7 @@ export default function ViewCompany() {
   // ---------- Get all Company Data ----------
   useEffect(() => {
     // Make a GET request to retrieve company data
-    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/get_companies", {
+    fetch("http://localhost:5000/get_companies", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -101,7 +101,7 @@ export default function ViewCompany() {
     };
 
     // Send a POST request to your Flask API endpoint for deleting companies
-    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/delete_company", {
+    fetch("http://localhost:5000/delete_company", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
