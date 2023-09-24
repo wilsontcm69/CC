@@ -58,8 +58,7 @@ export default function Evaluation() {
     setLoading(true);
 
     // <--- set database status to 3 --->
-    
-
+    handleApproveApplication();
 
     setTimeout(() => {
       setLoading(false);
@@ -147,6 +146,44 @@ export default function Evaluation() {
   };
 
   // --------------- Application Progress ---------------
+
+
+  // ---------- Edit Supervisor ----------
+  const handleApproveApplication = () => {
+    
+    // Create a data object to send to your Flask API
+    const data = {
+      student_id: studentID,
+      remarks: 3,
+    };
+
+    // Send a POST request to your Flask API endpoint for editing student
+    fetch("http://localhost:5000/edit_student_status", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === 200) {
+          // Handle the response, e.g., show a success message
+          Toast.success("Approved successfully!");
+          //navigate("/SupervisorHome");
+        } else {
+          // Handle other response statuses, if needed
+          console.log("Student status update failed.");
+        }
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while updating the student.");
+      });
+
+  };
+  // ---------- Edit Supervisor ----------
   
 
   return (

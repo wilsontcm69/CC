@@ -198,7 +198,7 @@ export default function StudentHome() {
   useEffect(() => {
     if (status_no == 1) {
       // Make a GET request to retrieve company data
-      fetch("http://localhost:5000/get_companies", {
+      fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -220,9 +220,7 @@ export default function StudentHome() {
         if (company.company_name === companyName) {
           console.log("Company address:  " + address);
           setCompanyAddress(address);
-        } else if (companyName == "") {
-          setCompanyAddress("");
-        }
+        } 
       });
     } else if (status_no == 2 || status_no == 3) {
       getApplication(sessionId);
@@ -232,12 +230,31 @@ export default function StudentHome() {
       console.log("Error ");
     }
   }, []);
+  
+
+    // For example, if you're using a dropdown list
+    const handleCompanyChange = (event) => {
+      //setSelectedCompany(event.target.value);
+
+      companies.map((company) => {
+        const address = company.address;
+
+        if (company.company_name === event.target.value) {
+          console.log("Company address:  " + address);
+          setCompanyAddress(address);
+        } 
+        else if (companyName == "") {
+          setCompanyAddress("");
+        }
+      });
+
+    };
 
   // --------------- Application Progress ---------------
 
   const getApplication = (student_id) => {
     // Send a GET request to your Flask API endpoint with the student_id in the URL
-    fetch(`http://127.0.0.1:5000/get_application/${student_id}`, {
+    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_application/${student_id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -278,7 +295,7 @@ export default function StudentHome() {
     data.append("hired_evidence", hiredEvidence[0]);
 
     // Send a POST request to your Flask API endpoint for adding supervisors
-    fetch("http://localhost:5000/add_application", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_application", {
       method: "POST",
       body: data,
     })
@@ -678,10 +695,18 @@ export default function StudentHome() {
                   <input
                     list="companies"
                     id="companyInput"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Select a company"
                     value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
+                    onChange={(e) => {
+                      setCompanyName(e.target.value);
+                      const selectedCompanyData = companies.find((company) => company.company_name === e.target.value);
+                      if (selectedCompanyData) {
+                        setCompanyAddress(selectedCompanyData.address);
+                      } else {
+                        setCompanyAddress(""); // Clear the address if no company is selected
+                      }
+                    }}
                   />
                   <datalist id="companies">
                     {companies.map((company) => (
@@ -699,6 +724,8 @@ export default function StudentHome() {
                   defaultValue={companyName}
                 />
               )}
+
+              
             </div>
             {/* Address */}
             <div class="mb-6">
