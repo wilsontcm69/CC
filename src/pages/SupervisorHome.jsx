@@ -71,7 +71,7 @@ export default function SupervisorHome() {
   // ---------- Get all Students Data ----------
   useEffect(() => {
     // Make a GET request to retrieve students data
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_students", {
+    fetch("http://localhost:5000/get_students", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -364,7 +364,7 @@ export default function SupervisorHome() {
                             className="font-normal"
                           >
                             {/* {major} */}
-                            Pending
+                            {student.remarks == 1 ? 'Pending' : student.remarks == 2 ? 'Evaluation' : student.remarks == 3 ? 'Approved' : student.remarks == 4 ? 'Progress Check': '-'}
                           </Typography>
                         </div>
                       </td>

@@ -26,7 +26,7 @@ export default function StudentSignIn() {
     };
 
     try {
-      const response = await fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/login_student", {
+      const response = await fetch("http://localhost:5000/login_student", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,6 +46,8 @@ export default function StudentSignIn() {
         sessionStorage.setItem("cohort", responseData.cohort);
         sessionStorage.setItem("intern_start", responseData.intern_start);
         sessionStorage.setItem("intern_end", responseData.intern_end);
+        sessionStorage.setItem("supervisor_assigned", responseData.supervisor_assigned);
+        sessionStorage.setItem("status", responseData.remarks);
     
         // Navigate to the "/StudentHome" page
         navigate("/StudentHome");

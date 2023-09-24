@@ -22,14 +22,18 @@ export default function Evaluation() {
   const [internEnd, setInternEnd] = useState("");
   const [remarks, setRemarks] = useState("");
 
+  // <-- Set Company Data -->
+  const [companyName, setCompanyName] = useState("");
+  const [companyAddress, setCompanyAddress] = useState("");
+  const [comSupervisorName, setComSupervisorName] = useState("");
+  const [comSupervisorEmail, setComSupervisorEmail] = useState("");
+  const [allowance, setAllowance] = useState();
+
   //Set Supervisor Data
   const [supervisorName, setSupervisorName] = useState("");
   const [supervisorEmail, setSupervisorEmail] = useState("");
 
   //Set Company Data
-  const [companyName, setCompanyName] = useState("");
-  const [companyAddress, setCompanyAddress] = useState("");
-  const [allowance, setAllowance] = useState("");
   const [comAcceptFormName, setComAcceptFormName] = useState("");
   const [comAcceptFormLink, setComAcceptFormLink] = useState("");
   const [parentAckFormName, setParentAckFormName] = useState("");
@@ -44,14 +48,18 @@ export default function Evaluation() {
   const [report2Link, setReport2Link] = useState("");
   const [loading, setLoading] = useState(false);
   const setForUserRole = useUserRoleUpdate();
-  const [status, setStatus] = useState(1);
+  
   const { id } = useParams();
+
+  const [status, setStatus] = useState(0);
 
   // <--- EDIT HERE: UPDATE STATUS --->
   const acceptApplication = () => {
     setLoading(true);
 
     // <--- set database status to 3 --->
+    
+
 
     setTimeout(() => {
       setLoading(false);
@@ -81,7 +89,7 @@ export default function Evaluation() {
   // ---------- Get Student Data ----------
   useEffect(() => {
     // Make a GET request to retrieve student data
-    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_student/${id}`)
+    fetch(`http://localhost:5000/get_student/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // Set the retrieved student data in your state
@@ -92,26 +100,54 @@ export default function Evaluation() {
         setCohort(data.cohort);
         setInternStart(data.intern_start);
         setInternEnd(data.intern_end);
-        setRemarks(data.remarks);
-        console.log(data.id);
+        setStatus(data.remarks);
+
+        if(data.remarks != "1") {
+          getApplication(data.id);
+        }
+
         // Set other fields as needed
       })
       .catch((error) => {
         // Handle errors
         console.log("Error");
       });
-  }, [id]);
+  }, []);
 
-  // ---------- Get Student Data ----------
+
+  // ---------- Application Progress  ----------
   
+  const getApplication = (student_id) => {
+    console.log("student_id: " + student_id);
 
-  // <--- Validate User Role --->
-  // useEffect(() => {
-  //   if (userRole !== "Supervisor") {
-  //     toast.error("You are not authorized to view this page");
-  //     navigate("/");
-  //   }
-  // }, []);
+    // Send a GET request to your Flask API endpoint with the student_id in the URL
+    fetch(`http://127.0.0.1:5000/get_application/${student_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle the response from the server
+      setCompanyName(data.com_name);
+      setCompanyAddress(data.com_address);
+      setComSupervisorName(data.com_supervisor_name);
+      setComSupervisorEmail(data.com_supervisor_email);
+      console.log(data);
+
+      // Assuming data.allowance is a decimal number
+      setAllowance(data.allowance);
+    })
+    .catch((error) => {
+      // Handle errors, e.g., display an error message
+      console.error("Error:", error);
+      alert("An error occurred while updating the company.");
+    });
+  };
+
+  // --------------- Application Progress ---------------
+  
 
   return (
     <>
@@ -286,10 +322,10 @@ export default function Evaluation() {
               </div>
               <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
-                  Remark
+                  Status
                 </dt>
                 <dd class="text-base font-semibold">
-                  {remarks.length > 0 ? remarks : "-"}
+                  {status == 1 ? 'Pending' : status == 2 ? 'Evaluation' : status == 3 ? 'Approved' : status == 4 ? 'Progress Check': '-'}
                 </dd>
               </div>
             </dl>
@@ -371,7 +407,7 @@ export default function Evaluation() {
                     id="company_name"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="John Doe"
-                    defaultValue={supervisorName}
+                    defaultValue={comSupervisorName}
                   />
                 </div>
                 {/* Email */}
@@ -387,7 +423,7 @@ export default function Evaluation() {
                     id="email"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="johndoe@acme.com"
-                    defaultValue={supervisorEmail}
+                    defaultValue={comSupervisorEmail}
                   />
                 </div>
               </div>
@@ -479,7 +515,7 @@ export default function Evaluation() {
                 </div>
               </div>
               {/* Button */}
-              {status === 2 && (
+              {status == 2 && (
                 <div className="text-right mb-2">
                   {loading ? (
                     <div role="status">
@@ -503,20 +539,15 @@ export default function Evaluation() {
                     </div>
                   ) : (
                     <>
-                      <button
-                        type="button"
-                        onClick={() => rejectApplication()}
-                        class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-4 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800 pointer-events-auto"
-                      >
-                        Reject
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => acceptApplication()}
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 pointer-events-auto"
-                      >
-                        Approve
-                      </button>
+                      <div style={{ textAlign: 'center' }}>
+                        <button
+                          type="button"
+                          onClick={() => acceptApplication()}
+                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 pointer-events-auto"
+                        >
+                          Approve
+                        </button>
+                      </div>
                     </>
                   )}
                 </div>
