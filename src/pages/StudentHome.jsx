@@ -224,6 +224,19 @@ export default function StudentHome() {
       allowance: allowance,
     };
 
+    const formData = new FormData();
+
+    formData.append("student_id", sessionId);
+    formData.append("company_name", companyName);
+    formData.append("company_address", companyAddress);
+    formData.append("company_supervisor_name", comSupervisorName);
+    formData.append("company_supervisor_email", comSupervisorEmail);
+    formData.append("allowance", allowance);
+
+    formData.append("com_acceptance_form", comAcceptanceForm);
+    formData.append("parent_ack_form", parentAckForm);
+    formData.append("indemnity", indemnity);
+
     //console.log(data.student_id);
     //console.log(data.company_name);
     //console.log(data.company_address);
@@ -232,12 +245,12 @@ export default function StudentHome() {
     //console.log(data.allowance);
 
     // Send a POST request to your Flask API endpoint for adding supervisors
-    fetch("http://localhost:5000/add_application", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_application", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: formData,
     })
       .then((response) => response.json())
       .then((data) => {
@@ -703,7 +716,7 @@ export default function StudentHome() {
                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                     id="file_input"
                     type="file"
-                    onChange={(e) => setComAcceptanceForm(e.target.value)}
+                    onChange={(e) => setComAcceptanceForm(e.target.files[0])}
                   />
                 ) : (
                   <a
