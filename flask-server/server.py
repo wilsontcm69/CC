@@ -445,14 +445,15 @@ def add_student():
         cohort = data.get("cohort")
         intern_start = data.get("intern_start")
         intern_end = data.get("intern_end")
+        remark = 1
         supervisor_assigned = data.get("supervisor_assigned")
         
         # Connect to the database
         cursor = db_conn.cursor()
 
         # Insert data into the database
-        insert_query = "INSERT INTO student (student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks, supervisor_assigned) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        cursor.execute(insert_query, (student_id, first_name, last_name, email, ic_no, cohort, intern_start, intern_end, 1 , supervisor_assigned))
+        insert_query = "INSERT INTO student (student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks, supervisor_assigned) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(insert_query, (student_id, first_name, last_name, email, ic_no, cohort, intern_start, intern_end, remark, supervisor_assigned))
 
         db_conn.commit()
         cursor.close()
