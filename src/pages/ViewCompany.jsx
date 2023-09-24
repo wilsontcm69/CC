@@ -43,7 +43,7 @@ export default function ViewCompany() {
   // Calculate the start and end indexes for the current page
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
-  const [companies, setCompanies] = useState("");
+  const [companies, setCompanies] = useState([]);
 
   // Slice the data to display only the rows for the current page
   const rowsToDisplay = companies.slice(startIndex, endIndex);

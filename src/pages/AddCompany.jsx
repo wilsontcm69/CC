@@ -192,8 +192,7 @@ export default function AddCompany() {
       .then((response) => response.json())
       .then((data) => {
         // Handle the response, e.g., show a success message
-        console.log(data);
-        alert("Company added successfully!");  
+        console.log(data); 
         
         // Clear the form fields
         setCompanyName("");
