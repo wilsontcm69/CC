@@ -10,7 +10,7 @@ export default function StudentHome() {
   const navigate = useNavigate();
   const userRole = useUserRole();
 
-  //Set Student Data
+  // <-- Set Student Data -->
   const [studentID, setStudentID] = useState("");
   const [studentName, setStudentName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,15 +20,17 @@ export default function StudentHome() {
   const [internStart, setInternStart] = useState("");
   const [internEnd, setInternEnd] = useState("");
   const [remarks, setRemarks] = useState("");
-  
   const [uniSupervisorName, setUniSupervisorName] = useState("");
   const [uniSupervisorEmail, setUniSupervisorEmail] = useState("");
   const [status, setStatus] = useState(1);
+
+  // <-- Set Company Data -->
   const [companyName, setCompanyName] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
   const [comSupervisorName, setComSupervisorName] = useState("");
   const [comSupervisorEmail, setComSupervisorEmail] = useState("");
   const [allowance, setAllowance] = useState("");
+
   // <-- DOUBLE CHECK WHAT ATTRIBUTE IS STORED WHEN FILE UPLOAD -->
   const [comAcceptanceForm, setComAcceptanceForm] = useState("");
   const [parentAckForm, setParentAckForm] = useState("");
@@ -36,6 +38,7 @@ export default function StudentHome() {
   const [hiredEvidence, setHiredEvidence] = useState("");
   const [report1, setReport1] = useState("");
   const [report2, setReport2] = useState("");
+
   // <-- DOUBLE CHECK WHAT ATTRIBUTE IS STORED WHEN FILE UPLOAD -->
   const [comAcceptFormName, setComAcceptFormName] = useState("");
   const [comAcceptFormLink, setComAcceptFormLink] = useState("");
@@ -64,7 +67,7 @@ export default function StudentHome() {
 
   // ---------- Get all Company Data ----------
   const [companies, setCompanies] = useState([]);
-  const [showDatalist, setShowDatalist] = useState(false);
+  
 
   const validateInputCompany = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -80,17 +83,17 @@ export default function StudentHome() {
       return;
     }
 
-    if (supervisorName === "") {
+    if (comSupervisorName === "") {
       toast.error("Please enter supervisor name");
       return;
     }
 
-    if (supervisorEmail === "") {
+    if (comSupervisorEmail === "") {
       toast.error("Please enter supervisor email");
       return;
     }
 
-    if (!emailRegex.test(supervisorEmail)) {
+    if (!emailRegex.test(comSupervisorEmail)) {
       toast.error("Please enter a valid email");
       return;
     }
@@ -105,6 +108,7 @@ export default function StudentHome() {
       return;
     }
 
+    /*
     if (comAcceptanceForm === "") {
       toast.error("Please upload company acceptance form");
       return;
@@ -119,6 +123,7 @@ export default function StudentHome() {
       toast.error("Please upload letter of indemnity");
       return;
     }
+    */
 
     onSubmitCompany();
   };
@@ -135,15 +140,21 @@ export default function StudentHome() {
   // <--- EDIT HERE: ADD APPLICATION --->
   const onSubmitCompany = () => {
     setLoading(true);
+    
+    //console.log("Company Name: " + companyName);
+    //console.log("Company Address: " + companyAddress);
+    //console.log("Com Supervisor Name: " + comSupervisorName);
+    //console.log("Allowance: " + allowance);
 
     // <--- add application --->
+    handleAddApplication();
 
     setTimeout(() => {
       setLoading(false);
       toast.success("Application updated!");
     }, 1000);
     setTimeout(() => {
-      window.location.reload();
+      //window.location.reload();
     }, 2000);
   };
 
@@ -161,8 +172,6 @@ export default function StudentHome() {
       window.location.reload();
     }, 2000);
   };
-
-  // <--- EDIT HERE: READ DATA --->
 
 
   // ---------- Get All Company Data ----------
@@ -187,32 +196,69 @@ export default function StudentHome() {
      
   }, []);
 
-  //console.log("Company:" + companies);
-
-  /*
   useEffect(() => {
-    dummyCompany.map((company) => {
-      if (company.name === companyName) {
-        setCompanyAddress(company.address);
+    companies.map((company) => {
+      console.log("Company names: " + company.company_name);
+      const address = company.address;
+
+      if (company.company_name === companyName) {
+        console.log("Company address:  " + address);
+        setCompanyAddress(address);
+      } 
+      else if (companyName == "") {
+        setCompanyAddress("");
       }
     });
   }, [companyName]);
-  */
 
-  /*
-  useEffect(() => {
-    // Find the company with a matching name
-    const foundCompany = companies.find((company) => company.name === companyName);
-    
-    // If a matching company is found, set its address
-    if (foundCompany) {
-      setCompanyAddress(foundCompany.address);
-    } else {
-      // Handle the case when no matching company is found
-      setCompanyAddress(""); // You can set a default value or handle the absence of a match as needed
-    }
-  }, [companies, companyName]);
-  */
+  
+  // ---------- Add Internship Application ----------
+  const handleAddApplication = () => {
+    // Create a data object to send to your Flask API
+    const data = {
+      student_id: sessionId,
+      company_name: companyName,
+      company_address: companyAddress,
+      company_supervisor_name: comSupervisorName,
+      company_supervisor_email: comSupervisorEmail,
+      allowance: allowance,
+    };
+
+    //console.log(data.student_id);
+    //console.log(data.company_name);
+    //console.log(data.company_address);
+    //console.log(data.company_supervisor_name);
+    //console.log(data.company_supervisor_email);
+    //console.log(data.allowance);
+
+    // Send a POST request to your Flask API endpoint for adding supervisors
+    fetch("http://localhost:5000/add_application", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Internship Application added successfully!");
+
+        // Clear the form fields
+        setCompanyName("");
+        setCompanyAddress("");
+        setComSupervisorName("");
+        setComSupervisorEmail("");
+        setAllowance("");
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        //alert("An error occurred while adding the supervisor.");
+      });
+  };
+  // ---------- Add Supervisor ----------
 
 
   // <--- Validate User Role --->
@@ -592,7 +638,7 @@ export default function StudentHome() {
                   id="company_name"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="John Doe"
-                  onChange={(e) => setSupervisorName(e.target.value)}
+                  onChange={(e) => setComSupervisorName(e.target.value)}
                   defaultValue={status > 1 ? comSupervisorName : ""}
                 />
               </div>
@@ -609,7 +655,7 @@ export default function StudentHome() {
                   id="email"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="johndoe@acme.com"
-                  onChange={(e) => setSupervisorEmail(e.target.value)}
+                  onChange={(e) => setComSupervisorEmail(e.target.value)}
                   defaultValue={status > 1 ? comSupervisorEmail : ""}
                 />
               </div>

@@ -636,40 +636,37 @@ def login_student():
         return jsonify({"error": str(e)}), 500
     
 
-def get_studentsdfsdf(student_id):
+
+# ------------------------- Application -------------------------
+
+# ----- Add Application -----
+@app.route("/add_application", methods=["POST"])
+def add_internship_application():
     try:
+        # Extract data from the request
+        data = request.json
+        student_id = data.get("student_id")
+        company_name = data.get("company_name")
+        company_address = data.get("company_address")
+        company_supervisor_name = data.get("company_supervisor_name")
+        company_supervisor_email = data.get("company_supervisor_email")
+        allowance = data.get("allowance")
+ 
         # Connect to the database
         cursor = db_conn.cursor()
 
-        # Retrieve student data from the database based on supervisor_id
-        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks FROM student WHERE student_id = %(student_id)s"
-        cursor.execute(query, {"student_id": student_id})
-        student = cursor.fetchone()
+        # Insert data into the database
+        insert_query = f"INSERT INTO application (student_id, com_name, com_address, com_supervisor_name, com_supervisor_email, allowance) VALUES (%s, %s, %s, %s, %s, %s)"
+        cursor.execute(insert_query, (student_id, company_name, company_address, company_supervisor_name, company_supervisor_email, allowance))
+        db_conn.commit()
+        cursor.close()
 
-        if student:
-            student_data = {
-                "id": student[0],
-                "first_name": student[1],
-                "last_name": student[2],
-                "email": student[3],
-                "ic_no": student[4],
-                "cohort": student[5],
-                "intern_start": student[6],
-                "intern_end": student[7],
-                "remarks": student[8],
-            }
-            cursor.close()
-            return jsonify(student_data), 200
-        else:
-            cursor.close()
-            return jsonify({"error": "Student not found"}), 404
-        
+        return jsonify({"message": "Internship Application added successfully."}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-
-# ------------------------- Student -------------------------
-
+    
+# ------------------------- Application -------------------------
 
 
 
