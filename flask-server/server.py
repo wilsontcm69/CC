@@ -644,17 +644,18 @@ def login_student():
 def add_internship_application():
     try:
         # Extract data from the request
-        student_id = request.form("student_id")
-        company_name = request.form("company_name")
-        company_address = request.form("company_address")
-        company_supervisor_name = request.form("company_supervisor_name")
-        company_supervisor_email = request.form("company_supervisor_email")
-        allowance = request.form("allowance")
+        data = request.json
+        student_id = data.get("student_id")
+        company_name = data.get("company_name")
+        company_address = data.get("company_address")
+        company_supervisor_name = data.get("company_supervisor_name")
+        company_supervisor_email = data.get("company_supervisor_email")
+        allowance = data.get("allowance")
 
         # Extract file uploads
-        com_acceptance_form = request.files("com_acceptance_form")
-        parent_ack_form = request.files("parent_ack_form")
-        indemnity = request.files("indemnity")
+        # com_acceptance_form = request.files("com_acceptance_form")
+        # parent_ack_form = request.files("parent_ack_form")
+        # indemnity = request.files("indemnity")
         #-------------------------------
 
         # Connect to the database
@@ -665,6 +666,60 @@ def add_internship_application():
         cursor.execute(insert_query, (student_id, company_name, company_address, company_supervisor_name, company_supervisor_email, allowance))
         db_conn.commit()
         cursor.close()
+
+        # #---------------------
+        # if com_acceptance_form is None:
+        #     return jsonify({"error": "Please select a file for company acceptance file"}), 400
+        
+        # if parent_ack_form.filename == "":
+        #     return "Please select a file for parent acknowledgement form"  
+        
+        # if indemnity.filename == "":
+        #     return "Please select a file for indemnity form"
+
+        # if com_acceptance_form: 
+            
+        #     s3 = boto3.client('s3')
+
+        #     com_acceptance_file_name_in_s3 = com_acceptance_form.filename + "_files"
+        #     try: 
+        #         s3.upload_fileobj(com_acceptance_form, custombucket, com_acceptance_file_name_in_s3)
+        #     except Exception as e: 
+        #         return jsonify({"error": str(e)}), 500
+        
+        #     s3_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{com_acceptance_file_name_in_s3}"
+        # #----------------------------------------------
+
+        return jsonify({"message": "Internship Application added successfully.", "s3_url": s3_url}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+# ----- Add Application -----
+@app.route("/add_applicationBUCKET", methods=["POST"])
+def add_internship_application():
+    try:
+        # # Extract data from the request
+        # student_id = request.form("student_id")
+        # company_name = request.form("company_name")
+        # company_address = request.form("company_address")
+        # company_supervisor_name = request.form("company_supervisor_name")
+        # company_supervisor_email = request.form("company_supervisor_email")
+        # allowance = request.form("allowance")
+
+        # Extract file uploads
+        com_acceptance_form = request.files["com_acceptance_form"]
+        parent_ack_form = request.files["parent_ack_form"]
+        indemnity = request.files["indemnity"]
+        #-------------------------------
+
+        # # Connect to the database
+        # cursor = db_conn.cursor()
+
+        # # Insert data into the database
+        # insert_query = f"INSERT INTO application (student_id, com_name, com_address, com_supervisor_name, com_supervisor_email, allowance) VALUES (%s, %s, %s, %s, %s, %s)"
+        # cursor.execute(insert_query, (student_id, company_name, company_address, company_supervisor_name, company_supervisor_email, allowance))
+        # db_conn.commit()
+        # cursor.close()
 
         #---------------------
         if com_acceptance_form is None:
@@ -692,8 +747,8 @@ def add_internship_application():
         return jsonify({"message": "Internship Application added successfully.", "s3_url": s3_url}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-    
+
+
 # ------------------------- Application -------------------------
 
 
