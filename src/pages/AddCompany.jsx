@@ -221,7 +221,7 @@ export default function AddCompany() {
   // ---------- Get all Company Name ----------
   useEffect(() => {
     // Make a GET request to retrieve Company Name only
-    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/get_companies", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

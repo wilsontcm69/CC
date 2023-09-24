@@ -90,6 +90,23 @@ export default function ViewSupervisor() {
   }, []);
   // ---------- Get all Supervisor Data ----------
 
+  const getAllSupervisor = () => {
+    // Make a GET request to retrieve supervisor data
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_supervisors", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      // Set the retrieved supervisor data in your state
+      setSupervisors(data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+  }
 
   // ---------- Delete Supervisor ----------
   const handleDeleteSupervisor = () => {
