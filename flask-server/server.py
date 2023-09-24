@@ -203,7 +203,6 @@ def delete_supervisor():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-
 # ----- Sign In Supervisor -----
 @app.route("/login_supervisor", methods=["POST"])
 def login_supervisor():
@@ -446,14 +445,14 @@ def add_student():
         cohort = data.get("cohort")
         intern_start = data.get("intern_start")
         intern_end = data.get("intern_end")
-        remarks = data.get("remarks")
+        supervisor_assigned = data.get("supervisor_assigned")
         
         # Connect to the database
         cursor = db_conn.cursor()
 
         # Insert data into the database
-        insert_query = f"INSERT INTO student (student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        cursor.execute(insert_query, (student_id, first_name, last_name, email, ic_no, cohort, intern_start, intern_end, remarks))
+        insert_query = f"INSERT INTO student (student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, supervisor_assigned) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s,%s)"
+        cursor.execute(insert_query, (student_id, first_name, last_name, email, ic_no, cohort, intern_start, intern_end, supervisor_assigned))
         db_conn.commit()
         cursor.close()
 
@@ -470,7 +469,7 @@ def get_students():
         cursor = db_conn.cursor()
 
         # Retrieve student data from the database
-        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks FROM student"
+        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, supervisor_assigned FROM student"
         cursor.execute(query)
         students = cursor.fetchall()
 
@@ -486,7 +485,7 @@ def get_students():
                 "cohort": student[5],
                 "intern_start": student[6],
                 "intern_end": student[7],
-                "remarks": student[8],
+                "supervisor_assigned": student[8],
             }
             student_list.append(student_data)
 
@@ -504,7 +503,7 @@ def get_student(student_id):
         cursor = db_conn.cursor()
 
         # Retrieve student data from the database based on supervisor_id
-        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks FROM student WHERE student_id = %(student_id)s"
+        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, supervisor_assigned  FROM student WHERE student_id = %(student_id)s"
         cursor.execute(query, {"student_id": student_id})
         student = cursor.fetchone()
 
@@ -518,7 +517,7 @@ def get_student(student_id):
                 "cohort": student[5],
                 "intern_start": student[6],
                 "intern_end": student[7],
-                "remarks": student[8],
+                "supervisor_assigned": student[8],
             }
             cursor.close()
             return jsonify(student_data), 200
@@ -543,13 +542,13 @@ def edit_student():
         cohort = data.get("cohort")
         intern_start = data.get("intern_start")
         intern_end = data.get("intern_end")
-        remarks = data.get("remarks")
-
+        supervisor_assigned = data.get("supervisor_assigned")
+        
         # Connect to the database
         cursor = db_conn.cursor()
 
         # Update the supervisor's data in the database using parameterized query
-        update_query = "UPDATE student SET firstname = %(first_name)s, lastname = %(last_name)s, email = %(email)s, ic_no = %(ic_no)s, cohort = %(cohort)s, intern_start = %(intern_start)s, intern_end = %(intern_end)s, remarks = %(remarks)s WHERE student_id = %(student_id)s"
+        update_query = "UPDATE student SET firstname = %(first_name)s, lastname = %(last_name)s, email = %(email)s, ic_no = %(ic_no)s, cohort = %(cohort)s, intern_start = %(intern_start)s, intern_end = %(intern_end)s, supervisor_assigned = %(supervisor_assigned)s WHERE student_id = %(student_id)s"
         
         cursor.execute(update_query, {
             "student_id": student_id,
@@ -560,7 +559,7 @@ def edit_student():
             "cohort": cohort,
             "intern_start": intern_start,
             "intern_end": intern_end,
-            "remarks": remarks,
+            "supervisor_assigned": supervisor_assigned,
         })
 
         db_conn.commit()
@@ -624,7 +623,7 @@ def login_student():
                 "cohort": student[5],
                 "intern_start": student[6],
                 "intern_end": student[7],
-                "remarks": student[8],
+                "supervisor_assigned": student[8],
             }
             cursor.close()
             return jsonify(student_data), 200
@@ -642,7 +641,7 @@ def get_studentsdfsdf(student_id):
         cursor = db_conn.cursor()
 
         # Retrieve student data from the database based on supervisor_id
-        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, remarks FROM student WHERE student_id = %(student_id)s"
+        query = "SELECT student_id, firstname, lastname, email, ic_no, cohort, intern_start, intern_end, supervisor_assigned FROM student WHERE student_id = %(student_id)s"
         cursor.execute(query, {"student_id": student_id})
         student = cursor.fetchone()
 
@@ -656,7 +655,7 @@ def get_studentsdfsdf(student_id):
                 "cohort": student[5],
                 "intern_start": student[6],
                 "intern_end": student[7],
-                "remarks": student[8],
+                "supervisor_assigned": [8],
             }
             cursor.close()
             return jsonify(student_data), 200
@@ -669,6 +668,59 @@ def get_studentsdfsdf(student_id):
     
 
 # ------------------------- Student -------------------------
+
+# ------------------------- Application -------------------------
+
+# ----- Add Application -----
+@app.route("/add_Application", methods=["POST"])
+def add_application():
+
+
+    print("I am here")
+    try:
+        # Extract data from the request
+        data = request.json
+        # company_name = data.get("company_name")
+        # company_address = data.get("company_address")
+        # supervisor_name = data.get("supervisorName")
+        # supervisor_email = data.get("supervisor_email")
+        # allowance = data.get("allowance")
+        # 
+        # 
+        # 
+        com_acceptance_form = request.files.get("com_acceptance_form")
+        parent_ack_form = request.files.get("parent_ack_form")
+        indemnity = request.files.get("indemnity")
+
+        print(com_acceptance_form)
+
+        if com_acceptance_form is None:
+            return jsonify({"error": "Please select a file for company acceptance file"}), 400
+        
+        if parent_ack_form.filename == "":
+            return "Please select a file for parent acknowledgement form"  
+        
+        if indemnity.filename == "":
+            return "Please select a file for indemnity form"
+        
+        if com_acceptance_form: 
+            
+            s3 = boto3.client('s3')
+
+            com_acceptance_file_name_in_s3 = com_acceptance_form.filename + "_files"
+            try: 
+                s3.upload_fileobj(com_acceptance_form, custombucket, com_acceptance_file_name_in_s3)
+            except Exception as e: 
+                return jsonify({"error": str(e)}), 500
+        
+            s3_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{com_acceptance_file_name_in_s3}"
+
+            return jsonify({"message": "File uploaded successfully", "s3_url": s3_url}), 200
+        return jsonify({"error" : "no file provided"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+ 
 
 
 

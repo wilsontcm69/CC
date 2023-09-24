@@ -24,7 +24,7 @@ const TABLE_HEAD = [
   "IC No",
   "Cohort",
   "Intern Period",
-  "Remarks",
+  "Supervisor Assigned",
   "Edit",
   "Remove",
 ];
@@ -71,7 +71,7 @@ export default function ViewStudent() {
   // ---------- Get all Students Data ----------
   useEffect(() => {
     // Make a GET request to retrieve students data
-    fetch("http://localhost:5000/get_students", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_students", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +96,7 @@ export default function ViewStudent() {
     };
 
     // Send a POST request to your Flask API endpoint for deleting students
-    fetch("http://localhost:5000/delete_student", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/delete_student", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -265,7 +265,7 @@ export default function ViewStudent() {
                         </div>
                       </td>
 
-                      {/* Remarks */}
+                      {/* Supervisor Assigned */}
                       <td className="p-4">
                         <div className="flex flex-col">
                           <Typography
@@ -273,7 +273,7 @@ export default function ViewStudent() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {student.remarks}
+                            {student.supervisor_assigned}
                           </Typography>
                         </div>
                       </td>

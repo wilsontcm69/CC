@@ -90,6 +90,23 @@ export default function ViewSupervisor() {
   }, []);
   // ---------- Get all Supervisor Data ----------
 
+  const getAllSupervisor = () => {
+    // Make a GET request to retrieve supervisor data
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_supervisors", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      // Set the retrieved supervisor data in your state
+      setSupervisors(data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+  }
 
   // ---------- Delete Supervisor ----------
   const handleDeleteSupervisor = () => {
@@ -99,7 +116,7 @@ export default function ViewSupervisor() {
     };
 
     // Send a POST request to your Flask API endpoint for deleting supervisors
-    fetch("http://localhost:5000/delete_supervisor", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/delete_supervisor", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

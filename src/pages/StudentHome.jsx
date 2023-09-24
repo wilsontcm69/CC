@@ -19,7 +19,6 @@ export default function StudentHome() {
   const [cohort, setCohort] = useState("");
   const [internStart, setInternStart] = useState("");
   const [internEnd, setInternEnd] = useState("");
-  const [remarks, setRemarks] = useState("");
   
   const [uniSupervisorName, setUniSupervisorName] = useState("");
   const [uniSupervisorEmail, setUniSupervisorEmail] = useState("");
@@ -30,6 +29,8 @@ export default function StudentHome() {
   const [comSupervisorEmail, setComSupervisorEmail] = useState("");
   const [allowance, setAllowance] = useState("");
   // <-- DOUBLE CHECK WHAT ATTRIBUTE IS STORED WHEN FILE UPLOAD -->
+  const [supervisorName, setSupervisorName] = useState("");
+  const [supervisorEmail, setSupervisorEmail] = useState("");
   const [comAcceptanceForm, setComAcceptanceForm] = useState("");
   const [parentAckForm, setParentAckForm] = useState("");
   const [indemnity, setIndemnity] = useState("");
@@ -137,13 +138,14 @@ export default function StudentHome() {
     setLoading(true);
 
     // <--- add application --->
+    handleAddCompany();
 
     setTimeout(() => {
       setLoading(false);
       toast.success("Application updated!");
     }, 1000);
     setTimeout(() => {
-      window.location.reload();
+      //window.location.reload();
     }, 2000);
   };
 
@@ -158,8 +160,55 @@ export default function StudentHome() {
       toast.success("Progress updated!");
     }, 1000);
     setTimeout(() => {
-      window.location.reload();
+      //window.location.reload();
     }, 2000);
+  };
+
+  // <--- EDIT HERE: ADD APPLICATION --->
+  const handleAddCompany = () => {
+    //create a data object to send to your Flask API
+    const data = {
+      //company_name: companyName,
+      //company_address: companyAddress,
+      //supervisor_name: supervisorName,
+      //supervisor_email: supervisorEmail,
+      //allowance: allowance,
+      com_acceptance_form: comAcceptanceForm,
+      parent_ack_form: parentAckForm,
+      //indemnity: indemnity,
+    };
+
+    console.log(comAcceptanceForm);
+    const formData = new FormData();
+    formData.append("com_acceptance_form", comAcceptanceForm);
+    formData.append("parent_ack_form", parentAckForm);
+
+
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_Application", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: formData,
+    })
+      .then((response) => {
+        // handle the response, e.g., show the success message 
+        alert("Application submitted successfully!");
+
+        // clear the form
+        //setCompanyName("");
+        //setCompanyAddress("");
+        //setSupervisorName("");
+        //setSupervisorEmail("");
+        //setAllowance("");
+        setComAcceptanceForm("");
+        setParentAckForm("");
+        //setIndemnity("");
+      })
+      .catch((error) => {
+        // handle the error
+        alert("An error occurred while submitting the form.");
+      });
   };
 
   // <--- EDIT HERE: READ DATA --->
@@ -169,7 +218,7 @@ export default function StudentHome() {
   useEffect(() => {
 
     // Make a GET request to retrieve company data
-    fetch("http://localhost:5000/get_companies", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -534,20 +583,28 @@ export default function StudentHome() {
               </label>
               {status === 1 ? (
                 <>
-                  <input
-                    list="companies"
+                {/* Company Selection */}
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Select a Company
+                  </label>
+                  <select
                     id="companyInput"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Select a company"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
-                  />
-                  <datalist id="companies">
-                      {companies.map((company) => (
-                        <option key={company.company_name} value={company.company_name} />
-                      ))}
-                  </datalist>
-                  
+                  >
+                    <option value="">Select a company</option>
+                    {companies.map((company) => (
+                      <option
+                        key={company.company_name}
+                        value={company.company_name}
+                      >
+                        {company.company_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 </>
               ) : (
                 <input
@@ -657,7 +714,7 @@ export default function StudentHome() {
                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                     id="file_input"
                     type="file"
-                    onChange={(e) => setComAcceptanceForm(e.target.value)}
+                    onChange={(e) => setComAcceptanceForm(e.target.files[0])}
                   />
                 ) : (
                   <a
