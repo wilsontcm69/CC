@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Logo from "../images/TARUMT-Logo.png";
-import { useUserRole } from "../UserRoleContext";
 
 export default function SupervisorSignIn() {
   const navigate = useNavigate();
-  const userRole = useUserRole();
   const [hide1, setHide1] = useState(true);
   const [supervisor_id, setSupervisorId] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +19,7 @@ export default function SupervisorSignIn() {
     // Perform supervisor ID and password validation here
     const data = {
       supervisor_id: supervisor_id,
-      password: password
+      password: password,
     };
 
     try {
@@ -32,19 +30,17 @@ export default function SupervisorSignIn() {
         },
         body: JSON.stringify(data),
       });
-      console.log(response.status === 200)
-      console.log(response)
+      console.log(response.status === 200);
+      console.log(response);
       if (response.status === 200) {
         // Sign-in was successful, navigate to the dashboard
         navigate("/SupervisorHome");
         toast.success("Login Successful");
         // Store supervisor ID into session
         sessionStorage.setItem("supervisorId", supervisor_id);
-
       } else if (response.status === 401) {
         // Invalid supervisor ID or password
         toast.error("Invalid Supervisor ID or Password");
-        
       } else {
         // Handle other errors
         toast.error("An error occurred while signing in.");
@@ -54,19 +50,7 @@ export default function SupervisorSignIn() {
       console.error("Error:", error);
       toast.error("An error occurred while signing in.");
     }
-
   };
-
-  // <--- EDIT HERE: READ SUPERVISOR EMAIL & IC NUM --->
-  useEffect(() => {}, []);
-
-  // <--- Validate User Role --->
-  useEffect(() => {
-    if (userRole !== "Supervisor") {
-      toast.error("You are not authorized to view this page");
-      navigate("/");
-    }
-  }, []);
 
   return (
     <>
@@ -122,9 +106,7 @@ export default function SupervisorSignIn() {
                   />
                 </div>
                 <div className="relative">
-                  <label
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
+                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Password
                   </label>
                   <input

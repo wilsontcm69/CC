@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-//import { Card, Typography } from "@material-tailwind/react";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
   Card,
-  CardHeader,
   Typography,
   Button,
   CardBody,
-  Chip,
   CardFooter,
-  Avatar,
   IconButton,
   Tooltip,
-  Input,
 } from "@material-tailwind/react";
 
 const TABLE_HEAD = [
@@ -58,7 +53,7 @@ export default function ViewStudent() {
   };
 
   const [deleteTarget, setDeleteTarget] = useState("");
-  
+
   const deleteAction = () => {
     handleDeleteStudent();
 
@@ -66,17 +61,20 @@ export default function ViewStudent() {
       toast.success(`${deleteTarget} has been deleted!`);
       navigate("/dashboard");
     }, 1500);
-  }
+  };
 
   // ---------- Get all Students Data ----------
   useEffect(() => {
     // Make a GET request to retrieve students data
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_students", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_students",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // Set the retrieved student data in your state
@@ -96,13 +94,16 @@ export default function ViewStudent() {
     };
 
     // Send a POST request to your Flask API endpoint for deleting students
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/delete_student", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
+    fetch(
+      "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/delete_student",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // Handle the response, e.g., show a success message
@@ -203,9 +204,7 @@ export default function ViewStudent() {
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {student.first_name +
-                                " " +
-                                student.last_name}
+                              {student.first_name + " " + student.last_name}
                             </Typography>
                           </div>
                         </div>
@@ -258,9 +257,7 @@ export default function ViewStudent() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {student.intern_start +
-                                " - " +
-                                student.intern_end}
+                            {student.intern_start + " - " + student.intern_end}
                           </Typography>
                         </div>
                       </td>
@@ -284,9 +281,7 @@ export default function ViewStudent() {
                           <IconButton
                             variant="text"
                             onClick={() => {
-                              navigate(
-                                `/Dashboard/EditStudent/${student.id}`
-                              );
+                              navigate(`/Dashboard/EditStudent/${student.id}`);
                             }}
                           >
                             <PencilIcon className="h-4 w-4 dark:text-white hover:opacity-50 transition duration-75 ease-in-out" />

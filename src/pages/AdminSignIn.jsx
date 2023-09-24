@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Logo from "../images/TARUMT-Logo.png";
-import { useUserRole } from "../UserRoleContext";
 
 export default function AdminSignIn() {
   const navigate = useNavigate();
-  const userRole = useUserRole();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -23,13 +21,6 @@ export default function AdminSignIn() {
     navigate("/dashboard");
     toast.success("Login Successful");
   };
-
-  useEffect(() => {
-    if (userRole !== "Admin") {
-      toast.error("You are not authorized to view this page");
-      navigate("/");
-    }
-  }, []);
 
   return (
     <>

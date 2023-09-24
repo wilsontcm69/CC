@@ -2,12 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Logo from "../images/TARUMT-Logo.png";
-import { useUserRole } from "../UserRoleContext";
-
 
 export default function StudentSignIn() {
   const navigate = useNavigate();
-  const userRole = useUserRole();
   const [email, setEmail] = useState("");
   const [ic, setIC] = useState("");
 
@@ -18,40 +15,48 @@ export default function StudentSignIn() {
       return;
     }
 
-    
     // Perform student ID and password validation here
     const data = {
       email: email,
-      ic: ic
+      ic: ic,
     };
 
     try {
-      const response = await fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/login_student", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-    
+      const response = await fetch(
+        "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/login_student",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
       if (response.status === 200) {
         // Sign-in was successful, parse response data as JSON
         const responseData = await response.json();
-    
+
         // Store student data in session storage
         sessionStorage.setItem("studentId", responseData.id);
         sessionStorage.setItem("studentEmail", responseData.email);
-        sessionStorage.setItem("studentName", responseData.first_name + " " + responseData.last_name);
+        sessionStorage.setItem(
+          "studentName",
+          responseData.first_name + " " + responseData.last_name
+        );
         sessionStorage.setItem("studentIc", responseData.ic_no);
         sessionStorage.setItem("cohort", responseData.cohort);
         sessionStorage.setItem("intern_start", responseData.intern_start);
         sessionStorage.setItem("intern_end", responseData.intern_end);
-        sessionStorage.setItem("supervisor_assigned", responseData.supervisor_assigned);
+        sessionStorage.setItem(
+          "supervisor_assigned",
+          responseData.supervisor_assigned
+        );
         sessionStorage.setItem("status", responseData.remarks);
-    
+
         // Navigate to the "/StudentHome" page
         navigate("/StudentHome");
-    
+
         // Display a success toast message
         toast.success("Login Successful");
       } else if (response.status === 401) {
@@ -66,19 +71,7 @@ export default function StudentSignIn() {
       console.error("Error:", error);
       toast.error("An error occurred while signing in.");
     }
-
   };
-
-  // <--- EDIT HERE: READ STUDENT EMAIL & IC NUM --->
-  useEffect(() => {}, []);
-
-  // <--- Validate User Role --->
-  useEffect(() => {
-    if (userRole !== "Student") {
-      toast.error("You are not authorized to view this page");
-      navigate("/");
-    }
-  }, []);
 
   return (
     <>

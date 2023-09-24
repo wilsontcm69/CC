@@ -1,21 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { useUserRole } from "../UserRoleContext";
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-import toast from "react-hot-toast";
 
 function Dashboard() {
-  const userRole = useUserRole();
-  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  // useEffect(() => {
-  //   if (userRole !== "Admin") {
-  //     toast.error("You are not authorized to view this page");
-  //     navigate("/");
-  //   }
-  // }, []);
 
   return (
     <div className="flex h-screen overflow-hidden">

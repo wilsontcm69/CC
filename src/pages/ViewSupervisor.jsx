@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-//import { Card, Typography } from "@material-tailwind/react";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
   Card,
-  CardHeader,
   Typography,
   Button,
   CardBody,
-  Chip,
   CardFooter,
-  Avatar,
   IconButton,
   Tooltip,
-  Input,
 } from "@material-tailwind/react";
 
 const TABLE_HEAD = [
@@ -73,12 +67,15 @@ export default function ViewSupervisor() {
   // ---------- Get all Supervisor Data ----------
   useEffect(() => {
     // Make a GET request to retrieve supervisor data
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_supervisors", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_supervisors",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // Set the retrieved supervisor data in your state
@@ -90,7 +87,6 @@ export default function ViewSupervisor() {
   }, []);
   // ---------- Get all Supervisor Data ----------
 
-
   // ---------- Delete Supervisor ----------
   const handleDeleteSupervisor = () => {
     // Create a data object to send to your Flask API
@@ -99,13 +95,16 @@ export default function ViewSupervisor() {
     };
 
     // Send a POST request to your Flask API endpoint for deleting supervisors
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/delete_supervisor", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
+    fetch(
+      "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/delete_supervisor",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // Handle the response, e.g., show a success message

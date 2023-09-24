@@ -4,12 +4,10 @@ import Logo from "../images/TARUMT-Logo.png";
 import ThemeToggle from "../components/ThemeToggle";
 import Help from "../components/DropdownHelp";
 import toast from "react-hot-toast";
-import { useUserRole, useUserRoleUpdate } from "../UserRoleContext";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
 export default function Evaluation() {
   const navigate = useNavigate();
-  const userRole = useUserRole();
 
   //Set Student Data
   const [studentID, setStudentID] = useState("");
@@ -48,7 +46,7 @@ export default function Evaluation() {
   const [report2Link, setReport2Link] = useState("");
   const [loading, setLoading] = useState(false);
   const setForUserRole = useUserRoleUpdate();
-  
+
   const { id } = useParams();
 
   const [status, setStatus] = useState(0);
@@ -101,7 +99,7 @@ export default function Evaluation() {
         setInternEnd(data.intern_end);
         setStatus(data.remarks);
 
-        if(data.remarks != "1") {
+        if (data.remarks != "1") {
           getApplication(data.id);
         }
 
@@ -113,9 +111,8 @@ export default function Evaluation() {
       });
   }, []);
 
-
   // ---------- Application Progress  ----------
-  
+
   const getApplication = (student_id) => {
     console.log("student_id: " + student_id);
 
@@ -126,31 +123,29 @@ export default function Evaluation() {
         "Content-Type": "application/json",
       },
     })
-    .then((response) => response.json())
-    .then((data) => {
-      // Handle the response from the server
-      setCompanyName(data.com_name);
-      setCompanyAddress(data.com_address);
-      setComSupervisorName(data.com_supervisor_name);
-      setComSupervisorEmail(data.com_supervisor_email);
-      console.log(data);
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response from the server
+        setCompanyName(data.com_name);
+        setCompanyAddress(data.com_address);
+        setComSupervisorName(data.com_supervisor_name);
+        setComSupervisorEmail(data.com_supervisor_email);
+        console.log(data);
 
-      // Assuming data.allowance is a decimal number
-      setAllowance(data.allowance);
-    })
-    .catch((error) => {
-      // Handle errors, e.g., display an error message
-      console.error("Error:", error);
-      alert("An error occurred while updating the company.");
-    });
+        // Assuming data.allowance is a decimal number
+        setAllowance(data.allowance);
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while updating the company.");
+      });
   };
 
   // --------------- Application Progress ---------------
 
-
   // ---------- Edit Supervisor ----------
   const handleApproveApplication = () => {
-    
     // Create a data object to send to your Flask API
     const data = {
       student_id: studentID,
@@ -181,10 +176,8 @@ export default function Evaluation() {
         console.error("Error:", error);
         alert("An error occurred while updating the student.");
       });
-
   };
   // ---------- Edit Supervisor ----------
-  
 
   return (
     <>
@@ -355,14 +348,24 @@ export default function Evaluation() {
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Intern Period
                 </dt>
-                <dd class="text-base font-semibold">{internStart} - {internEnd}</dd>
+                <dd class="text-base font-semibold">
+                  {internStart} - {internEnd}
+                </dd>
               </div>
               <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Status
                 </dt>
                 <dd class="text-base font-semibold">
-                  {status == 1 ? 'Pending' : status == 2 ? 'Evaluation' : status == 3 ? 'Approved' : status == 4 ? 'Progress Check': '-'}
+                  {status == 1
+                    ? "Pending"
+                    : status == 2
+                    ? "Evaluation"
+                    : status == 3
+                    ? "Approved"
+                    : status == 4
+                    ? "Progress Check"
+                    : "-"}
                 </dd>
               </div>
             </dl>
@@ -576,7 +579,7 @@ export default function Evaluation() {
                     </div>
                   ) : (
                     <>
-                      <div style={{ textAlign: 'center' }}>
+                      <div style={{ textAlign: "center" }}>
                         <button
                           type="button"
                           onClick={() => acceptApplication()}
@@ -677,10 +680,10 @@ export default function Evaluation() {
 
           setCompanyName("Joah");
           setCompanyAddress("No. 1, Jalan 1, 1/1, 11111, Kuala Lumpur");
-          
+
           setSupervisorName("johndoe");
           setSupervisorEmail("johndoe@gmail.com");
-          
+
           setAllowance(1000);
           setComAcceptFormName("ComAcceptForm.pdf");
           setComAcceptFormLink("https://www.google.com");

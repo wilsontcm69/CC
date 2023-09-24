@@ -1,27 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useUserRole, useUserRoleUpdate } from "../UserRoleContext";
 import { useNavigate } from "react-router-dom";
 import Logo from "../images/TARUMT-Logo.png";
 import ThemeToggle from "../components/ThemeToggle";
 import Help from "../components/DropdownHelp";
 import toast from "react-hot-toast";
 import {
-  PencilIcon,
-  TrashIcon,
-  CheckBadgeIcon,
-} from "@heroicons/react/24/solid";
-import {
   Card,
-  CardHeader,
   Typography,
   Button,
   CardBody,
-  Chip,
   CardFooter,
-  Avatar,
-  IconButton,
   Tooltip,
-  Input,
 } from "@material-tailwind/react";
 
 const TABLE_HEAD = [
@@ -40,11 +29,9 @@ const ROWS_PER_PAGE = 7; // Number of rows per page
 
 export default function SupervisorHome() {
   const navigate = useNavigate();
-  const userRole = useUserRole();
-  const setForUserRole = useUserRoleUpdate();
   const [currentPage, setCurrentPage] = useState(1);
-   // Retrieve student email from sessionStorage
-   const session_supervisorId = sessionStorage.getItem("supervisorId");
+  // Retrieve student email from sessionStorage
+  const session_supervisorId = sessionStorage.getItem("supervisorId");
 
   // Calculate the start and end indexes for the current page
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
@@ -104,9 +91,9 @@ export default function SupervisorHome() {
               <ThemeToggle />
               <button
                 onClick={() => {
-                  setForUserRole("");
+                  sessionStorage.clear();
                   navigate("/");
-                  toast.success("You have successfully logged out!");
+                  toast.success("Logged out successfully.");
                 }}
                 className="flex items-center justify-center cursor-pointer w-8 h-8 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600/80 rounded-full"
                 data-popover-target="popover-description"
@@ -143,21 +130,39 @@ export default function SupervisorHome() {
       </header>
 
       <main class="p-4 h-auto sm:p-4 xl:px-28 xl:py-6">
-
-      {/* Welcome Banner */}
-      <div className="relative bg-indigo-200 dark:bg-indigo-500 p-4 sm:p-6 rounded-sm overflow-hidden mb-2">
+        {/* Welcome Banner */}
+        <div className="relative bg-indigo-200 dark:bg-indigo-500 p-4 sm:p-6 rounded-sm overflow-hidden mb-2">
           {/* Background illustration */}
-          <div className="absolute right-0 top-0 -mt-4 mr-16 pointer-events-none hidden xl:block" aria-hidden="true">
-            <svg width="319" height="198" xmlnsXlink="http://www.w3.org/1999/xlink">
+          <div
+            className="absolute right-0 top-0 -mt-4 mr-16 pointer-events-none hidden xl:block"
+            aria-hidden="true"
+          >
+            <svg
+              width="319"
+              height="198"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
+            >
               <defs>
                 <path id="welcome-a" d="M64 0l64 128-64-20-64 20z" />
                 <path id="welcome-e" d="M40 0l40 80-40-12.5L0 80z" />
                 <path id="welcome-g" d="M40 0l40 80-40-12.5L0 80z" />
-                <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="welcome-b">
+                <linearGradient
+                  x1="50%"
+                  y1="0%"
+                  x2="50%"
+                  y2="100%"
+                  id="welcome-b"
+                >
                   <stop stopColor="#A5B4FC" offset="0%" />
                   <stop stopColor="#818CF8" offset="100%" />
                 </linearGradient>
-                <linearGradient x1="50%" y1="24.537%" x2="50%" y2="100%" id="welcome-c">
+                <linearGradient
+                  x1="50%"
+                  y1="24.537%"
+                  x2="50%"
+                  y2="100%"
+                  id="welcome-c"
+                >
                   <stop stopColor="#4338CA" offset="0%" />
                   <stop stopColor="#6366F1" stopOpacity="0" offset="100%" />
                 </linearGradient>
@@ -168,21 +173,33 @@ export default function SupervisorHome() {
                     <use xlinkHref="#welcome-a" />
                   </mask>
                   <use fill="url(#welcome-b)" xlinkHref="#welcome-a" />
-                  <path fill="url(#welcome-c)" mask="url(#welcome-d)" d="M64-24h80v152H64z" />
+                  <path
+                    fill="url(#welcome-c)"
+                    mask="url(#welcome-d)"
+                    d="M64-24h80v152H64z"
+                  />
                 </g>
                 <g transform="rotate(-51 91.324 -105.372)">
                   <mask id="welcome-f" fill="#fff">
                     <use xlinkHref="#welcome-e" />
                   </mask>
                   <use fill="url(#welcome-b)" xlinkHref="#welcome-e" />
-                  <path fill="url(#welcome-c)" mask="url(#welcome-f)" d="M40.333-15.147h50v95h-50z" />
+                  <path
+                    fill="url(#welcome-c)"
+                    mask="url(#welcome-f)"
+                    d="M40.333-15.147h50v95h-50z"
+                  />
                 </g>
                 <g transform="rotate(44 61.546 392.623)">
                   <mask id="welcome-h" fill="#fff">
                     <use xlinkHref="#welcome-g" />
                   </mask>
                   <use fill="url(#welcome-b)" xlinkHref="#welcome-g" />
-                  <path fill="url(#welcome-c)" mask="url(#welcome-h)" d="M40.333-15.147h50v95h-50z" />
+                  <path
+                    fill="url(#welcome-c)"
+                    mask="url(#welcome-h)"
+                    d="M40.333-15.147h50v95h-50z"
+                  />
                 </g>
               </g>
             </svg>
@@ -190,238 +207,241 @@ export default function SupervisorHome() {
 
           {/* Content */}
           <div className="relative">
-            <h1 className="text-4xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold mb-1">Welcome, Staff {session_supervisorId}. 👋</h1>
-            <p className="dark:text-indigo-200">A journey of a thousand miles begins with a single step.</p>
+            <h1 className="text-4xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold mb-1">
+              Welcome, Staff {session_supervisorId}. 👋
+            </h1>
+            <p className="dark:text-indigo-200">
+              A journey of a thousand miles begins with a single step.
+            </p>
           </div>
         </div>
-        
       </main>
 
       <section className="sm:flex sm:items-center sm:justify-between p-2 sm:p-4 xl:px-28 xl:py-4">
-        
-      {students.length === 0 ? (
-        <div class="text-center">
-          <div role="status">
-            <svg
-              aria-hidden="true"
-              class="inline w-10 h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-              viewBox="0 0 100 101"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                fill="currentColor"
-              />
-              <path
-                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                fill="currentFill"
-              />
-            </svg>
-            <span class="sr-only">Loading...</span>
+        {students.length === 0 ? (
+          <div class="text-center">
+            <div role="status">
+              <svg
+                aria-hidden="true"
+                class="inline w-10 h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentFill"
+                />
+              </svg>
+              <span class="sr-only">Loading...</span>
+            </div>
           </div>
-        </div>
-      ) : (
-        <Card className="h-full w-full">
-          {/* ... other parts of your component ... */}
-          <form
-            action="/edit_student"
-            autoComplete="on"
-            method="POST"
-            enctype="multipart/form-data"
-          >
+        ) : (
+          <Card className="h-full w-full">
+            {/* ... other parts of your component ... */}
+            <form
+              action="/edit_student"
+              autoComplete="on"
+              method="POST"
+              enctype="multipart/form-data"
+            >
+              <CardBody className="overflow-x-auto px-0 bg-white text-black dark:bg-gray-800 dark:text-white rounded-t-lg">
+                <table className="w-full min-w-max table-auto text-left">
+                  <thead>
+                    {/* ... table header ... */}
+                    <tr>
+                      {TABLE_HEAD.map((head) => (
+                        <th
+                          key={head}
+                          className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                        >
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal leading-none opacity-70"
+                          >
+                            {head}
+                          </Typography>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
 
-          <CardBody className="overflow-x-auto px-0 bg-white text-black dark:bg-gray-800 dark:text-white rounded-t-lg">
-            <table className="w-full min-w-max table-auto text-left">
-              <thead>
-                {/* ... table header ... */}
-                <tr>
-                  {TABLE_HEAD.map((head) => (
-                    <th
-                      key={head}
-                      className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                    >
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal leading-none opacity-70"
-                      >
-                        {head}
-                      </Typography>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              
-              <tbody>
-                  {rowsToDisplay.map((student) => (
-                    <tr key={student.id}>
-                      {/* Student ID */}
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
+                  <tbody>
+                    {rowsToDisplay.map((student) => (
+                      <tr key={student.id}>
+                        {/* Student ID */}
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex flex-col">
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                {student.id}
+                              </Typography>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Student Name */}
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex flex-col">
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                {student.first_name + " " + student.last_name}
+                              </Typography>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Email */}
+                        <td className="p-4">
                           <div className="flex flex-col">
                             <Typography
                               variant="small"
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {student.id}
+                              {student.email}
                             </Typography>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Student Name */}
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
+                        {/* IC No */}
+                        <td className="p-4">
                           <div className="flex flex-col">
                             <Typography
                               variant="small"
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {student.first_name +
-                                " " +
-                                student.last_name}
+                              {student.ic_no}
                             </Typography>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Email */}
-                      <td className="p-4">
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {student.email}
-                          </Typography>
-                        </div>
-                      </td>
+                        {/* Cohort */}
+                        <td className="p-4">
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {student.cohort}
+                            </Typography>
+                          </div>
+                        </td>
 
-                      {/* IC No */}
-                      <td className="p-4">
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {student.ic_no}
-                          </Typography>
-                        </div>
-                      </td>
-
-                      {/* Cohort */}
-                      <td className="p-4">
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {student.cohort}
-                          </Typography>
-                        </div>
-                      </td>
-
-                      {/* Intern Period*/}
-                      <td className="p-4">
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {student.intern_start +
+                        {/* Intern Period*/}
+                        <td className="p-4">
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {student.intern_start +
                                 " - " +
                                 student.intern_end}
-                          </Typography>
-                        </div>
-                      </td>
+                            </Typography>
+                          </div>
+                        </td>
 
-                      {/* Supervisor Assigned */}
-                      <td className="p-4">
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {student.supervisor_assigned}
-                          </Typography>
-                        </div>
-                      </td>
+                        {/* Supervisor Assigned */}
+                        <td className="p-4">
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {student.supervisor_assigned}
+                            </Typography>
+                          </div>
+                        </td>
 
-                      {/* Status */}
-                      <td className="p-4">
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {/* {major} */}
-                            {student.remarks == 1 ? 'Pending' : student.remarks == 2 ? 'Evaluation' : student.remarks == 3 ? 'Approved' : student.remarks == 4 ? 'Progress Check': '-'}
-                          </Typography>
-                        </div>
-                      </td>
+                        {/* Status */}
+                        <td className="p-4">
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {/* {major} */}
+                              {student.remarks == 1
+                                ? "Pending"
+                                : student.remarks == 2
+                                ? "Evaluation"
+                                : student.remarks == 3
+                                ? "Approved"
+                                : student.remarks == 4
+                                ? "Progress Check"
+                                : "-"}
+                            </Typography>
+                          </div>
+                        </td>
 
-                      {/* Edit Button */}
-                      <td className="p-4">
-                        <Tooltip content="Edit User">
-                          <button
-                            className="text-sm text-blue-600 dark:text-blue-500 hover:underline"
-                            onClick={() => {
-                              navigate(`${student.id}`);
-                            }}
-                          >
-                            Click to Edit
-                          </button>
-                        </Tooltip>
-                      </td>
+                        {/* Edit Button */}
+                        <td className="p-4">
+                          <Tooltip content="Edit User">
+                            <button
+                              className="text-sm text-blue-600 dark:text-blue-500 hover:underline"
+                              onClick={() => {
+                                navigate(`${student.id}`);
+                              }}
+                            >
+                              Click to Edit
+                            </button>
+                          </Tooltip>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </CardBody>
+            </form>
 
-                    </tr>
-                  ))}
-                </tbody>
-
-            </table>
-          </CardBody>
-
-          </form>
-
-          <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4 bg-white text-black dark:bg-gray-800 dark:text-white rounded-b-lg">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="font-normal"
-            >
-              Page {currentPage} of {totalPages}
-            </Typography>
-            <div className="flex gap-2">
-              <Button
-                variant="outlined"
-                size="sm"
-                onClick={handlePreviousPage}
-                className="dark:text-white dark:border-white hover:opacity-60 transition duration-300 ease-in-out"
+            <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4 bg-white text-black dark:bg-gray-800 dark:text-white rounded-b-lg">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal"
               >
-                Previous
-              </Button>
-              <Button
-                variant="outlined"
-                size="sm"
-                onClick={handleNextPage}
-                className="dark:text-white dark:border-white hover:opacity-60 transition duration-300 ease-in-out"
-              >
-                Next
-              </Button>
-            </div>
-          </CardFooter>
-        </Card>
-      )}
-      
+                Page {currentPage} of {totalPages}
+              </Typography>
+              <div className="flex gap-2">
+                <Button
+                  variant="outlined"
+                  size="sm"
+                  onClick={handlePreviousPage}
+                  className="dark:text-white dark:border-white hover:opacity-60 transition duration-300 ease-in-out"
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="sm"
+                  onClick={handleNextPage}
+                  className="dark:text-white dark:border-white hover:opacity-60 transition duration-300 ease-in-out"
+                >
+                  Next
+                </Button>
+              </div>
+            </CardFooter>
+          </Card>
+        )}
       </section>
 
       {/* Quick Links */}

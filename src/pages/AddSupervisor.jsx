@@ -103,16 +103,6 @@ export default function AddSupervisor() {
 
   const onSubmit = () => {
     setLoading(true);
-    console.log("Supervisor ID: " + supervisorID);
-    console.log("Email: " + email);
-    console.log("Password: " + password);
-    console.log("Confirm Password: " + confirmPassword);
-    console.log("Name: " + firstName + " " + lastName);
-    console.log("Phone: " + phone);
-    console.log("Birth Date: " + birthDate);
-    console.log("Gender: " + gender);
-    console.log("Position: " + positionTitle);
-    console.log("Major of Study: " + major);
 
     handleAddSupervisor();
     setTimeout(() => {

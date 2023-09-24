@@ -1,24 +1,18 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-//import { Card, Typography } from "@material-tailwind/react";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
   Card,
-  CardHeader,
   Typography,
   Button,
   CardBody,
-  Chip,
   CardFooter,
-  Avatar,
   IconButton,
   Tooltip,
-  Input,
 } from "@material-tailwind/react";
 
 const TABLE_HEAD = [
-
   "Name",
   "Email",
   "Website",
@@ -76,12 +70,15 @@ export default function ViewCompany() {
   // ---------- Get all Company Data ----------
   useEffect(() => {
     // Make a GET request to retrieve company data
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // Set the retrieved company data in your state
@@ -101,13 +98,16 @@ export default function ViewCompany() {
     };
 
     // Send a POST request to your Flask API endpoint for deleting companies
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/delete_company", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
+    fetch(
+      "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/delete_company",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // Handle the response, e.g., show a success message
@@ -273,8 +273,8 @@ export default function ViewCompany() {
                             className="font-normal"
                           >
                             {company.working_day_start +
-                            " - " +
-                            company.working_day_end} 
+                              " - " +
+                              company.working_day_end}
                           </Typography>
                         </div>
                       </td>
@@ -288,8 +288,8 @@ export default function ViewCompany() {
                             className="font-normal"
                           >
                             {company.working_hour_start +
-                            " - " +
-                            company.working_hour_end} 
+                              " - " +
+                              company.working_hour_end}
                           </Typography>
                         </div>
                       </td>
@@ -303,12 +303,12 @@ export default function ViewCompany() {
                             className="font-normal"
                           >
                             {company.allowance_start +
-                            " - " +
-                            company.allowance_end}
+                              " - " +
+                              company.allowance_end}
                           </Typography>
                         </div>
                       </td>
-                      
+
                       {/* Open For */}
                       <td className="p-4">
                         <div className="flex flex-col">
