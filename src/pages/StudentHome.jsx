@@ -52,39 +52,19 @@ export default function StudentHome() {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(true);
   const setForUserRole = useUserRoleUpdate();
-  // Retrieve student email from sessionStorage
-  const studentEmail = sessionStorage.getItem("studentEmail");
 
-  const dummyCompany = [
-    {
-      name: "Aeon Co. (M) Bhd.",
-      address: "No. 1, Jalan 1, Taman 1, 11111 Kuala Lumpur",
-    },
-    {
-      name: "Joah",
-      address: "No. 2, Jalan 2, Taman 2, 22222 Kuala Lumpur",
-    },
-    {
-      name: "TARUC",
-      address: "No. 3, Jalan 3, Taman 3, 33333 Kuala Lumpur",
-    },
-    {
-      name: "XYZ Corporation",
-      address: "123 Main Street, Suite 456, Cityville, 54321",
-    },
-    {
-      name: "ABC Industries",
-      address: "456 Elm Avenue, Apt 789, Townsville, 98765",
-    },
-    {
-      name: "Tech Innovators Inc.",
-      address: "789 Oak Road, Unit 101, Techville, 12345",
-    },
-    {
-      name: "Greenfield Farms Ltd.",
-      address: "101 Willow Lane, Farmville, 67890",
-    },
-  ];
+  // ---------- Student Data Session ----------
+  const sessionId = sessionStorage.getItem("studentId");
+  const sessionEmail = sessionStorage.getItem("studentEmail");
+  const sessionName = sessionStorage.getItem("studentName");
+  const sessionIc = sessionStorage.getItem("studentIc");
+  const sessionCohort = sessionStorage.getItem("cohort");
+  const sessionInternStart = sessionStorage.getItem("intern_start");
+  const sessionInternEnd = sessionStorage.getItem("intern_end");
+
+  // ---------- Get all Company Data ----------
+  const [companies, setCompanies] = useState([]);
+  const [showDatalist, setShowDatalist] = useState(false);
 
   const validateInputCompany = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -183,48 +163,33 @@ export default function StudentHome() {
   };
 
   // <--- EDIT HERE: READ DATA --->
-  // ---------- Get Student Data ----------
+
+
+  // ---------- Get All Company Data ----------
   useEffect(() => {
 
-    const data = {
-      email: studentEmail,
-    };
-
-    // Make a GET request to retrieve student data
-    fetch("http://localhost:5000/get_login_student", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      // Handle the response from the Flask API
-      // Set the retrieved student data in your state
-      setStudentID(data.id);
-      setStudentName(data.first_name + " " + data.last_name);
-      setEmail(data.email);
-      setICNum(data.ic_no);
-      setCohort(data.cohort);
-      setInternStart(data.intern_start);
-      setInternEnd(data.intern_end);
-      setRemarks(data.remarks);
-      setUniSupervisorName("Ridzuan");
-      setUniSupervisorEmail("ridzuan@gmail.com");
-
-      console.log(data);
+    // Make a GET request to retrieve company data
+    fetch("http://localhost:5000/get_companies", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
-    .catch((error) => {
-      // Handle errors, e.g., display an error message
-      console.error("Error:", error);
-      alert("An error occurred while communicating with the server.");
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        // Set the retrieved student data in your state
+        setCompanies(data);
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+     
+  }, []);
 
-      
-  }, [studentEmail]);
+  //console.log("Company:" + companies);
 
-
+  /*
   useEffect(() => {
     dummyCompany.map((company) => {
       if (company.name === companyName) {
@@ -232,6 +197,23 @@ export default function StudentHome() {
       }
     });
   }, [companyName]);
+  */
+
+  /*
+  useEffect(() => {
+    // Find the company with a matching name
+    const foundCompany = companies.find((company) => company.name === companyName);
+    
+    // If a matching company is found, set its address
+    if (foundCompany) {
+      setCompanyAddress(foundCompany.address);
+    } else {
+      // Handle the case when no matching company is found
+      setCompanyAddress(""); // You can set a default value or handle the absence of a match as needed
+    }
+  }, [companies, companyName]);
+  */
+
 
   // <--- Validate User Role --->
   // useEffect(() => {
@@ -388,14 +370,13 @@ export default function StudentHome() {
 
           {/* Content */}
           <div className="relative">
-            <h1 className="text-2xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold mb-1">Welcome, {studentEmail}. 👋</h1>
+            <h1 className="text-2xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold mb-1">Welcome, {sessionEmail}. 👋</h1>
             <p className="dark:text-indigo-200">A journey of a thousand miles begins with a single step.</p>
           </div>
         </div>
 
         <br /><br />
-        
-
+                    
         {/* Stepper */}
         <div className="px-4 pb-4">
           <ol class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
@@ -502,13 +483,13 @@ export default function StudentHome() {
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Cohort
                 </dt>
-                <dd class="text-base font-semibold">{cohort}</dd>
+                <dd class="text-base font-semibold">{sessionCohort}</dd>
               </div>
               <div class="flex flex-col py-3">
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Intern Period
                 </dt>
-                <dd class="text-base font-semibold">{internStart} - {internEnd}</dd>
+                <dd class="text-base font-semibold">{sessionInternStart} to {sessionInternEnd}</dd>
               </div>
             </dl>
           </div>
@@ -554,16 +535,19 @@ export default function StudentHome() {
               {status === 1 ? (
                 <>
                   <input
-                    list="countries"
+                    list="companies"
+                    id="companyInput"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Select a company"
+                    value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                   />
-                  <datalist id="countries">
-                    {dummyCompany.map((company) => (
-                      <option value={company.name} />
-                    ))}
+                  <datalist id="companies">
+                      {companies.map((company) => (
+                        <option key={company.company_name} value={company.company_name} />
+                      ))}
                   </datalist>
+                  
                 </>
               ) : (
                 <input

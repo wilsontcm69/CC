@@ -128,7 +128,7 @@ export default function AddStudent() {
     };
 
     // Send a POST request to your Flask API endpoint for adding students
-    fetch("ALB-890423990.us-east-1.elb.amazonaws.com/add_student", {
+    fetch("http://localhost:5000/add_student", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
