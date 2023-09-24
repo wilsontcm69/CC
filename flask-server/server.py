@@ -646,31 +646,64 @@ def login_student():
 # ------------------------- Application -------------------------
 
 # ----- Add Application -----
-@app.route("/add_application", methods=["POST"])
-def add_application():
+@app.route("/add_application", methods=["POST", "GET"])
+def add_internship_application():
     try:
-        # Extract data from the request
-        data = request.json
-        student_id = data.get("student_id")
-        company_name = data.get("company_name")
-        company_address = data.get("company_address")
-        company_supervisor_name = data.get("company_supervisor_name")
-        company_supervisor_email = data.get("company_supervisor_email")
-        allowance = data.get("allowance")
+        student_id = request.form.get("student_id")
+        company_name = request.form.get("company_name")
+        company_address = request.form.get("company_address")
+        company_supervisor_name = request.form.get("company_supervisor_name")
+        company_supervisor_email = request.form.get("company_supervisor_email")
+        allowance = request.form.get("allowance")
+        com_acceptance_form = request.files.get("com_acceptance_form")
+        parent_ack_form = request.files.get("parent_ack_form")
+        indemnity = request.files.get("indemnity")
+        hired_evidence = request.files.get("hired_evidence")
 
-        # Connect to the database
-        cursor = db_conn.cursor()
+        # Connect S3 and upload files
+        try: 
+            s3 = boto3.client('s3')
 
-        # Insert data into the database
-        insert_query = f"INSERT INTO application (student_id, com_name, com_address, com_supervisor_name, com_supervisor_email, allowance) VALUES (%s, %s, %s, %s, %s, %s)"
-        cursor.execute(insert_query, (student_id, company_name, company_address, company_supervisor_name, company_supervisor_email, allowance))
-        db_conn.commit()
-        cursor.close()
+            try: 
+                com_acceptance_file_name_in_s3 = "companyFile_" + com_acceptance_form.filename
+                s3.upload_fileobj(com_acceptance_form, custombucket, com_acceptance_file_name_in_s3)
+                company_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{com_acceptance_file_name_in_s3}"
 
-        return jsonify({"message": "Internship Application added successfully."}), 201
+                parent_ack_file_name_in_s3 = "parentFiles_" + parent_ack_form.filename
+                s3.upload_fileobj(parent_ack_form, custombucket, parent_ack_file_name_in_s3)
+                parent_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{parent_ack_file_name_in_s3}"
+
+                indemnity_file_name_in_s3 = "indeminityFiles_" + indemnity.filename
+                s3.upload_fileobj(indemnity, custombucket, indemnity_file_name_in_s3)
+                indemnity_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{indemnity_file_name_in_s3}"
+
+                if(hired_evidence == None):
+                    hired_evidence_file_name_in_s3 = "evidenceFile_" + hired_evidence.filename 
+                    s3.upload_fileobj(hired_evidence, custombucket, hired_evidence_file_name_in_s3)
+                    hired_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{hired_evidence_file_name_in_s3}"
+                else:
+                    hired_url = ""
+
+            except Exception as e: 
+                return jsonify({"error": str(e)}), 500
+        
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+        # Connect to the database and add application
+        try:
+            # Connect to the database
+            cursor = db_conn.cursor()
+            insert_query = "INSERT INTO application (student_id, com_name, com_address, com_supervisor_name, com_supervisor_email, allowance, com_acceptance_form, parent_ack_form, indemnity, hired_evidence) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            cursor.execute(insert_query, (student_id, company_name, company_address, company_supervisor_name, company_supervisor_email, allowance, company_url, parent_url, indemnity_url, hired_url))
+            db_conn.commit()
+            cursor.close()
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+        return jsonify({"message": "Internship Application added successfully.", "company_url": company_url, "parent_url": parent_url, "indemnity_url": indemnity_url, "hired_url": hired_url}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 # ----- Get Application -----
 @app.route("/get_application/<string:student_id>", methods=["GET"])
@@ -708,7 +741,6 @@ def get_application(student_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-
 # ----- Update  -----
 @app.route("/approve_application", methods=["POST"])
 def approve_application():
@@ -759,67 +791,51 @@ def approve_application():
         return jsonify({"message": "Internship Application added successfully.", "s3_url": s3_url}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-# ----- Add Application -----
-@app.route("/add_applicationBUCKET", methods=["POST"])
-def add_internship_application():
+
+# ----- Add Progress  -----
+@app.route("/add_progress", methods=["POST"])
+def add_progress():
     try:
-        # # Extract data from the request
-        # student_id = request.form("student_id")
-        # company_name = request.form("company_name")
-        # company_address = request.form("company_address")
-        # company_supervisor_name = request.form("company_supervisor_name")
-        # company_supervisor_email = request.form("company_supervisor_email")
-        # allowance = request.form("allowance")
+        student_id = request.form.get("student_id")
+        report_1 = request.files.get("report_1")
+        report_2 = request.files.get("report_2")
 
-        # Extract file uploads
-        com_acceptance_form = request.files["com_acceptance_form"]
-        parent_ack_form = request.files["parent_ack_form"]
-        indemnity = request.files["indemnity"]
-        #-------------------------------
-
-        # # Connect to the database
-        # cursor = db_conn.cursor()
-
-        # # Insert data into the database
-        # insert_query = f"INSERT INTO application (student_id, com_name, com_address, com_supervisor_name, com_supervisor_email, allowance) VALUES (%s, %s, %s, %s, %s, %s)"
-        # cursor.execute(insert_query, (student_id, company_name, company_address, company_supervisor_name, company_supervisor_email, allowance))
-        # db_conn.commit()
-        # cursor.close()
-
-        #---------------------
-        if com_acceptance_form is None:
-            return jsonify({"error": "Please select a file for company acceptance file"}), 400
-        
-        if parent_ack_form.filename == "":
-            return "Please select a file for parent acknowledgement form"  
-        
-        if indemnity.filename == "":
-            return "Please select a file for indemnity form"
-
-        if com_acceptance_form: 
-            
+        # Connect S3 and upload files
+        try:
             s3 = boto3.client('s3')
 
-            com_acceptance_file_name_in_s3 = com_acceptance_form.filename + "_files"
             try: 
-                s3.upload_fileobj(com_acceptance_form, custombucket, com_acceptance_file_name_in_s3)
+                report_1_file_name_in_s3 = "report1_" + report_1.filename
+                s3.upload_fileobj(report_1, custombucket, report_1_file_name_in_s3)
+                report_1_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{report_1_file_name_in_s3}"
+
+                report_2_file_name_in_s3 = "report2_" + report_2.filename
+                s3.upload_fileobj(report_2, custombucket, report_2_file_name_in_s3)
+                report_2_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{report_2_file_name_in_s3}"
+
             except Exception as e: 
                 return jsonify({"error": str(e)}), 500
-        
-            s3_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{com_acceptance_file_name_in_s3}"
-        #----------------------------------------------
 
-        return jsonify({"message": "Internship Application added successfully.", "s3_url": s3_url}), 201
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+        # Connect to the database and add application
+        try:
+            cursor = db_conn.cursor()
+            insert_query = f"INSERT INTO progress (student_id, report_1, report_2) VALUES (%s, %s, %s)"
+            cursor.execute(insert_query, (student_id, report_1_url, report_2_url))
+            db_conn.commit()
+            cursor.close()
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+        return jsonify({"message": "Progress added successfully.", "s3_url": s3_url}), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-
 
 # ------------------------- Application -------------------------
-
-
 
 if __name__ == "__main__":
     #app.run(debug=True)

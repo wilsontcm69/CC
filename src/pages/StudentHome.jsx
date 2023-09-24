@@ -31,12 +31,12 @@ export default function StudentHome() {
   const [allowance, setAllowance] = useState();
 
   // <-- DOUBLE CHECK WHAT ATTRIBUTE IS STORED WHEN FILE UPLOAD -->
-  const [comAcceptanceForm, setComAcceptanceForm] = useState("");
-  const [parentAckForm, setParentAckForm] = useState("");
-  const [indemnity, setIndemnity] = useState("");
-  const [hiredEvidence, setHiredEvidence] = useState("");
-  const [report1, setReport1] = useState("");
-  const [report2, setReport2] = useState("");
+  const [comAcceptanceForm, setComAcceptanceForm] = useState(null);
+  const [parentAckForm, setParentAckForm] = useState(null);
+  const [indemnity, setIndemnity] = useState(null);
+  const [hiredEvidence, setHiredEvidence] = useState(null);
+  const [report1, setReport1] = useState(null);
+  const [report2, setReport2] = useState(null);
 
   // <-- DOUBLE CHECK WHAT ATTRIBUTE IS STORED WHEN FILE UPLOAD -->
   const [comAcceptFormName, setComAcceptFormName] = useState("");
@@ -63,7 +63,9 @@ export default function StudentHome() {
   const sessionCohort = sessionStorage.getItem("cohort");
   const sessionInternStart = sessionStorage.getItem("intern_start");
   const sessionInternEnd = sessionStorage.getItem("intern_end");
-  const sessionSupervisorAssigned = sessionStorage.getItem("supervisor_assigned");
+  const sessionSupervisorAssigned = sessionStorage.getItem(
+    "supervisor_assigned"
+  );
   const sessionStatus = sessionStorage.getItem("status");
   const status_no = Number(sessionStatus);
 
@@ -74,11 +76,11 @@ export default function StudentHome() {
 
   // ---------- Check User Session available ----------
   if (sessionEmail === null) {
-    navigate("/"); 
+    navigate("/");
   }
-  
+
   // ---------- Handle Logout ----------
-  const handleLogout = () =>  {
+  const handleLogout = () => {
     setForUserRole("");
     navigate("/");
     sessionStorage.removeItem("studentId");
@@ -133,7 +135,6 @@ export default function StudentHome() {
       return;
     }
 
-    /*
     if (comAcceptanceForm === "") {
       toast.error("Please upload company acceptance form");
       return;
@@ -148,7 +149,6 @@ export default function StudentHome() {
       toast.error("Please upload letter of indemnity");
       return;
     }
-    */
 
     onSubmitCompany();
   };
@@ -165,11 +165,6 @@ export default function StudentHome() {
   // <--- EDIT HERE: ADD APPLICATION --->
   const onSubmitCompany = () => {
     setLoading(true);
-    
-    //console.log("Company Name: " + companyName);
-    //console.log("Company Address: " + companyAddress);
-    //console.log("Com Supervisor Name: " + comSupervisorName);
-    //console.log("Allowance: " + allowance);
 
     // <--- add application --->
     handleAddApplication();
@@ -177,7 +172,7 @@ export default function StudentHome() {
     setTimeout(() => {
       setLoading(false);
       toast.success("Application updated!");
-    }, 1000);
+    }, 6000);
     setTimeout(() => {
       //window.location.reload();
     }, 2000);
@@ -188,6 +183,7 @@ export default function StudentHome() {
     setLoading(true);
 
     // <--- add application --->
+    handleAddProgress();
 
     setTimeout(() => {
       setLoading(false);
@@ -198,12 +194,9 @@ export default function StudentHome() {
     }, 2000);
   };
 
-
   // --------------- Application Progress ---------------
   useEffect(() => {
-
-    if(status_no == 1) {
-
+    if (status_no == 1) {
       // Make a GET request to retrieve company data
       fetch("http://localhost:5000/get_companies", {
         method: "GET",
@@ -219,7 +212,7 @@ export default function StudentHome() {
         .catch((error) => {
           console.error("Error:", error);
         });
-        
+
       companies.map((company) => {
         console.log("Company names: " + company.company_name);
         const address = company.address;
@@ -227,30 +220,22 @@ export default function StudentHome() {
         if (company.company_name === companyName) {
           console.log("Company address:  " + address);
           setCompanyAddress(address);
-        } 
-        else if (companyName == "") {
+        } else if (companyName == "") {
           setCompanyAddress("");
         }
       });
-
-    }
-    else if(status_no == 2 || status_no == 3) {
+    } else if (status_no == 2 || status_no == 3) {
       getApplication(sessionId);
-    }
-    else if(status_no == 4) {
+    } else if (status_no == 4) {
       getApplication(sessionId);
-    }
-    else {
+    } else {
       console.log("Error ");
     }
-
   }, []);
-
 
   // --------------- Application Progress ---------------
 
   const getApplication = (student_id) => {
-
     // Send a GET request to your Flask API endpoint with the student_id in the URL
     fetch(`http://127.0.0.1:5000/get_application/${student_id}`, {
       method: "GET",
@@ -258,53 +243,44 @@ export default function StudentHome() {
         "Content-Type": "application/json",
       },
     })
-    .then((response) => response.json())
-    .then((data) => {
-      // Handle the response from the server
-      setCompanyName(data.com_name);
-      setCompanyAddress(data.com_address);
-      setComSupervisorName(data.com_supervisor_name);
-      setComSupervisorEmail(data.com_supervisor_email);
-      console.log(data);
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response from the server
+        setCompanyName(data.com_name);
+        setCompanyAddress(data.com_address);
+        setComSupervisorName(data.com_supervisor_name);
+        setComSupervisorEmail(data.com_supervisor_email);
+        console.log(data);
 
-      // Assuming data.allowance is a decimal number
-      setAllowance(data.allowance);
-    })
-    .catch((error) => {
-      // Handle errors, e.g., display an error message
-      console.error("Error:", error);
-      alert("An error occurred while updating the company.");
-    });
-
+        // Assuming data.allowance is a decimal number
+        setAllowance(data.allowance);
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while updating the company.");
+      });
   };
 
-  
   // ---------- Add Internship Application ----------
   const handleAddApplication = () => {
     // Create a data object to send to your Flask API
-    const data = {
-      student_id: sessionId,
-      company_name: companyName,
-      company_address: companyAddress,
-      company_supervisor_name: comSupervisorName,
-      company_supervisor_email: comSupervisorEmail,
-      allowance: allowance,
-    };
-
-    //console.log(data.student_id);
-    //console.log(data.company_name);
-    //console.log(data.company_address);
-    //console.log(data.company_supervisor_name);
-    //console.log(data.company_supervisor_email);
-    //console.log(data.allowance);
+    const data = new FormData();
+    data.append("student_id", sessionId);
+    data.append("company_name", companyName);
+    data.append("company_address", companyAddress);
+    data.append("company_supervisor_name", comSupervisorName);
+    data.append("company_supervisor_email", comSupervisorEmail);
+    data.append("allowance", allowance);
+    data.append("com_acceptance_form", comAcceptanceForm[0]);
+    data.append("parent_ack_form", parentAckForm[0]);
+    data.append("indemnity", indemnity[0]);
+    data.append("hired_evidence", hiredEvidence[0]);
 
     // Send a POST request to your Flask API endpoint for adding supervisors
     fetch("http://localhost:5000/add_application", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      body: data,
     })
       .then((response) => response.json())
       .then((data) => {
@@ -318,6 +294,36 @@ export default function StudentHome() {
         setComSupervisorName("");
         setComSupervisorEmail("");
         setAllowance("");
+        setComAcceptanceForm("");
+        setParentAckForm("");
+        setIndemnity("");
+        setHiredEvidence("");
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        //alert("An error occurred while adding the supervisor.");
+      });
+
+  };
+  
+  // ---------- Add Progress ----------
+  const handleAddProgress = () => {
+    // Create a data object to send to your Flask API
+    const data = new FormData();
+    data.append("student_id", sessionId);
+    data.append("report1", report1[0]);
+    data.append("report2", report2[0]);
+
+    fetch("http://localhost:5000/add_progress", {
+      method: "POST",
+      body: data,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, e.g., show a success message
+        console.log(data);
+        alert("Progress added successfully!");
       })
       .catch((error) => {
         // Handle errors, e.g., display an error message
@@ -325,7 +331,6 @@ export default function StudentHome() {
         //alert("An error occurred while adding the supervisor.");
       });
   };
-  // ---------- Add Supervisor ----------
 
   return (
     <>
@@ -429,17 +434,36 @@ export default function StudentHome() {
         {/* Welcome Banner */}
         <div className="relative bg-indigo-200 dark:bg-indigo-500 p-4 sm:p-6 rounded-sm overflow-hidden mb-2">
           {/* Background illustration */}
-          <div className="absolute right-0 top-0 -mt-4 mr-16 pointer-events-none hidden xl:block" aria-hidden="true">
-            <svg width="319" height="198" xmlnsXlink="http://www.w3.org/1999/xlink">
+          <div
+            className="absolute right-0 top-0 -mt-4 mr-16 pointer-events-none hidden xl:block"
+            aria-hidden="true"
+          >
+            <svg
+              width="319"
+              height="198"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
+            >
               <defs>
                 <path id="welcome-a" d="M64 0l64 128-64-20-64 20z" />
                 <path id="welcome-e" d="M40 0l40 80-40-12.5L0 80z" />
                 <path id="welcome-g" d="M40 0l40 80-40-12.5L0 80z" />
-                <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="welcome-b">
+                <linearGradient
+                  x1="50%"
+                  y1="0%"
+                  x2="50%"
+                  y2="100%"
+                  id="welcome-b"
+                >
                   <stop stopColor="#A5B4FC" offset="0%" />
                   <stop stopColor="#818CF8" offset="100%" />
                 </linearGradient>
-                <linearGradient x1="50%" y1="24.537%" x2="50%" y2="100%" id="welcome-c">
+                <linearGradient
+                  x1="50%"
+                  y1="24.537%"
+                  x2="50%"
+                  y2="100%"
+                  id="welcome-c"
+                >
                   <stop stopColor="#4338CA" offset="0%" />
                   <stop stopColor="#6366F1" stopOpacity="0" offset="100%" />
                 </linearGradient>
@@ -450,21 +474,33 @@ export default function StudentHome() {
                     <use xlinkHref="#welcome-a" />
                   </mask>
                   <use fill="url(#welcome-b)" xlinkHref="#welcome-a" />
-                  <path fill="url(#welcome-c)" mask="url(#welcome-d)" d="M64-24h80v152H64z" />
+                  <path
+                    fill="url(#welcome-c)"
+                    mask="url(#welcome-d)"
+                    d="M64-24h80v152H64z"
+                  />
                 </g>
                 <g transform="rotate(-51 91.324 -105.372)">
                   <mask id="welcome-f" fill="#fff">
                     <use xlinkHref="#welcome-e" />
                   </mask>
                   <use fill="url(#welcome-b)" xlinkHref="#welcome-e" />
-                  <path fill="url(#welcome-c)" mask="url(#welcome-f)" d="M40.333-15.147h50v95h-50z" />
+                  <path
+                    fill="url(#welcome-c)"
+                    mask="url(#welcome-f)"
+                    d="M40.333-15.147h50v95h-50z"
+                  />
                 </g>
                 <g transform="rotate(44 61.546 392.623)">
                   <mask id="welcome-h" fill="#fff">
                     <use xlinkHref="#welcome-g" />
                   </mask>
                   <use fill="url(#welcome-b)" xlinkHref="#welcome-g" />
-                  <path fill="url(#welcome-c)" mask="url(#welcome-h)" d="M40.333-15.147h50v95h-50z" />
+                  <path
+                    fill="url(#welcome-c)"
+                    mask="url(#welcome-h)"
+                    d="M40.333-15.147h50v95h-50z"
+                  />
                 </g>
               </g>
             </svg>
@@ -472,13 +508,18 @@ export default function StudentHome() {
 
           {/* Content */}
           <div className="relative">
-            <h1 className="text-2xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold mb-1">Welcome, {sessionEmail}. 👋</h1>
-            <p className="dark:text-indigo-200">A journey of a thousand miles begins with a single step.</p>
+            <h1 className="text-2xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold mb-1">
+              Welcome, {sessionEmail}. 👋
+            </h1>
+            <p className="dark:text-indigo-200">
+              A journey of a thousand miles begins with a single step.
+            </p>
           </div>
         </div>
 
-        <br /><br />
-                    
+        <br />
+        <br />
+
         {/* Stepper */}
         <div className="px-4 pb-4">
           <ol class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
@@ -591,7 +632,9 @@ export default function StudentHome() {
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   Intern Period
                 </dt>
-                <dd class="text-base font-semibold">{sessionInternStart} to {sessionInternEnd}</dd>
+                <dd class="text-base font-semibold">
+                  {sessionInternStart} to {sessionInternEnd}
+                </dd>
               </div>
             </dl>
           </div>
@@ -605,7 +648,9 @@ export default function StudentHome() {
                 <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">
                   University Supervisor
                 </dt>
-                <dd class="text-base font-semibold">{sessionSupervisorAssigned}</dd>
+                <dd class="text-base font-semibold">
+                  {sessionSupervisorAssigned}
+                </dd>
               </div>
             </dl>
           </div>
@@ -639,11 +684,13 @@ export default function StudentHome() {
                     onChange={(e) => setCompanyName(e.target.value)}
                   />
                   <datalist id="companies">
-                      {companies.map((company) => (
-                        <option key={company.company_name} value={company.company_name} />
-                      ))}
+                    {companies.map((company) => (
+                      <option
+                        key={company.company_name}
+                        value={company.company_name}
+                      />
+                    ))}
                   </datalist>
-                  
                 </>
               ) : (
                 <input
@@ -753,7 +800,7 @@ export default function StudentHome() {
                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                     id="file_input"
                     type="file"
-                    onChange={(e) => setComAcceptanceForm(e.target.value)}
+                    onChange={(e) => setComAcceptanceForm(e.target.files)}
                   />
                 ) : (
                   <a
@@ -776,7 +823,7 @@ export default function StudentHome() {
                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                     id="file_input"
                     type="file"
-                    onChange={(e) => setParentAckForm(e.target.value)}
+                    onChange={(e) => setParentAckForm(e.target.files)}
                   />
                 ) : (
                   <a
@@ -799,7 +846,7 @@ export default function StudentHome() {
                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                     id="file_input"
                     type="file"
-                    onChange={(e) => setIndemnity(e.target.value)}
+                    onChange={(e) => setIndemnity(e.target.files)}
                   />
                 ) : (
                   <a
@@ -823,7 +870,7 @@ export default function StudentHome() {
                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                     id="file_input"
                     type="file"
-                    onChange={(e) => setHiredEvidence(e.target.value)}
+                    onChange={(e) => setHiredEvidence(e.target.files)}
                   />
                 ) : (
                   <a
@@ -909,7 +956,7 @@ export default function StudentHome() {
                       class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                       id="file_input"
                       type="file"
-                      onChange={(e) => setReport1(e.target.value)}
+                      onChange={(e) => setReport1(e.target.files)}
                     />
                   ) : (
                     <a
@@ -933,7 +980,7 @@ export default function StudentHome() {
                       class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                       id="file_input"
                       type="file"
-                      onChange={(e) => setReport2(e.target.value)}
+                      onChange={(e) => setReport2(e.target.files)}
                     />
                   ) : (
                     <a
@@ -990,71 +1037,6 @@ export default function StudentHome() {
           </div>
         )}
       </main>
-
-      <button
-        className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-        onClick={() => {
-          setStatus(1);
-          setCohort("2021/2022");
-          setInternPeriod("3 months");
-          setRemark("");
-          setUniSupervisorName("Lee Chong Wei");
-          setUniSupervisorEmail("leechongwei@tarc.edu.my");
-        }}
-      >
-        Status 1
-      </button>
-      <button
-        className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-        onClick={() => {
-          setStatus(2);
-          setCompanyName("Acme Inc");
-          setComSupervisorName("Tan Yong Yue");
-          setComSupervisorEmail("yongyue@gmail.com");
-          setAllowance(500);
-        }}
-      >
-        Status 2
-      </button>
-      <button
-        className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-        onClick={() => {
-          setStatus(3);
-          setComAcceptFormName("AcmeIncAcceptanceForm.pdf");
-          setComAcceptFormLink("https://www.google.com");
-          setParentAckFormName("ParentAcknowledgementForm.pdf");
-          setParentAckFormLink("https://www.google.com");
-          setIndemnityName("LetterofIndemnity.pdf");
-          setIndemnityLink("https://www.google.com");
-          setHiredEvidenceName("HiredEvidence.pdf");
-          setHiredEvidenceLink("https://www.google.com");
-        }}
-      >
-        Status 3
-      </button>
-      <button
-        className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-        onClick={() => {
-          setStatus(4);
-          setReport1Name("InternshipReport.pdf");
-          setReport1Link("https://www.google.com");
-          setReport2Name("AdditionalDocument.pdf");
-          setReport2Link("https://www.google.com");
-        }}
-      >
-        Status 4
-      </button>
-      <button
-        className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-        onClick={() => {
-          setHiredEvidenceName("");
-          setHiredEvidenceLink("");
-          setReport2Name("");
-          setReport2Link("");
-        }}
-      >
-        Empty Optional Field(use in status 4)
-      </button>
 
       <footer class="bg-white rounded-lg shadow sm:flex sm:items-center sm:justify-between p-4 sm:p-6 xl:px-28 xl:py-8 dark:bg-gray-800 antialiased">
         <p class="mb-4 text-sm text-center text-gray-500 dark:text-gray-400 sm:mb-0">
