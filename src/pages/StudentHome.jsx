@@ -185,7 +185,7 @@ export default function StudentHome() {
   useEffect(() => {
     if (status_no == 1) {
       // Make a GET request to retrieve company data
-      fetch("http://localhost:5000/get_companies", {
+      fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -218,7 +218,7 @@ export default function StudentHome() {
   // --------------- Application Progress ---------------
   const getApplication = (student_id) => {
     // Send a GET request to your Flask API endpoint with the student_id in the URL
-    fetch(`http://localhost:5000/get_application/${student_id}`, {
+    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_application/${student_id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -262,7 +262,7 @@ export default function StudentHome() {
     data.append("hired_evidence", hiredEvidence[0]);
 
     // Send a POST request to your Flask API endpoint for adding supervisors
-    fetch("http://localhost:5000/add_application", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_application", {
       method: "POST",
       body: data,
     })
@@ -299,7 +299,7 @@ export default function StudentHome() {
     data.append("report1", report1[0]);
     data.append("report2", report2[0]);
 
-    fetch("http://localhost:5000/add_progress", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_progress", {
       method: "POST",
       body: data,
     })
@@ -325,7 +325,7 @@ export default function StudentHome() {
     };
 
     // Send a POST request to your Flask API endpoint for editing student
-    fetch("http://localhost:5000/edit_student_status", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/edit_student_status", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

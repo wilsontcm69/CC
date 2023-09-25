@@ -124,7 +124,7 @@ export default function AddStudent() {
   useEffect(() => {
 
     // Make a GET request to retrieve company data
-    fetch("http://127.0.0.1:5000/get_supervisors", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_supervisors", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -159,7 +159,7 @@ export default function AddStudent() {
     };
 
     // Send a POST request to your Flask API endpoint for adding students
-    fetch("http://127.0.0.1:5000/add_student", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_student", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -194,7 +194,7 @@ export default function AddStudent() {
   // ---------- Get all Student ID ----------
   useEffect(() => {
     // Make a GET request to retrieve student ID only
-    fetch("http://127.0.0.1:5000/get_students", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_students", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

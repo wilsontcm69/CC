@@ -77,8 +77,17 @@ export default function ViewStudent() {
     )
       .then((response) => response.json())
       .then((data) => {
-        // Set the retrieved student data in your state
-        setStudents(data);
+        if (Array.isArray(data)) {
+          // Data is already an array, set it in your state
+          setStudents(data);
+          console.log(data);
+        } else if (typeof data === 'object' && data.students) {
+          // Data is an object with a 'students' property, extract the array
+          setStudents(data.students);
+          console.log(data.students);
+        } else {
+          console.error("Error: Data is not in the expected format");
+        }
       })
       .catch((error) => {
         console.error("Error:", error);
