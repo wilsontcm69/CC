@@ -13,12 +13,10 @@ export default function Evaluation() {
   const [studentID, setStudentID] = useState("");
   const [studentName, setStudentName] = useState("");
   const [email, setEmail] = useState("");
-  const [lastName, setLastName] = useState("");
   const [icNum, setICNum] = useState("");
   const [cohort, setCohort] = useState("");
   const [internStart, setInternStart] = useState("");
   const [internEnd, setInternEnd] = useState("");
-  const [remarks, setRemarks] = useState("");
 
   // <-- Set Company Data -->
   const [companyName, setCompanyName] = useState("");
@@ -27,25 +25,16 @@ export default function Evaluation() {
   const [comSupervisorEmail, setComSupervisorEmail] = useState("");
   const [allowance, setAllowance] = useState();
 
-  //Set Supervisor Data
-  const [supervisorName, setSupervisorName] = useState("");
-  const [supervisorEmail, setSupervisorEmail] = useState("");
-
   //Set Company Data
-  const [comAcceptFormName, setComAcceptFormName] = useState("");
   const [comAcceptFormLink, setComAcceptFormLink] = useState("");
-  const [parentAckFormName, setParentAckFormName] = useState("");
   const [parentAckFormLink, setParentAckFormLink] = useState("");
-  const [indemnityName, setIndemnityName] = useState("");
   const [indemnityLink, setIndemnityLink] = useState("");
-  const [hiredEvidenceName, setHiredEvidenceName] = useState("");
   const [hiredEvidenceLink, setHiredEvidenceLink] = useState("");
   const [report1Name, setReport1Name] = useState("");
   const [report1Link, setReport1Link] = useState("");
   const [report2Name, setReport2Name] = useState("");
   const [report2Link, setReport2Link] = useState("");
   const [loading, setLoading] = useState(false);
-  const setForUserRole = useUserRoleUpdate();
 
   const { id } = useParams();
 
@@ -67,26 +56,11 @@ export default function Evaluation() {
     }, 2000);
   };
 
-  // <--- EDIT HERE: UPDATE STATUS AND COMPANY DELETE DETAILS--->
-  const rejectApplication = () => {
-    setLoading(true);
-
-    // <--- set database status to 1 and clear previous data--->
-
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("Application updated!");
-    }, 1000);
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
-  };
-
   // <--- EDIT HERE: GET STUDENT DATA HERE --->
   // ---------- Get Student Data ----------
   useEffect(() => {
     // Make a GET request to retrieve student data
-    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_student/${id}`)
+    fetch(`http://127.0.0.1:5000/get_student/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // Set the retrieved student data in your state
@@ -98,6 +72,7 @@ export default function Evaluation() {
         setInternStart(data.intern_start);
         setInternEnd(data.intern_end);
         setStatus(data.remarks);
+        console.log(data.remarks);
 
         if (data.remarks != "1") {
           getApplication(data.id);
@@ -109,6 +84,8 @@ export default function Evaluation() {
         // Handle errors
         console.log("Error");
       });
+
+      console.log(status)
   }, []);
 
   // ---------- Application Progress  ----------
@@ -117,7 +94,7 @@ export default function Evaluation() {
     console.log("student_id: " + student_id);
 
     // Send a GET request to your Flask API endpoint with the student_id in the URL
-    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_application/${student_id}`, {
+    fetch(`http://127.0.0.1:5000/get_application/${student_id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -130,10 +107,13 @@ export default function Evaluation() {
         setCompanyAddress(data.com_address);
         setComSupervisorName(data.com_supervisor_name);
         setComSupervisorEmail(data.com_supervisor_email);
-        console.log(data);
-
-        // Assuming data.allowance is a decimal number
         setAllowance(data.allowance);
+        setComAcceptFormLink(data.com_acceptance_form);
+        setParentAckFormLink(data.parent_ack_form);
+        setIndemnityLink(data.indemnity);
+        setHiredEvidenceLink(data.hired_evidence);
+        setReport1Link(data.report_1);
+        setReport2Link(data.report_2);
       })
       .catch((error) => {
         // Handle errors, e.g., display an error message
@@ -153,7 +133,7 @@ export default function Evaluation() {
     };
 
     // Send a POST request to your Flask API endpoint for editing student
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/edit_student_status", {
+    fetch("http://127.0.0.1:5000/edit_student_status", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -195,7 +175,6 @@ export default function Evaluation() {
               <ThemeToggle />
               <button
                 onClick={() => {
-                  setForUserRole("");
                   navigate("/");
                   toast.success("You have successfully logged out!");
                 }}
@@ -349,7 +328,7 @@ export default function Evaluation() {
                   Intern Period
                 </dt>
                 <dd class="text-base font-semibold">
-                  {internStart} - {internEnd}
+                  {internStart} to {internEnd}
                 </dd>
               </div>
               <div class="flex flex-col pt-3">
@@ -503,8 +482,9 @@ export default function Evaluation() {
                   <a
                     href={comAcceptFormLink}
                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto"
+                    target="_blank"
                   >
-                    {comAcceptFormName}
+                    Company Acceptance Form
                   </a>
                 </div>
                 <div>
@@ -517,8 +497,9 @@ export default function Evaluation() {
                   <a
                     href={parentAckFormLink}
                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto"
+                    target="_blank"
                   >
-                    {parentAckFormName}
+                    Parent Acknowledgement Form
                   </a>
                 </div>
                 <div>
@@ -531,8 +512,9 @@ export default function Evaluation() {
                   <a
                     href={indemnityLink}
                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto"
+                    target="_blank"
                   >
-                    {indemnityName}
+                    Letter of Indemnity
                   </a>
                 </div>
                 <div>
@@ -540,17 +522,14 @@ export default function Evaluation() {
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     for="file_input"
                   >
-                    Hired Evidence{" "}
-                    <span class="text-xs font-light">(Optional)</span>
+                    Hired Evidence
                   </label>
                   <a
                     href={hiredEvidenceLink}
-                    class={`font-medium ${
-                      hiredEvidenceLink &&
-                      "pointer-events-auto text-blue-600 dark:text-blue-500 hover:underline"
-                    }`}
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto"
+                    target="_blank"
                   >
-                    {hiredEvidenceName ? hiredEvidenceName : "-"}
+                    Hired Evidence
                   </a>
                 </div>
               </div>
@@ -579,7 +558,7 @@ export default function Evaluation() {
                     </div>
                   ) : (
                     <>
-                      <div style={{ textAlign: "center" }}>
+                      <div style={{ textAlign: "right" }}>
                         <button
                           type="button"
                           onClick={() => acceptApplication()}
@@ -628,7 +607,7 @@ export default function Evaluation() {
           </div>
         )}
 
-        {status === 4 && (
+        {status === 0 && (
           <div class="bg-white rounded-lg dark:bg-gray-800 h-auto p-6 shadow-lg mb-4">
             <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
               Progress Check
@@ -646,7 +625,7 @@ export default function Evaluation() {
                     href={report1Link}
                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                   >
-                    {report1Name}
+                    Report 1
                   </a>
                 </div>
                 <div>
@@ -654,17 +633,14 @@ export default function Evaluation() {
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     for="file_input"
                   >
-                    Additional Document{" "}
-                    <span class="text-xs font-light">(Optional)</span>
+                    Additional Document
                   </label>
                   <a
                     href={report2Link}
-                    class={`font-medium${
-                      report2Link &&
-                      "pointer-events-auto text-blue-600 dark:text-blue-500 hover:underline"
-                    }`}
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+
                   >
-                    {report2Name ? report2Name : "-"}
+                    Report 2
                   </a>
                 </div>
               </div>
@@ -672,46 +648,6 @@ export default function Evaluation() {
           </div>
         )}
       </main>
-
-      <button
-        className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-        onClick={() => {
-          setStatus(status + 1);
-
-          setCompanyName("Joah");
-          setCompanyAddress("No. 1, Jalan 1, 1/1, 11111, Kuala Lumpur");
-
-          setSupervisorName("johndoe");
-          setSupervisorEmail("johndoe@gmail.com");
-
-          setAllowance(1000);
-          setComAcceptFormName("ComAcceptForm.pdf");
-          setComAcceptFormLink("https://www.google.com");
-          setParentAckFormName("ParentAckForm.pdf");
-          setParentAckFormLink("https://www.google.com");
-          setIndemnityName("Indemnity.pdf");
-          setIndemnityLink("https://www.google.com");
-          setHiredEvidenceName("HiredEvidence.pdf");
-          setHiredEvidenceLink("https://www.google.com");
-          setReport1Name("Report1.pdf");
-          setReport1Link("https://www.google.com");
-          setReport2Name("Report2.pdf");
-          setReport2Link("https://www.google.com");
-        }}
-      >
-        Click Me to test
-      </button>
-      <button
-        className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-        onClick={() => {
-          setHiredEvidenceName("");
-          setHiredEvidenceLink("");
-          setReport2Name("");
-          setReport2Link("");
-        }}
-      >
-        Empty Optional Field
-      </button>
 
       <footer class="bg-white rounded-lg shadow sm:flex sm:items-center sm:justify-between p-4 sm:p-6 xl:px-28 xl:py-8 dark:bg-gray-800 antialiased">
         <p class="mb-4 text-sm text-center text-gray-500 dark:text-gray-400 sm:mb-0">

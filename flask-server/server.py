@@ -688,64 +688,52 @@ def add_application():
         parent_ack_form = request.files.get("parent_ack_form")
         indemnity = request.files.get("indemnity")
         hired_evidence = request.files.get("hired_evidence")
-        print("student_id: " + student_id)
 
         # Connect S3 and upload files
-        try: 
+        try:
             s3 = boto3.client('s3')
+            print("S3 connected")
 
-            try: 
-                print("Connecting to S3...")
-
+            try:
                 com_acceptance_file_name_in_s3 = "companyFile_" + com_acceptance_form.filename
-                print(com_acceptance_file_name_in_s3)
                 s3.upload_fileobj(com_acceptance_form, custombucket, com_acceptance_file_name_in_s3)
                 company_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{com_acceptance_file_name_in_s3}"
-                print("Connecting to 1")
                 parent_ack_file_name_in_s3 = "parentFiles_" + parent_ack_form.filename
                 s3.upload_fileobj(parent_ack_form, custombucket, parent_ack_file_name_in_s3)
                 parent_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{parent_ack_file_name_in_s3}"
-                print("Connecting to 2")
-                indemnity_file_name_in_s3 = "indeminityFiles_" + indemnity.filename
+                indemnity_file_name_in_s3 = "indemnityFiles_" + indemnity.filename
                 s3.upload_fileobj(indemnity, custombucket, indemnity_file_name_in_s3)
                 indemnity_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{indemnity_file_name_in_s3}"
-                print("Connecting to 3")
-
-                '''
-                if(hired_evidence == None):
-                    hired_evidence_file_name_in_s3 = "evidenceFile_" + hired_evidence.filename 
-                    s3.upload_fileobj(hired_evidence, custombucket, hired_evidence_file_name_in_s3)
-                    hired_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{hired_evidence_file_name_in_s3}"
-                else:
-                    hired_url = ""
-                '''
+                hired_evidence_file_name_in_s3 = "evidenceFile_" + hired_evidence.filename
+                s3.upload_fileobj(hired_evidence, custombucket, hired_evidence_file_name_in_s3)
+                hired_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{hired_evidence_file_name_in_s3}"
+                print("S3 Upload Success")
 
                 # Connect to the database
-                print("Connecting to database")
+                print("DB connected")
                 cursor = db_conn.cursor()
-                insert_query = "INSERT INTO application (student_id, com_name, com_address, com_supervisor_name, com_supervisor_email, allowance, com_acceptance_form, parent_ack_form, indemnity, hired_evidence) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                cursor.execute(insert_query, (student_id, company_name, company_address, company_supervisor_name, company_supervisor_email, allowance, company_url, parent_url, indemnity_url))
+                insert_query = "INSERT INTO application (student_id, com_name, com_address, com_supervisor_name, com_supervisor_email, allowance, com_acceptance_form, parent_ack_form, indemnity, hired_evidence) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                cursor.execute(insert_query, (student_id, company_name, company_address, company_supervisor_name, company_supervisor_email, allowance, company_url, parent_url, indemnity_url, hired_url))
                 db_conn.commit()
                 cursor.close()
+                print("DB Update success")
 
-            except Exception as e: 
-                return jsonify({"error": str(e)}), 500
-        
+                # Close the S3 connection and return a success response
+                return jsonify({"message": "Data inserted successfully"}), 200
+
+            except Exception as e:
+                # Print detailed error information for debugging
+                print("S3 Upload Error:", str(e))
+                return jsonify({"error": "An error occurred while uploading to S3."}), 500
+
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-
-        # Connect to the database and add application
-        '''
-        try:
-            
-        except Exception as e:
-            return jsonify({"error": str(e)}), 500
-
-        return jsonify({"message": "Internship Application added successfully.", "company_url": company_url, "parent_url": parent_url, "indemnity_url": indemnity_url}), 201
-        '''
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Print detailed error information for debugging
+        print("Application Error:", str(e))
+        return jsonify({"error": "An error occurred while processing the request."}), 500
+
 
 # ----- Get Application -----
 @app.route("/get_application/<string:student_id>", methods=["GET"])
@@ -842,47 +830,50 @@ def approve_application():
         return jsonify({"error": str(e)}), 500
 
 # ----- Add Progress  -----
-@app.route("/add_progress", methods=["POST"])
+@app.route("/add_progress", methods=["POST", "GET"])
 def add_progress():
     try:
         student_id = request.form.get("student_id")
-        report_1 = request.files.get("report_1")
-        report_2 = request.files.get("report_2")
+        report_1 = request.files.get("report1")
+        report_2 = request.files.get("report2")
 
         # Connect S3 and upload files
         try:
             s3 = boto3.client('s3')
+            print("Connecting to S3")
 
             try: 
                 report_1_file_name_in_s3 = "report1_" + report_1.filename
                 s3.upload_fileobj(report_1, custombucket, report_1_file_name_in_s3)
                 report_1_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{report_1_file_name_in_s3}"
-
                 report_2_file_name_in_s3 = "report2_" + report_2.filename
                 s3.upload_fileobj(report_2, custombucket, report_2_file_name_in_s3)
                 report_2_url = f"https://{custombucket}.s3.{customregion}.amazonaws.com/{report_2_file_name_in_s3}"
+                print("S3 Upload Success")
+
+                print("Connecting to database")
+                cursor = db_conn.cursor()
+                update_query = "UPDATE application SET report_1 = %(report_1)s, report_2 = %(report_2)s WHERE student_id = %(student_id)s"
+                cursor.execute(update_query, {"report_1": report_1_url, "report_2": report_2_url, "student_id": student_id})
+                db_conn.commit()
+                cursor.close()
+                print("DB Update success")
+
+                # Close the S3 connection and return a success response
+                return jsonify({"message": "Data inserted successfully"}), 200
 
             except Exception as e: 
-                return jsonify({"error": str(e)}), 500
+                # Print detailed error information for debugging
+                print("S3 Upload Error:", str(e))
+                return jsonify({"error": "An error occurred while uploading to S3."}), 500
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-
-        # Connect to the database and add application
-        try:
-            cursor = db_conn.cursor()
-            update_query = "UPDATE INTO application SET report_1 = %(report_1)s, report_2 = %(report_2)s WHERE student_id = %(student_id)s"
-            cursor.execute(update_query, (student_id, report_1_url, report_2_url))
-            db_conn.commit()
-            cursor.close()
-
-        except Exception as e:
-            return jsonify({"error": str(e)}), 500
-
-        return jsonify({"message": "Progress added successfully.", "s3_url": s3_url}), 201
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Print detailed error information for debugging
+        print("Progress Error:", str(e))
+        return jsonify({"error": "An error occurred while processing the request."}), 500
 
 # ------------------------- Application -------------------------
 

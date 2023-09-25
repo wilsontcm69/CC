@@ -4,24 +4,9 @@ import Logo from "../images/TARUMT-Logo.png";
 import ThemeToggle from "../components/ThemeToggle";
 import Help from "../components/DropdownHelp";
 import toast from "react-hot-toast";
-import { useUserRole, useUserRoleUpdate } from "../UserRoleContext";
 
 export default function StudentHome() {
   const navigate = useNavigate();
-  const userRole = useUserRole();
-
-  // <-- Set Student Data -->
-  const [studentID, setStudentID] = useState("");
-  const [studentName, setStudentName] = useState("");
-  const [email, setEmail] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [icNum, setICNum] = useState("");
-  const [cohort, setCohort] = useState("");
-  const [internStart, setInternStart] = useState("");
-  const [internEnd, setInternEnd] = useState("");
-  const [remarks, setRemarks] = useState("");
-  const [uniSupervisorName, setUniSupervisorName] = useState("");
-  const [uniSupervisorEmail, setUniSupervisorEmail] = useState("");
 
   // <-- Set Company Data -->
   const [companyName, setCompanyName] = useState("");
@@ -39,21 +24,14 @@ export default function StudentHome() {
   const [report2, setReport2] = useState(null);
 
   // <-- DOUBLE CHECK WHAT ATTRIBUTE IS STORED WHEN FILE UPLOAD -->
-  const [comAcceptFormName, setComAcceptFormName] = useState("");
   const [comAcceptFormLink, setComAcceptFormLink] = useState("");
-  const [parentAckFormName, setParentAckFormName] = useState("");
   const [parentAckFormLink, setParentAckFormLink] = useState("");
-  const [indemnityName, setIndemnityName] = useState("");
   const [indemnityLink, setIndemnityLink] = useState("");
-  const [hiredEvidenceName, setHiredEvidenceName] = useState("");
   const [hiredEvidenceLink, setHiredEvidenceLink] = useState("");
-  const [report1Name, setReport1Name] = useState("");
   const [report1Link, setReport1Link] = useState("");
-  const [report2Name, setReport2Name] = useState("");
   const [report2Link, setReport2Link] = useState("");
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(true);
-  const setForUserRole = useUserRoleUpdate();
 
   // ---------- Student Data Session ----------
   const sessionId = sessionStorage.getItem("studentId");
@@ -81,7 +59,6 @@ export default function StudentHome() {
 
   // ---------- Handle Logout ----------
   const handleLogout = () => {
-    setForUserRole("");
     navigate("/");
     sessionStorage.removeItem("studentId");
     sessionStorage.removeItem("studentEmail");
@@ -150,6 +127,11 @@ export default function StudentHome() {
       return;
     }
 
+    if (hiredEvidence === "") {
+      toast.error("Please upload evidence of being hired");
+      return;
+    }
+
     onSubmitCompany();
   };
 
@@ -159,41 +141,44 @@ export default function StudentHome() {
       return;
     }
 
+    if (report2 === "") {
+      toast.error("Please upload internship report");
+      return;
+    }
+
     onSubmitReport();
   };
 
-  // <--- EDIT HERE: ADD APPLICATION --->
   const onSubmitCompany = () => {
     setLoading(true);
 
     // <--- add application --->
     handleAddApplication();
-    updateStudentStatus(2);
 
     setTimeout(() => {
       setLoading(false);
       toast.success("Application updated!");
+      updateStudentStatus(2);
     }, 6000);
     setTimeout(() => {
-      //window.location.reload();
-    }, 2000);
+      window.location.reload();
+    }, 8000);
   };
 
-  // <--- EDIT HERE: ADD PROGRESS CHECK REPORT --->
   const onSubmitReport = () => {
     setLoading(true);
 
     // <--- add report application --->
     handleAddProgress();
-    updateStudentStatus(3);
 
     setTimeout(() => {
       setLoading(false);
       toast.success("Progress updated!");
-    }, 1000);
+      updateStudentStatus(4);
+    }, 6000);
     setTimeout(() => {
       window.location.reload();
-    }, 2000);
+    }, 8000);
   };
 
   // --------------- Application Progress ---------------
@@ -230,9 +215,7 @@ export default function StudentHome() {
     } 
   }, []);
   
-
   // --------------- Application Progress ---------------
-
   const getApplication = (student_id) => {
     // Send a GET request to your Flask API endpoint with the student_id in the URL
     fetch(`http://localhost:5000/get_application/${student_id}`, {
@@ -248,10 +231,13 @@ export default function StudentHome() {
         setCompanyAddress(data.com_address);
         setComSupervisorName(data.com_supervisor_name);
         setComSupervisorEmail(data.com_supervisor_email);
-        console.log(data);
-
-        // Assuming data.allowance is a decimal number
         setAllowance(data.allowance);
+        setComAcceptFormLink(data.com_acceptance_form);
+        setParentAckFormLink(data.parent_ack_form);
+        setIndemnityLink(data.indemnity);
+        setHiredEvidenceLink(data.hired_evidence);
+        setReport1Link(data.report1);
+        setReport2Link(data.report2);
       })
       .catch((error) => {
         // Handle errors, e.g., display an error message
@@ -850,9 +836,10 @@ export default function StudentHome() {
                 ) : (
                   <a
                     href={comAcceptFormLink}
-                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto"
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto hover:cursor-pointer"
+                    target="_blank"
                   >
-                    {comAcceptFormName}
+                    Company Acceptance Form
                   </a>
                 )}
               </div>
@@ -873,9 +860,10 @@ export default function StudentHome() {
                 ) : (
                   <a
                     href={parentAckFormLink}
-                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto"
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto hover:cursor-pointer"
+                    target="_blank"
                   >
-                    {parentAckFormName}
+                    Parent Acknowledgement Form
                   </a>
                 )}
               </div>
@@ -896,9 +884,10 @@ export default function StudentHome() {
                 ) : (
                   <a
                     href={indemnityLink}
-                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto"
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto hover:cursor-pointer"
+                    target="_blank"
                   >
-                    {indemnityName}
+                    Indemnity Letter
                   </a>
                 )}
               </div>
@@ -907,8 +896,7 @@ export default function StudentHome() {
                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   for="file_input"
                 >
-                  Hired Evidence{" "}
-                  <span class="text-xs font-light">(Optional)</span>
+                  Hired Evidence
                 </label>
                 {status === 1 ? (
                   <input
@@ -920,12 +908,10 @@ export default function StudentHome() {
                 ) : (
                   <a
                     href={hiredEvidenceLink}
-                    class={`font-medium  ${
-                      hiredEvidenceLink &&
-                      "pointer-events-auto text-blue-600 dark:text-blue-500 hover:underline"
-                    }`}
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline pointer-events-auto hover:cursor-pointer"
+                    target="_blank"
                   >
-                    {hiredEvidenceName ? hiredEvidenceName : "-"}
+                    Hired Evidence
                   </a>
                 )}
               </div>
@@ -1007,8 +993,9 @@ export default function StudentHome() {
                     <a
                       href={report1Link}
                       class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                      target="_blank"
                     >
-                      {report1Name}
+                      Internship Report
                     </a>
                   )}
                 </div>
@@ -1017,8 +1004,7 @@ export default function StudentHome() {
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     for="file_input"
                   >
-                    Additional Document{" "}
-                    <span class="text-xs font-light">(Optional)</span>
+                    Additional Document
                   </label>
                   {status === 3 ? (
                     <input
@@ -1030,12 +1016,10 @@ export default function StudentHome() {
                   ) : (
                     <a
                       href={report2Link}
-                      class={`font-medium ${
-                        report2Link &&
-                        "pointer-events-auto text-blue-600 dark:text-blue-500 hover:underline"
-                      }`}
+                      class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                      target="_blank"
                     >
-                      {report2Name ? report2Name : "-"}
+                      Additional Document
                     </a>
                   )}
                 </div>
