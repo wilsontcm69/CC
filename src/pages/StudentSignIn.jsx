@@ -23,7 +23,7 @@ export default function StudentSignIn() {
 
     try {
       const response = await fetch(
-        "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/login_student",
+        "http://localhost:5000/login_student",
         {
           method: "POST",
           headers: {

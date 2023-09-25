@@ -144,7 +144,7 @@ export default function Evaluation() {
 
   // --------------- Application Progress ---------------
 
-  // ---------- Edit Supervisor ----------
+  // ---------- Approve Application ----------
   const handleApproveApplication = () => {
     // Create a data object to send to your Flask API
     const data = {
@@ -177,7 +177,7 @@ export default function Evaluation() {
         alert("An error occurred while updating the student.");
       });
   };
-  // ---------- Edit Supervisor ----------
+  // ---------- Approve Application ----------
 
   return (
     <>
