@@ -168,6 +168,7 @@ export default function StudentHome() {
 
     // <--- add application --->
     handleAddApplication();
+    updateStudentStatus(2);
 
     setTimeout(() => {
       setLoading(false);
@@ -182,8 +183,9 @@ export default function StudentHome() {
   const onSubmitReport = () => {
     setLoading(true);
 
-    // <--- add application --->
+    // <--- add report application --->
     handleAddProgress();
+    updateStudentStatus(3);
 
     setTimeout(() => {
       setLoading(false);
@@ -198,7 +200,7 @@ export default function StudentHome() {
   useEffect(() => {
     if (status_no == 1) {
       // Make a GET request to retrieve company data
-      fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies", {
+      fetch("http://localhost:5000/get_companies", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -222,39 +224,18 @@ export default function StudentHome() {
           setCompanyAddress(address);
         } 
       });
-    } else if (status_no == 2 || status_no == 3) {
+
+    } else if (status_no > 1) {
       getApplication(sessionId);
-    } else if (status_no == 4) {
-      getApplication(sessionId);
-    } else {
-      console.log("Error ");
-    }
+    } 
   }, []);
   
-
-    // For example, if you're using a dropdown list
-    const handleCompanyChange = (event) => {
-      //setSelectedCompany(event.target.value);
-
-      companies.map((company) => {
-        const address = company.address;
-
-        if (company.company_name === event.target.value) {
-          console.log("Company address:  " + address);
-          setCompanyAddress(address);
-        } 
-        else if (companyName == "") {
-          setCompanyAddress("");
-        }
-      });
-
-    };
 
   // --------------- Application Progress ---------------
 
   const getApplication = (student_id) => {
     // Send a GET request to your Flask API endpoint with the student_id in the URL
-    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_application/${student_id}`, {
+    fetch(`http://localhost:5000/get_application/${student_id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -295,7 +276,7 @@ export default function StudentHome() {
     data.append("hired_evidence", hiredEvidence[0]);
 
     // Send a POST request to your Flask API endpoint for adding supervisors
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_application", {
+    fetch("http://localhost:5000/add_application", {
       method: "POST",
       body: data,
     })
@@ -348,6 +329,40 @@ export default function StudentHome() {
         //alert("An error occurred while adding the supervisor.");
       });
   };
+
+  const updateStudentStatus = (remarks) => {
+
+    // Create a data object to send to your Flask API
+    const data = {
+      student_id: sessionId,
+      remarks: remarks,
+    };
+
+    // Send a POST request to your Flask API endpoint for editing student
+    fetch("http://localhost:5000/edit_student_status", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === 200) {
+          // Handle the response, e.g., show a success message
+          Toast.success("Approved successfully!");
+          //navigate("/SupervisorHome");
+        } else {
+          // Handle other response statuses, if needed
+          console.log("Student status update failed.");
+        }
+      })
+      .catch((error) => {
+        // Handle errors, e.g., display an error message
+        console.error("Error:", error);
+        alert("An error occurred while updating the student.");
+      });
+  }
 
   return (
     <>
@@ -708,14 +723,17 @@ export default function StudentHome() {
                       }
                     }}
                   />
-                  <datalist id="companies">
-                    {companies.map((company) => (
-                      <option
-                        key={company.company_name}
-                        value={company.company_name}
-                      />
-                    ))}
-                  </datalist>
+                  {companies.length === 0 ? (
+                    // Render nothing if the companies array is empty
+                    null
+                  ) : (
+                    // Render the datalist if the companies array is not empty
+                    <datalist id="companies">
+                      {companies.map((company) => (
+                        <option key={company.company_name} value={company.company_name} />
+                      ))}
+                    </datalist>
+                  )}
                 </>
               ) : (
                 <input
