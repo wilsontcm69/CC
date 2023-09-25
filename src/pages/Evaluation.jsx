@@ -88,7 +88,7 @@ export default function Evaluation() {
   // ---------- Get Student Data ----------
   useEffect(() => {
     // Make a GET request to retrieve student data
-    fetch(`http://localhost:5000/get_student/${id}`)
+    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_student/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // Set the retrieved student data in your state
@@ -120,7 +120,7 @@ export default function Evaluation() {
     console.log("student_id: " + student_id);
 
     // Send a GET request to your Flask API endpoint with the student_id in the URL
-    fetch(`http://127.0.0.1:5000/get_application/${student_id}`, {
+    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_application/${student_id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -158,7 +158,7 @@ export default function Evaluation() {
     };
 
     // Send a POST request to your Flask API endpoint for editing student
-    fetch("http://localhost:5000/edit_student_status", {
+    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/edit_student_status", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
