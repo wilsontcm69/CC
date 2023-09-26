@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../images/TARUMT-Logo.png";
 import Admin from "../images/Admin.png";
@@ -7,16 +7,33 @@ import Student from "../images/Student.png";
 import Company from "../images/Company.png";
 import ThemeToggle from "../components/ThemeToggle";
 import Help from '../components/DropdownHelp';
-import { useUserRole, useUserRoleUpdate } from "../UserRoleContext";
 
 export default function Home() {
   const navigate = useNavigate();
-  const userRole = useUserRole();
-  const setForUserRole = useUserRoleUpdate();
+  const [server, setServer] = useState(false);
 
   useEffect(() => {
-    console.log("userRole: ", userRole);
-  }, [userRole]);
+    // Make a GET request to retrieve company data
+    fetch(
+      "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // Set the retrieved company data in your state
+        if(data) {
+          setServer(true);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
 
   return (
     <>
@@ -96,6 +113,13 @@ export default function Home() {
                 Find Company
               </h3>
             </a>
+          </div>
+          <div class="absolute bottom-0 right-0 mr-10 mb-10">
+              <p>Server Status: {(server) ? (
+                "Online"
+              ) : (
+                "Offline"
+              )}</p>
           </div>
         </div>
       </section>

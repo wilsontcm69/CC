@@ -52,7 +52,7 @@ export default function Evaluation() {
       toast.success("Application updated!");
     }, 1000);
     setTimeout(() => {
-      window.location.reload();
+      window.history.back();
     }, 2000);
   };
 

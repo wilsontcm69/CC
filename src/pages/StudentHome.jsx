@@ -46,6 +46,7 @@ export default function StudentHome() {
   );
   const sessionStatus = sessionStorage.getItem("status");
   const status_no = Number(sessionStatus);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const [status, setStatus] = useState(status_no);
 
@@ -159,10 +160,8 @@ export default function StudentHome() {
       setLoading(false);
       toast.success("Application updated!");
       updateStudentStatus(2);
+      setModalOpen(true);
     }, 6000);
-    setTimeout(() => {
-      window.location.reload();
-    }, 8000);
   };
 
   const onSubmitReport = () => {
@@ -175,22 +174,23 @@ export default function StudentHome() {
       setLoading(false);
       toast.success("Progress updated!");
       updateStudentStatus(4);
+      setModalOpen(true);
     }, 6000);
-    setTimeout(() => {
-      window.location.reload();
-    }, 8000);
   };
 
   // --------------- Application Progress ---------------
   useEffect(() => {
     if (status_no == 1) {
       // Make a GET request to retrieve company data
-      fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      fetch(
+        "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_companies",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
           // Set the retrieved student data in your state
@@ -207,23 +207,25 @@ export default function StudentHome() {
         if (company.company_name === companyName) {
           console.log("Company address:  " + address);
           setCompanyAddress(address);
-        } 
+        }
       });
-
     } else if (status_no > 1) {
       getApplication(sessionId);
-    } 
+    }
   }, []);
-  
+
   // --------------- Application Progress ---------------
   const getApplication = (student_id) => {
     // Send a GET request to your Flask API endpoint with the student_id in the URL
-    fetch(`http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_application/${student_id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/get_application/${student_id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // Handle the response from the server
@@ -262,10 +264,13 @@ export default function StudentHome() {
     data.append("hired_evidence", hiredEvidence[0]);
 
     // Send a POST request to your Flask API endpoint for adding supervisors
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_application", {
-      method: "POST",
-      body: data,
-    })
+    fetch(
+      "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_application",
+      {
+        method: "POST",
+        body: data,
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // Handle the response, e.g., show a success message
@@ -288,9 +293,8 @@ export default function StudentHome() {
         console.error("Error:", error);
         //alert("An error occurred while adding the supervisor.");
       });
-
   };
-  
+
   // ---------- Add Progress ----------
   const handleAddProgress = () => {
     // Create a data object to send to your Flask API
@@ -299,10 +303,13 @@ export default function StudentHome() {
     data.append("report1", report1[0]);
     data.append("report2", report2[0]);
 
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_progress", {
-      method: "POST",
-      body: data,
-    })
+    fetch(
+      "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/add_progress",
+      {
+        method: "POST",
+        body: data,
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // Handle the response, e.g., show a success message
@@ -317,7 +324,6 @@ export default function StudentHome() {
   };
 
   const updateStudentStatus = (remarks) => {
-
     // Create a data object to send to your Flask API
     const data = {
       student_id: sessionId,
@@ -325,13 +331,16 @@ export default function StudentHome() {
     };
 
     // Send a POST request to your Flask API endpoint for editing student
-    fetch("http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/edit_student_status", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
+    fetch(
+      "http://cherngmingtan-loadbalancer-88123096.us-east-1.elb.amazonaws.com/edit_student_status",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.status === 200) {
@@ -348,7 +357,7 @@ export default function StudentHome() {
         console.error("Error:", error);
         alert("An error occurred while updating the student.");
       });
-  }
+  };
 
   return (
     <>
@@ -701,7 +710,9 @@ export default function StudentHome() {
                     value={companyName}
                     onChange={(e) => {
                       setCompanyName(e.target.value);
-                      const selectedCompanyData = companies.find((company) => company.company_name === e.target.value);
+                      const selectedCompanyData = companies.find(
+                        (company) => company.company_name === e.target.value
+                      );
                       if (selectedCompanyData) {
                         setCompanyAddress(selectedCompanyData.address);
                       } else {
@@ -709,14 +720,16 @@ export default function StudentHome() {
                       }
                     }}
                   />
-                  {companies.length === 0 ? (
-                    // Render nothing if the companies array is empty
-                    null
-                  ) : (
+                  {companies.length ===
+                  0 ? // Render nothing if the companies array is empty
+                  null : (
                     // Render the datalist if the companies array is not empty
                     <datalist id="companies">
                       {companies.map((company) => (
-                        <option key={company.company_name} value={company.company_name} />
+                        <option
+                          key={company.company_name}
+                          value={company.company_name}
+                        />
                       ))}
                     </datalist>
                   )}
@@ -728,8 +741,6 @@ export default function StudentHome() {
                   defaultValue={companyName}
                 />
               )}
-
-              
             </div>
             {/* Address */}
             <div class="mb-6">
@@ -1162,6 +1173,45 @@ export default function StudentHome() {
           </div>
         </div>
       </footer>
+
+      {modalOpen && (
+        <>
+          <div className="w-full h-full bg-slate-400 bg-opacity-50 fixed flex top-0 left-0 z-60 justify-center items-center">
+            <div className="w-auto h-auto rounded-xl bg-white shadow-lg flex flex-col py-6 px-12 dark:bg-gray-700">
+              <div className="inline-block text-center text-2xl font-medium relative">
+                <svg
+                  class="mx-auto text-gray-400 w-12 h-12 dark:text-gray-200"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+              </div>
+              <div className="top-5 relative justify-center items-center text-lg text-center mb-2">
+                <p>Request have been submitted.</p>
+              </div>
+              <div className="top-7 flex justify-center items-center relative w-full text-white rounded-lg text-xl mb-6">
+                <button
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                  onClick={() => {
+                    navigate("/");
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }

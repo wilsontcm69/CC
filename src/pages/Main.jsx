@@ -1,5 +1,6 @@
 import React from "react";
 import WelcomeBanner from "../components/WelcomeBanner";
+import { NavLink } from "react-router-dom/dist";
 
 export default function Home() {
   return (
@@ -12,7 +13,11 @@ export default function Home() {
           <div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
             {/* Company */}
             <div class="flex flex-col p-12 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-14 dark:bg-gray-800 dark:text-white hover:shadow-lg hover:scale-105 transition duration-300 ease-in-out">
-              <h3 class="mb-4 text-4xl font-semibold"><span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Company</span></h3>
+              <h3 class="mb-4 text-4xl font-semibold">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+                  Company
+                </span>
+              </h3>
               <div class="flex justify-center items-baseline my-12 px-24">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -29,22 +34,24 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <a
-                href="/Dashboard/AddCompany"
-                class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900 mb-4"
-              >
-                Add
-              </a>
-              <a
-                href="/Dashboard/ViewCompany"
-                class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900"
-              >
-                View
-              </a>
+              <NavLink to="AddCompany">
+                <button class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900 mb-4 w-full">
+                  Add
+                </button>{" "}
+              </NavLink>
+              <NavLink to="ViewCompany">
+                <button class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900 mb-4 w-full">
+                  View
+                </button>
+              </NavLink>
             </div>
             {/* Supervisor */}
             <div class="flex flex-col p-12 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-14 dark:bg-gray-800 dark:text-white hover:shadow-lg hover:scale-105 transition duration-300 ease-in-out">
-            <h3 class="mb-4 text-4xl font-semibold"><span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Supervisor</span></h3>
+              <h3 class="mb-4 text-4xl font-semibold">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
+                  Supervisor
+                </span>
+              </h3>
               <div class="flex justify-center items-baseline my-12 px-24">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -61,22 +68,24 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <a
-                href="/Dashboard/AddSupervisor"
-                class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900 mb-4"
-              >
-                Add
-              </a>
-              <a
-                href="/Dashboard/ViewSupervisor"
-                class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900"
-              >
-                View
-              </a>
+              <NavLink to="AddSupervisor">
+                <button class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900 mb-4 w-full">
+                  Add
+                </button>
+              </NavLink>
+              <NavLink to="ViewSupervisor">
+                <button class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900 w-full">
+                  View
+                </button>
+              </NavLink>
             </div>
             {/* Student */}
             <div class="flex flex-col p-12 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-14 dark:bg-gray-800 dark:text-white hover:shadow-lg hover:scale-105 transition duration-300 ease-in-out">
-            <h3 class="mb-4 text-4xl font-semibold"><span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-500">Student</span></h3>
+              <h3 class="mb-4 text-4xl font-semibold">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-500">
+                  Student
+                </span>
+              </h3>
               <div class="flex justify-center items-baseline my-12 px-24">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -93,18 +102,16 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <a
-                href="/Dashboard/AddStudent"
-                class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900 mb-4"
-              >
-                Add
-              </a>
-              <a
-                href="/Dashboard/ViewStudent"
-                class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900"
-              >
-                View
-              </a>
+              <NavLink to="AddStudent">
+                <button class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900 mb-4 w-full">
+                  Add
+                </button>{" "}
+              </NavLink>
+              <NavLink to="ViewStudent">
+                <button class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900 mb-4 w-full">
+                  View
+                </button>
+              </NavLink>
             </div>
           </div>
         </div>
