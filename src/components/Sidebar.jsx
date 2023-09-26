@@ -88,7 +88,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
             </svg>
           </button>
           {/* Logo */}
-          <NavLink end to="Main" className={`block ${
+          <NavLink end to="Main" className={`block pointer-events-none ${
                 pathname === '/Dashboard' || pathname.includes("Main")
                   ? "text-indigo-500"
                   : "text-slate-400 hover:text-indigo-500 transition duration-150 ease-in-out"
