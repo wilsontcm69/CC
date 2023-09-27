@@ -26,8 +26,7 @@ export default function Home() {
       .then((response) => response.json())
       .then((data) => {
         // Set the retrieved company data in your state
-        console.log(data.error);
-        if(data.company_name) {
+        if(data.error === undefined) {
           setServer(true);
         }
       })
